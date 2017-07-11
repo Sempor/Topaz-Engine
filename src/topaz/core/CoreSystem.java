@@ -6,6 +6,7 @@ import topaz.input.MouseManager;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import topaz.rendering.RenderManager;
 
 public class CoreSystem implements Runnable {
@@ -94,6 +95,15 @@ public class CoreSystem implements Runnable {
         Display.init(title, width, height);
 
         GL.createCapabilities();
+        
+        //Enables z-buffer
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+        //Enables multisampling
+        GL11.glEnable(GL13.GL_MULTISAMPLE);
+
+        //Enables face-culling
+        GL11.glEnable(GL11.GL_CULL_FACE);
 
         if (printVersionData) {
             System.out.println("OS Name: " + System.getProperty("os.name"));
@@ -120,7 +130,7 @@ public class CoreSystem implements Runnable {
     }
 
     public void render() {
-        //Clears screen / framebuffer
+        //Clears frame-buffer and z-buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         RenderManager.render();
@@ -147,5 +157,29 @@ public class CoreSystem implements Runnable {
 
     public void setPrintVersionData(boolean printVersionData) {
         this.printVersionData = printVersionData;
+    }
+    
+    public static void setZBuffer(boolean zBuffer) {
+        if (zBuffer) {
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+        } else {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+        }
+    }
+
+    public static void setMultisampling(boolean multisampling) {
+        if (multisampling) {
+            GL11.glEnable(GL13.GL_MULTISAMPLE);
+        } else {
+            GL11.glDisable(GL13.GL_MULTISAMPLE);
+        }
+    }
+
+    public static void setFaceCulling(boolean faceCulling) {
+        if (faceCulling) {
+            GL11.glEnable(GL11.GL_CULL_FACE);
+        } else {
+            GL11.glDisable(GL11.GL_CULL_FACE);
+        }
     }
 }
