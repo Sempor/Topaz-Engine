@@ -1,17 +1,44 @@
 package topaz.rendering;
 
 import org.joml.Vector3f;
+import topaz.input.MouseManager;
 
 public class Camera {
 
-    public Vector3f location;
-    public Vector3f rotation;
-    public Vector3f scale;
+    private MouseManager mouseManager;
 
-    public Camera() {
+    private Vector3f location;
+    private Vector3f forward;
+    private Vector3f right;
+    private Vector3f up;
+
+    private float horizontalAngle = 0f;
+    private float verticalAngle = 0;
+
+    public Camera(MouseManager mouseManager) {
+        this.mouseManager = mouseManager;
+
         location = new Vector3f(0, 0, -2);
-        rotation = new Vector3f(0, 0, 0);
-        scale = new Vector3f(1, 1, 1);
+        forward = new Vector3f(0, 0, 0);
+        right = new Vector3f(0, 0, 0);
+        up = new Vector3f(0, 1, 0);
+    }
+
+    public void tick(double delta) {
+        horizontalAngle += mouseManager.getMouseSpeed() * delta * ((float) RenderSettings.getDisplayWidth() / 2f - (float) mouseManager.getCursorX());
+        verticalAngle += mouseManager.getMouseSpeed() * delta * ((float) RenderSettings.getDisplayHeight() / 2f - (float) mouseManager.getCursorY());
+
+        forward = new Vector3f((float) (Math.cos(verticalAngle) * Math.sin(horizontalAngle)),
+                (float) Math.sin(verticalAngle),
+                (float) (Math.cos(verticalAngle) * Math.cos(horizontalAngle)));
+
+        right = new Vector3f((float) Math.sin(horizontalAngle - Math.PI / 2f),
+                0,
+                (float) Math.cos(horizontalAngle - Math.PI / 2f));
+        
+        //Computes cross product of forward and right, stores cross product in up
+        Vector3f rightCopy = new Vector3f(right);
+        rightCopy.cross(forward, up);
     }
 
     public void translate(float dx, float dy, float dz) {
@@ -19,21 +46,13 @@ public class Camera {
         location.y += dy;
         location.z += dz;
     }
-
-    public void rotate(float dx, float dy, float dz) {
-        rotation.x += dx;
-        rotation.y += dy;
-        rotation.z += dz;
-    }
-
-    public void scale(float dx, float dy, float dz) {
-        scale.x += dx;
-        scale.y += dy;
-        scale.z += dz;
+    
+    public void translate(Vector3f translation) {
+        location.add(translation);
     }
 
     public Vector3f getLocation() {
-        return location;
+        return new Vector3f(location);
     }
 
     public void setLocation(Vector3f location) {
@@ -46,31 +65,15 @@ public class Camera {
         location.z = z;
     }
 
-    public Vector3f getRotation() {
-        return rotation;
+    public Vector3f getForward() {
+        return new Vector3f(forward);
     }
 
-    public void setRotation(Vector3f rotation) {
-        this.rotation = rotation;
+    public Vector3f getRight() {
+        return new Vector3f(right);
     }
 
-    public void setRotation(float x, float y, float z) {
-        rotation.x = x;
-        rotation.y = y;
-        rotation.z = z;
-    }
-
-    public Vector3f getScale() {
-        return scale;
-    }
-
-    public void setScale(Vector3f scale) {
-        this.scale = scale;
-    }
-
-    public void setScale(float x, float y, float z) {
-        scale.x = x;
-        scale.y = y;
-        scale.z = z;
+    public Vector3f getUp() {
+        return new Vector3f(up);
     }
 }

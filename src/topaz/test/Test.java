@@ -1,7 +1,7 @@
 package topaz.test;
 
 import topaz.assets.Texture;
-import topaz.core.CoreSystem;
+import topaz.core.CoreEngine;
 import topaz.core.CoreUser;
 import topaz.rendering.objects.Box;
 import topaz.util.Color4f;
@@ -11,9 +11,10 @@ public class Test extends CoreUser {
     private static String TITLE = "GameEngine Test";
     private static int WIDTH = 640, HEIGHT = 480;
     private Box box1, box2;
+    private float speed = 0.01f;
 
     public static void main(String[] args) {
-        CoreSystem core = new CoreSystem(new Test(), TITLE, WIDTH, HEIGHT);
+        CoreEngine core = new CoreEngine(new Test(), TITLE, WIDTH, HEIGHT);
         core.setPrintVersionData(false);
         core.setPrintFramesPerSecond(false);
         core.start();
@@ -23,9 +24,9 @@ public class Test extends CoreUser {
     public void init() {
         box1 = new Box(1, 1, 1);
         box1.setTextures(new Texture("/topaz/assets/textures/testPicture.png"));
-        box1.setLocation(2, 0, 0);
+        box1.setLocation(0, 0, 0);
         box1.generate();
-        
+
         box2 = new Box(1, 1, 1);
         box2.setColor(Color4f.CYAN);
         box2.setLocation(-2, 0, 0);
@@ -35,25 +36,14 @@ public class Test extends CoreUser {
     @Override
     public void tick(double delta) {
         if (keyManager.KEY_W) {
-            camera.translate(0, 0, 0.05f);
+            camera.translate(camera.getForward().mul((float) delta).mul(speed));
+        } else if (keyManager.KEY_S) {
+            camera.translate(camera.getForward().mul((float) delta).mul(speed).negate());
         }
         if (keyManager.KEY_A) {
-            camera.translate(0.05f, 0, 0);
-        }
-        if (keyManager.KEY_S) {
-            camera.translate(0, 0, -0.05f);
-        }
-        if (keyManager.KEY_D) {
-            camera.translate(-0.05f, 0, 0);
-        }
-        if (keyManager.KEY_Q) {
-            camera.translate(0, -0.05f, 0);
-        }
-        if (keyManager.KEY_E) {
-            camera.translate(0, 0.05f, 0);
-        }
-        if (keyManager.KEY_R) {
-            camera.rotate(0, 0.5f, 0);
+            camera.translate(camera.getRight().mul((float) delta).mul(speed).negate());
+        } else if (keyManager.KEY_D) {
+            camera.translate(camera.getRight().mul((float) delta).mul(speed));
         }
     }
 }

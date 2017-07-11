@@ -89,7 +89,6 @@ public class Mesh {
         // Create a FloatBuffer with the proper size to store our matrices later
         matrix44Buffer = BufferUtils.createFloatBuffer(16);
 
-        //Add mesh to RenderManager
         RenderManager.addMesh(this);
     }
 
@@ -144,11 +143,10 @@ public class Mesh {
         // Create a FloatBuffer with the proper size to store our matrices later
         matrix44Buffer = BufferUtils.createFloatBuffer(16);
 
-        //Add mesh to RenderManager
         RenderManager.addMesh(this);
     }
 
-    public void tick(double delta) {
+    public void tick(Matrix4f viewProjectionMatrix, double delta) {
         //Reset model matrix
         modelMatrix = new Matrix4f();
 
@@ -160,20 +158,15 @@ public class Mesh {
         modelMatrix.rotate((float) Math.toRadians(rotation.x), new Vector3f(1, 0, 0));
 
         //Calculate model-view-projection matrix
-        Matrix4f mvp = new Matrix4f(RenderManager.getProjectionMatrix());
-
-        mvp = mvp.mul(RenderManager.getViewMatrix());
-
+        Matrix4f mvp = new Matrix4f(viewProjectionMatrix);
         mvp = mvp.mul(modelMatrix);
 
         // Upload mvp matrix to the uniform variable
         GL20.glUseProgram(getShaderProgram(meshType).getProgramID());
-
         store(mvp, matrix44Buffer);
         matrix44Buffer.flip();
         GL20.glUniformMatrix4fv(RenderManager.getMVPMatrixLocation(getShaderProgram(meshType)),
                 false, matrix44Buffer);
-
         GL20.glUseProgram(0);
     }
 

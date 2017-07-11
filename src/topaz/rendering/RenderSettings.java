@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import topaz.core.Display;
+import topaz.util.Color4f;
 
 public class RenderSettings {
 
@@ -13,24 +14,24 @@ public class RenderSettings {
     private static int numSamples = 4;
     private static boolean visible = true;
 
-    public static void setZBuffer(boolean zBuffer) {
-        if (zBuffer) {
+    public static void enableZBuffer(boolean toggle) {
+        if (toggle) {
             GL11.glEnable(GL11.GL_DEPTH_TEST);
         } else {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
         }
     }
 
-    public static void setMultisampling(boolean multisampling) {
-        if (multisampling) {
+    public static void enableMultisampling(boolean toggle) {
+        if (toggle) {
             GL11.glEnable(GL13.GL_MULTISAMPLE);
         } else {
             GL11.glDisable(GL13.GL_MULTISAMPLE);
         }
     }
 
-    public static void setFaceCulling(boolean faceCulling) {
-        if (faceCulling) {
+    public static void enableFaceCulling(boolean toggle) {
+        if (toggle) {
             GL11.glEnable(GL11.GL_CULL_FACE);
         } else {
             GL11.glDisable(GL11.GL_CULL_FACE);
@@ -46,7 +47,7 @@ public class RenderSettings {
         return vSync;
     }
 
-    public static void setDisplayVisible(boolean isVisible) {
+    public static void makeDisplayVisible(boolean isVisible) {
         if (isVisible) {
             GLFW.glfwShowWindow(Display.getWindowID());
             visible = true;
@@ -96,5 +97,13 @@ public class RenderSettings {
         IntBuffer heightBuffer = BufferUtils.createIntBuffer(1);
         GLFW.glfwGetWindowSize(Display.getWindowID(), widthBuffer, heightBuffer);
         return heightBuffer.get(0);
+    }
+
+    public static void setBackgroundColor(Color4f backgroundColor) {
+        GL11.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+    }
+
+    public static void setBackgroundColor(float r, float g, float b, float a) {
+        GL11.glClearColor(r, g, b, a);
     }
 }

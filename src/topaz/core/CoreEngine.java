@@ -8,8 +8,10 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import topaz.rendering.RenderManager;
+import topaz.rendering.RenderSettings;
+import topaz.util.Color4f;
 
-public class CoreSystem implements Runnable {
+public class CoreEngine implements Runnable {
 
     private String title;
     private int width, height;
@@ -25,7 +27,7 @@ public class CoreSystem implements Runnable {
     private boolean printFramesPerSecond = true;
     private boolean printVersionData = false;
 
-    public CoreSystem(CoreUser coreUser, String title, int width, int height) {
+    public CoreEngine(CoreUser coreUser, String title, int width, int height) {
         this.coreUser = coreUser;
         this.title = title;
         this.width = width;
@@ -98,7 +100,7 @@ public class CoreSystem implements Runnable {
         Display.init(title, width, height);
 
         GL.createCapabilities();
-        
+
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL13.GL_MULTISAMPLE);
         GL11.glEnable(GL11.GL_CULL_FACE);
@@ -110,18 +112,17 @@ public class CoreSystem implements Runnable {
             System.out.println("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION));
         }
 
-        //Sets screen clear color to black
-        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        RenderSettings.setBackgroundColor(Color4f.BLACK);
 
-        RenderManager.init();
+        RenderManager.init(mouseManager);
 
         coreUser.setUp(RenderManager.getCamera(), keyManager, mouseManager);
         coreUser.init();
     }
 
     public void tick(double delta) {
-        RenderManager.tick(delta);
-        
+        RenderManager.tick(mouseManager, delta);
+
         keyManager.tick(Display.getWindowID());
 
         coreUser.tick(delta);
