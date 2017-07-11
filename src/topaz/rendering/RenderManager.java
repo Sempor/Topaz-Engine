@@ -2,8 +2,8 @@ package topaz.rendering;
 
 import java.util.ArrayList;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL20;
-import topaz.core.Display;
 import topaz.rendering.shaders.Shader;
 import topaz.rendering.shaders.ShaderBuilder;
 import topaz.rendering.shaders.ShaderProgram;
@@ -48,8 +48,12 @@ public class RenderManager {
         //Reset view matrix
         viewMatrix = new Matrix4f();
 
-        //Translate camera
+        //Scale, translate, and rotate camera
+        viewMatrix.scale(camera.getScale());
         viewMatrix.translate(camera.getLocation());
+        viewMatrix.rotate((float) Math.toRadians(camera.getRotation().z), new Vector3f(0, 0, 1));
+        viewMatrix.rotate((float) Math.toRadians(camera.getRotation().y), new Vector3f(0, 1, 0));
+        viewMatrix.rotate((float) Math.toRadians(camera.getRotation().x), new Vector3f(1, 0, 0));
 
         //Tick meshes
         for (Mesh mesh : meshes) {
@@ -67,7 +71,7 @@ public class RenderManager {
     public static void addMesh(Mesh mesh) {
         meshes.add(mesh);
     }
-    
+
     public static int getMVPMatrixLocation(ShaderProgram program) {
         return GL20.glGetUniformLocation(program.getProgramID(), "mvpMatrix");
     }
@@ -83,10 +87,10 @@ public class RenderManager {
     public static Camera getCamera() {
         return camera;
     }
-    
+
     private static void createProjectionMatrix() {
         projectionMatrix = new Matrix4f();
-        float aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
+        float aspectRatio = (float) RenderSettings.getDisplayWidth() / (float) RenderSettings.getDisplayHeight();
 
         float y_scale = MathUtil.coTangent((float) Math.toRadians(fieldOfView / 2f));
         float x_scale = y_scale / aspectRatio;

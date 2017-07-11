@@ -17,6 +17,14 @@ public abstract class CoreUser {
     public void render() {
     }
 
+    /**
+     * This method is used for internal engine purposes. It is NOT meant to be
+     * called by users.
+     *
+     * @param camera
+     * @param keyManager
+     * @param mouseManager
+     */
     protected void setUp(Camera camera, KeyManager keyManager, MouseManager mouseManager) {
         this.camera = camera;
         this.keyManager = keyManager;

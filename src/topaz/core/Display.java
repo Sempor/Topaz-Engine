@@ -4,25 +4,18 @@ import java.nio.IntBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
+import topaz.rendering.RenderSettings;
 
 public class Display {
 
-    private static long window;
-    private static String title;
-    private static int width, height;
-    private static int vSync = 1;
-    private static int numSamples = 4;
-    private static boolean visible = true;
+    private static long windowID;
+    private static String windowTitle;
 
-    public static void init(String displayTitle, int displayWidth, int displayHeight) {
-        title = displayTitle;
-        width = displayWidth;
-        height = displayHeight;
-
+    public static void init(String title, int width, int height) {
+        windowTitle = title;
+        
         //Creates error callback to print error messages in System.err
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -35,16 +28,16 @@ public class Display {
         GLFW.glfwDefaultWindowHints();
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
-        GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, numSamples);
+        GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, RenderSettings.getNumSamples());
 
         //Creates window
-        window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
-        if (window == MemoryUtil.NULL) {
+        windowID = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
+        if (windowID == MemoryUtil.NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
         }
 
         //Creates key callback that is called whenever a key event occurs
-        GLFW.glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+        GLFW.glfwSetKeyCallback(windowID, (window, key, scancode, action, mods) -> {
             if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
                 GLFW.glfwSetWindowShouldClose(window, true);
             }
@@ -55,58 +48,32 @@ public class Display {
             IntBuffer pWidth = stack.mallocInt(1);
             IntBuffer pHeight = stack.mallocInt(1);
 
-            GLFW.glfwGetWindowSize(window, pWidth, pHeight);
+            GLFW.glfwGetWindowSize(windowID, pWidth, pHeight);
             GLFWVidMode vidmode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-            GLFW.glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0)) / 2, (vidmode.height() - pHeight.get(0)) / 2);
+            GLFW.glfwSetWindowPos(windowID, (vidmode.width() - pWidth.get(0)) / 2, (vidmode.height() - pHeight.get(0)) / 2);
         }
 
-        GLFW.glfwMakeContextCurrent(window);
+        GLFW.glfwMakeContextCurrent(windowID);
 
         //Sets vSync
-        GLFW.glfwSwapInterval(vSync);
+        GLFW.glfwSwapInterval(RenderSettings.getVSync());
 
         //Makes window visible if it needs to be visible
-        if (visible) {
-            GLFW.glfwShowWindow(window);
+        if (RenderSettings.isDisplayVisible()) {
+            GLFW.glfwShowWindow(windowID);
         }
     }
 
-    public static long getWindow() {
-        return window;
+    public static long getWindowID() {
+        return windowID;
     }
 
-    public static int getWidth() {
-        return width;
+    public static void setTitle(String newTitle) {
+        GLFW.glfwSetWindowTitle(windowID, newTitle);
+        windowTitle = newTitle;
     }
 
-    public static int getHeight() {
-        return height;
-    }
-
-    public static void setVSync(int newVSync) {
-        vSync = newVSync;
-        GLFW.glfwSwapInterval(vSync);
-    }
-
-    public static int getVSync() {
-        return vSync;
-    }
-
-    public static void setVisible(boolean isVisible) {
-        if (isVisible) {
-            GLFW.glfwShowWindow(window);
-            visible = true;
-        } else {
-            GLFW.glfwShowWindow(0);
-            visible = false;
-        }
-    }
-
-    public static boolean isVisible() {
-        return visible;
-    }
-
-    public static int getNumSamples() {
-        return numSamples;
+    public static String getTitle() {
+        return windowTitle;
     }
 }

@@ -34,6 +34,9 @@ public class CoreSystem implements Runnable {
         mouseManager = new MouseManager();
     }
 
+    /**
+     * Starts the game.
+     */
     public synchronized void start() {
         if (running) {
             return;
@@ -72,7 +75,7 @@ public class CoreSystem implements Runnable {
                 GLFW.glfwPollEvents();
 
                 //Swaps color buffers
-                GLFW.glfwSwapBuffers(Display.getWindow());
+                GLFW.glfwSwapBuffers(Display.getWindowID());
             }
 
             if (timer > 1000000000D) {
@@ -83,7 +86,7 @@ public class CoreSystem implements Runnable {
                 timer = 0;
             }
 
-            if (GLFW.glfwWindowShouldClose(Display.getWindow())) {
+            if (GLFW.glfwWindowShouldClose(Display.getWindowID())) {
                 running = false;
             }
         }
@@ -96,13 +99,8 @@ public class CoreSystem implements Runnable {
 
         GL.createCapabilities();
         
-        //Enables z-buffer
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-
-        //Enables multisampling
         GL11.glEnable(GL13.GL_MULTISAMPLE);
-
-        //Enables face-culling
         GL11.glEnable(GL11.GL_CULL_FACE);
 
         if (printVersionData) {
@@ -124,7 +122,7 @@ public class CoreSystem implements Runnable {
     public void tick(double delta) {
         RenderManager.tick(delta);
         
-        keyManager.tick(Display.getWindow());
+        keyManager.tick(Display.getWindowID());
 
         coreUser.tick(delta);
     }
@@ -138,6 +136,9 @@ public class CoreSystem implements Runnable {
         coreUser.render();
     }
 
+    /**
+     * Stops the game.
+     */
     public synchronized void stop() {
         if (!running) {
             return;
@@ -157,29 +158,5 @@ public class CoreSystem implements Runnable {
 
     public void setPrintVersionData(boolean printVersionData) {
         this.printVersionData = printVersionData;
-    }
-    
-    public static void setZBuffer(boolean zBuffer) {
-        if (zBuffer) {
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-        } else {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-        }
-    }
-
-    public static void setMultisampling(boolean multisampling) {
-        if (multisampling) {
-            GL11.glEnable(GL13.GL_MULTISAMPLE);
-        } else {
-            GL11.glDisable(GL13.GL_MULTISAMPLE);
-        }
-    }
-
-    public static void setFaceCulling(boolean faceCulling) {
-        if (faceCulling) {
-            GL11.glEnable(GL11.GL_CULL_FACE);
-        } else {
-            GL11.glDisable(GL11.GL_CULL_FACE);
-        }
     }
 }
