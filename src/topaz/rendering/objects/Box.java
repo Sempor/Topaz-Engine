@@ -3,6 +3,7 @@ package topaz.rendering.objects;
 import topaz.assets.AssetLoader;
 import topaz.assets.Texture;
 import topaz.rendering.Mesh;
+import topaz.rendering.RenderManager;
 import topaz.util.Color4f;
 
 public class Box {
@@ -81,7 +82,7 @@ public class Box {
         }
     }
 
-    public void generate() {
+    public void generate(RenderManager renderManager) {
         vertices = new float[]{
             x, y, z + depth, //Bottom left, front
             x + width, y, z + depth, //Bottom right, front
@@ -104,7 +105,7 @@ public class Box {
                 color.r, color.g, color.b, color.a,
                 color.r, color.g, color.b, color.a
             };
-            mesh = new Mesh(vertices, indices, colors);
+            mesh = new Mesh(renderManager, vertices, indices, colors);
         } else {
             textureCoords = new float[]{
                 0, 0, //first vertex
@@ -113,7 +114,7 @@ public class Box {
                 1, 0 //fourth vertex
             };
 
-            mesh = new Mesh(vertices, indices, textureCoords, textureIDs);
+            mesh = new Mesh(renderManager, vertices, indices, textureCoords, textureIDs);
         }
 
         meshCreated = true;

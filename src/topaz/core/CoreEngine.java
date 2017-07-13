@@ -7,6 +7,8 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import topaz.physics.PhysicsManager;
+import topaz.rendering.Camera;
 import topaz.rendering.RenderManager;
 import topaz.rendering.RenderSettings;
 import topaz.util.Color4f;
@@ -21,6 +23,10 @@ public class CoreEngine implements Runnable {
 
     private KeyManager keyManager;
     private MouseManager mouseManager;
+
+    private RenderManager renderManager;
+    private PhysicsManager physicsManager;
+    private Camera camera;
 
     private CoreUser coreUser;
 
@@ -114,14 +120,18 @@ public class CoreEngine implements Runnable {
 
         RenderSettings.setBackgroundColor(Color4f.BLACK);
 
-        RenderManager.init(mouseManager);
+        renderManager = new RenderManager(mouseManager);
+        physicsManager = new PhysicsManager();
+        camera = new Camera(mouseManager);
 
-        coreUser.setUp(RenderManager.getCamera(), keyManager, mouseManager);
+        coreUser.setUp(renderManager, physicsManager, camera, keyManager, mouseManager);
         coreUser.init();
     }
 
     public void tick(double delta) {
-        RenderManager.tick(mouseManager, delta);
+        renderManager.tick(camera, mouseManager, delta);
+        camera.tick(delta);
+        mouseManager.centerCursor();
 
         keyManager.tick(Display.getWindowID());
 
@@ -132,7 +142,7 @@ public class CoreEngine implements Runnable {
         //Clears frame-buffer and z-buffer
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-        RenderManager.render();
+        renderManager.render();
 
         coreUser.render();
     }

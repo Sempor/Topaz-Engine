@@ -7,43 +7,53 @@ public class AxisAlignedBoundingBox {
 
     public float x = 0, y = 0, z = 0; //Default values
     public float width, height, depth;
+    
+    private PhysicsManager physicsManager;
 
-    public AxisAlignedBoundingBox(float width, float height, float depth) {
+    public AxisAlignedBoundingBox(PhysicsManager physicsManager, float width, float height, float depth) {
         this.width = width;
         this.height = height;
         this.depth = depth;
-        PhysicsManager.addBoundingBox(this);
+        
+        this.physicsManager = physicsManager;
+        physicsManager.add(this);
     }
 
-    public AxisAlignedBoundingBox(Vector3f dimensions) {
+    public AxisAlignedBoundingBox(PhysicsManager physicsManager, Vector3f dimensions) {
         width = dimensions.x;
         height = dimensions.y;
         depth = dimensions.z;
-        PhysicsManager.addBoundingBox(this);
+        
+        this.physicsManager = physicsManager;
+        physicsManager.add(this);
     }
 
-    public AxisAlignedBoundingBox(float x, float y, float z, float width, float height, float depth) {
+    public AxisAlignedBoundingBox(PhysicsManager physicsManager, float x, float y, float z, float width, float height, float depth) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.width = width;
         this.height = height;
         this.depth = depth;
-        PhysicsManager.addBoundingBox(this);
+        
+        this.physicsManager = physicsManager;
+        physicsManager.add(this);
     }
 
-    public AxisAlignedBoundingBox(Vector3f location, Vector3f dimensions) {
+    public AxisAlignedBoundingBox(PhysicsManager physicsManager, Vector3f location, Vector3f dimensions) {
         x = location.x;
         y = location.y;
         z = location.z;
         width = dimensions.x;
         height = dimensions.y;
         depth = dimensions.z;
-        PhysicsManager.addBoundingBox(this);
+        
+        this.physicsManager = physicsManager;
+        physicsManager.add(this);
     }
 
     public boolean checkBoundingBoxCollisions() {
-        for (AxisAlignedBoundingBox box : PhysicsManager.getBoundingBoxes()) {
+        for (AxisAlignedBoundingBox box : physicsManager.getBoundingBoxes()) {
             if (box.equals(this)) {
                 continue;
             }

@@ -15,7 +15,7 @@ public class Camera {
     private float horizontalAngle = 0f;
     private float verticalAngle = 0;
 
-    private boolean followMouse = true;
+    private boolean followingMouse = true;
 
     public Camera(MouseManager mouseManager) {
         this.mouseManager = mouseManager;
@@ -44,9 +44,7 @@ public class Camera {
     }
 
     public void translate(float dx, float dy, float dz) {
-        location.x += dx;
-        location.y += dy;
-        location.z += dz;
+        translate(new Vector3f(dx, dy, dz));
     }
 
     public void translateX(float dx) {
@@ -69,13 +67,35 @@ public class Camera {
         return new Vector3f(location);
     }
 
+    public float getX() {
+        return location.x;
+    }
+
+    public float getY() {
+        return location.y;
+    }
+
+    public float getZ() {
+        return location.z;
+    }
+
     public void setLocation(Vector3f location) {
         this.location = location;
     }
 
     public void setLocation(float x, float y, float z) {
+        setLocation(new Vector3f(x, y, z));
+    }
+
+    public void setX(float x) {
         location.x = x;
+    }
+
+    public void setY(float y) {
         location.y = y;
+    }
+
+    public void setZ(float z) {
         location.z = z;
     }
 
@@ -92,10 +112,10 @@ public class Camera {
     }
 
     public boolean isFollowingMouse() {
-        return followMouse;
+        return followingMouse;
     }
 
     public void setFollowingMouse(boolean followMouse) {
-        this.followMouse = followMouse;
+        this.followingMouse = followMouse;
     }
 }

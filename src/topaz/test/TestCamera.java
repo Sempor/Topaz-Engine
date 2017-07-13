@@ -24,12 +24,12 @@ public class TestCamera extends CoreUser {
         Box box1 = new Box(1, 1, 1);
         box1.setTextures(new Texture("/topaz/assets/textures/testPicture.png"));
         box1.setLocation(0, 0, 0);
-        box1.generate();
+        box1.generate(renderManager);
 
         Box box2 = new Box(1, 1, 1);
         box2.setColor(Color4f.CYAN);
         box2.setLocation(-2, 0, 0);
-        box2.generate();
+        box2.generate(renderManager);
     }
 
     @Override

@@ -10,18 +10,16 @@ import topaz.rendering.shaders.ShaderProgram;
 
 public class RenderManager {
 
-    public static ShaderProgram colorMesh;
-    public static ShaderProgram textureMesh;
+    public ShaderProgram colorMesh;
+    public ShaderProgram textureMesh;
 
-    private static float fieldOfView = 45f;
-    private static float nearPlane = 0.01f;
-    private static float farPlane = 100f;
+    private float fieldOfView = 45f;
+    private float nearPlane = 0.01f;
+    private float farPlane = 100f;
 
-    private static ArrayList<Mesh> meshes = new ArrayList<>();
+    private ArrayList<Mesh> meshes = new ArrayList<>();
 
-    private static Camera camera;
-
-    public static void init(MouseManager mouseManager) {
+    public RenderManager(MouseManager mouseManager) {
         Shader vsColorMesh = ShaderBuilder.createVertexShader("/topaz/assets/shaders/colorMesh.vs");
         Shader fsColorMesh = ShaderBuilder.createFragmentShader("/topaz/assets/shaders/colorMesh.fs");
         colorMesh = new ShaderProgram(vsColorMesh, fsColorMesh);
@@ -29,11 +27,9 @@ public class RenderManager {
         Shader vsTextureMesh = ShaderBuilder.createVertexShader("/topaz/assets/shaders/textureMesh.vs");
         Shader fsTextureMesh = ShaderBuilder.createFragmentShader("/topaz/assets/shaders/textureMesh.fs");
         textureMesh = new ShaderProgram(vsTextureMesh, fsTextureMesh);
-
-        camera = new Camera(mouseManager);
     }
 
-    public static void tick(MouseManager mouseManager, double delta) {
+    public void tick(Camera camera, MouseManager mouseManager, double delta) {
         float aspectRatio = (float) RenderSettings.getDisplayWidth() / (float) RenderSettings.getDisplayHeight();
 
         Matrix4f viewProjectionMatrix = new Matrix4f();
@@ -42,53 +38,46 @@ public class RenderManager {
             viewProjectionMatrix.lookAt(camera.getLocation(), camera.getLocation().add(camera.getForward()), camera.getUp());
         }
 
-        camera.tick(delta);
-        mouseManager.centerCursor();
-
         for (Mesh mesh : meshes) {
-            mesh.tick(viewProjectionMatrix, delta);
+            mesh.tick(this, viewProjectionMatrix, delta);
         }
     }
 
-    public static void render() {
+    public void render() {
         for (Mesh mesh : meshes) {
-            mesh.render();
+            mesh.render(this);
         }
     }
 
-    public static void addMesh(Mesh mesh) {
+    public void addMesh(Mesh mesh) {
         meshes.add(mesh);
     }
 
-    public static int getMVPMatrixLocation(ShaderProgram program) {
+    public int getMVPMatrixLocation(ShaderProgram program) {
         return GL20.glGetUniformLocation(program.getProgramID(), "mvpMatrix");
     }
 
-    public static Camera getCamera() {
-        return camera;
-    }
-
-    public static float getFieldOfView() {
+    public float getFieldOfView() {
         return fieldOfView;
     }
 
-    public static void setFieldOfView(float fieldOfView) {
-        RenderManager.fieldOfView = fieldOfView;
+    public void setFieldOfView(float fieldOfView) {
+        this.fieldOfView = fieldOfView;
     }
 
-    public static float getNearPlane() {
+    public float getNearPlane() {
         return nearPlane;
     }
 
-    public static void setNearPlane(float nearPlane) {
-        RenderManager.nearPlane = nearPlane;
+    public void setNearPlane(float nearPlane) {
+        this.nearPlane = nearPlane;
     }
 
-    public static float getFarPlane() {
+    public float getFarPlane() {
         return farPlane;
     }
 
-    public static void setFarPlane(float farPlane) {
-        RenderManager.farPlane = farPlane;
+    public void setFarPlane(float farPlane) {
+        this.farPlane = farPlane;
     }
 }

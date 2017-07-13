@@ -42,7 +42,7 @@ public class Mesh {
         COLOR_MESH, TEXTURE_MESH
     }
 
-    public Mesh(float[] vertices, short[] indices, float[] colors) {
+    public Mesh(RenderManager renderManager, float[] vertices, short[] indices, float[] colors) {
         meshType = MeshType.COLOR_MESH;
 
         numIndices = indices.length;
@@ -91,10 +91,10 @@ public class Mesh {
         // Create a FloatBuffer with the proper size to store our matrices later
         matrix44Buffer = BufferUtils.createFloatBuffer(16);
 
-        RenderManager.addMesh(this);
+        renderManager.addMesh(this);
     }
 
-    public Mesh(float[] vertices, short[] indices, float[] textureCoords, int[] textureIDs) {
+    public Mesh(RenderManager renderManager, float[] vertices, short[] indices, float[] textureCoords, int[] textureIDs) {
         meshType = MeshType.TEXTURE_MESH;
 
         numIndices = indices.length;
@@ -145,10 +145,10 @@ public class Mesh {
         // Create a FloatBuffer with the proper size to store our matrices later
         matrix44Buffer = BufferUtils.createFloatBuffer(16);
 
-        RenderManager.addMesh(this);
+        renderManager.addMesh(this);
     }
 
-    public void tick(Matrix4f viewProjectionMatrix, double delta) {
+    public void tick(RenderManager renderManager, Matrix4f viewProjectionMatrix, double delta) {
         //Reset model matrix
         modelMatrix = new Matrix4f();
 
@@ -164,10 +164,10 @@ public class Mesh {
         mvp = mvp.mul(modelMatrix);
 
         // Upload mvp matrix to the uniform variable
-        GL20.glUseProgram(getShaderProgram(meshType).getProgramID());
+        GL20.glUseProgram(getShaderProgram(renderManager, meshType).getProgramID());
         store(mvp, matrix44Buffer);
         matrix44Buffer.flip();
-        GL20.glUniformMatrix4fv(RenderManager.getMVPMatrixLocation(getShaderProgram(meshType)),
+        GL20.glUniformMatrix4fv(renderManager.getMVPMatrixLocation(getShaderProgram(renderManager, meshType)),
                 false, matrix44Buffer);
         GL20.glUseProgram(0);
     }
@@ -193,10 +193,10 @@ public class Mesh {
         return matrix;
     }
 
-    public void render() {
+    public void render(RenderManager renderManager) {
         if (visible) {
             //Binds the program
-            GL20.glUseProgram(getShaderProgram(meshType).getProgramID());
+            GL20.glUseProgram(getShaderProgram(renderManager, meshType).getProgramID());
 
             //Binds the texture (if there is one)
             if (meshType == MeshType.TEXTURE_MESH) {
@@ -301,11 +301,11 @@ public class Mesh {
         scale = new Vector3f(1, 1, 1);
     }
 
-    private ShaderProgram getShaderProgram(MeshType meshType) {
+    private ShaderProgram getShaderProgram(RenderManager renderManager, MeshType meshType) {
         if (meshType == MeshType.COLOR_MESH) {
-            return RenderManager.colorMesh;
+            return renderManager.colorMesh;
         } else if (meshType == MeshType.TEXTURE_MESH) {
-            return RenderManager.textureMesh;
+            return renderManager.textureMesh;
         }
         return null;
     }
