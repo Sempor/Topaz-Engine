@@ -17,6 +17,9 @@ public class KeyManager implements KeyListener {
             KEY_9, KEY_0;
     public boolean KEY_SPACE, KEY_ENTER, KEY_ESCAPE;
     public boolean KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN;
+    public boolean KEY_TAB, KEY_CAPS, KEY_SHIFT_LEFT, KEY_SHIFT_RIGHT,
+            KEY_CONTROL_LEFT, KEY_CONTROL_RIGHT, KEY_ALT_LEFT, KEY_ALT_RIGHT,
+            KEY_BACKSPACE, KEY_DELETE;
 
     public KeyManager() {
         keys = new boolean[256];
@@ -80,6 +83,16 @@ public class KeyManager implements KeyListener {
         KEY_DOWN = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_DOWN));
         KEY_RIGHT = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT));
         KEY_LEFT = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT));
+        KEY_TAB = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_TAB));
+        KEY_CAPS = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_CAPS_LOCK));
+        KEY_SHIFT_LEFT = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_SHIFT));
+        KEY_SHIFT_RIGHT = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT_SHIFT));
+        KEY_CONTROL_LEFT = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_CONTROL));
+        KEY_CONTROL_RIGHT = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT_CONTROL));
+        KEY_ALT_LEFT = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_ALT));
+        KEY_ALT_RIGHT = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT_ALT));
+        KEY_BACKSPACE = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_BACKSPACE));
+        KEY_DELETE = intToBoolean(GLFW.glfwGetKey(window, GLFW.GLFW_KEY_DELETE));
     }
 
     public boolean keyJustPressed(int keyCode) {

@@ -178,4 +178,8 @@ public class Box {
             this.z = z;
         }
     }
+
+    public void setVisible(boolean visible) {
+        mesh.setVisible(visible);
+    }
 }

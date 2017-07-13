@@ -35,10 +35,12 @@ public class RenderManager {
 
     public static void tick(MouseManager mouseManager, double delta) {
         float aspectRatio = (float) RenderSettings.getDisplayWidth() / (float) RenderSettings.getDisplayHeight();
-        
+
         Matrix4f viewProjectionMatrix = new Matrix4f();
         viewProjectionMatrix.perspective((float) Math.toRadians(fieldOfView), aspectRatio, nearPlane, farPlane);
-        viewProjectionMatrix.lookAt(camera.getLocation(), camera.getLocation().add(camera.getForward()), camera.getUp());
+        if (camera.isFollowingMouse()) {
+            viewProjectionMatrix.lookAt(camera.getLocation(), camera.getLocation().add(camera.getForward()), camera.getUp());
+        }
 
         camera.tick(delta);
         mouseManager.centerCursor();
@@ -64,5 +66,29 @@ public class RenderManager {
 
     public static Camera getCamera() {
         return camera;
+    }
+
+    public static float getFieldOfView() {
+        return fieldOfView;
+    }
+
+    public static void setFieldOfView(float fieldOfView) {
+        RenderManager.fieldOfView = fieldOfView;
+    }
+
+    public static float getNearPlane() {
+        return nearPlane;
+    }
+
+    public static void setNearPlane(float nearPlane) {
+        RenderManager.nearPlane = nearPlane;
+    }
+
+    public static float getFarPlane() {
+        return farPlane;
+    }
+
+    public static void setFarPlane(float farPlane) {
+        RenderManager.farPlane = farPlane;
     }
 }

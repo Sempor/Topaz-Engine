@@ -15,6 +15,8 @@ public class Camera {
     private float horizontalAngle = 0f;
     private float verticalAngle = 0;
 
+    private boolean followMouse = true;
+
     public Camera(MouseManager mouseManager) {
         this.mouseManager = mouseManager;
 
@@ -35,7 +37,7 @@ public class Camera {
         right = new Vector3f((float) Math.sin(horizontalAngle - Math.PI / 2f),
                 0,
                 (float) Math.cos(horizontalAngle - Math.PI / 2f));
-        
+
         //Computes cross product of forward and right, stores cross product in up
         Vector3f rightCopy = new Vector3f(right);
         rightCopy.cross(forward, up);
@@ -46,7 +48,19 @@ public class Camera {
         location.y += dy;
         location.z += dz;
     }
-    
+
+    public void translateX(float dx) {
+        location.x += dx;
+    }
+
+    public void translateY(float dy) {
+        location.y += dy;
+    }
+
+    public void translateZ(float dz) {
+        location.z += dz;
+    }
+
     public void translate(Vector3f translation) {
         location.add(translation);
     }
@@ -75,5 +89,13 @@ public class Camera {
 
     public Vector3f getUp() {
         return new Vector3f(up);
+    }
+
+    public boolean isFollowingMouse() {
+        return followMouse;
+    }
+
+    public void setFollowingMouse(boolean followMouse) {
+        this.followMouse = followMouse;
     }
 }

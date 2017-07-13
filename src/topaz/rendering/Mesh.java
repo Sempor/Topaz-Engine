@@ -36,6 +36,8 @@ public class Mesh {
 
     private MeshType meshType;
 
+    private boolean visible;
+
     public enum MeshType {
         COLOR_MESH, TEXTURE_MESH
     }
@@ -192,30 +194,32 @@ public class Mesh {
     }
 
     public void render() {
-        //Binds the program
-        GL20.glUseProgram(getShaderProgram(meshType).getProgramID());
+        if (visible) {
+            //Binds the program
+            GL20.glUseProgram(getShaderProgram(meshType).getProgramID());
 
-        //Binds the texture (if there is one)
-        if (meshType == MeshType.TEXTURE_MESH) {
-            GL13.glActiveTexture(GL13.GL_TEXTURE0);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIDs[textureSelector]);
+            //Binds the texture (if there is one)
+            if (meshType == MeshType.TEXTURE_MESH) {
+                GL13.glActiveTexture(GL13.GL_TEXTURE0);
+                GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIDs[textureSelector]);
+            }
+
+            //Binds the vertex array object
+            GL30.glBindVertexArray(vaoID);
+            GL20.glEnableVertexAttribArray(0);
+            GL20.glEnableVertexAttribArray(1);
+
+            //Draws the mesh
+            GL11.glDrawElements(GL11.GL_TRIANGLES, numIndices, GL11.GL_UNSIGNED_SHORT, 0);
+
+            //Unbinds the vertex array object
+            GL20.glDisableVertexAttribArray(0);
+            GL20.glDisableVertexAttribArray(1);
+            GL30.glBindVertexArray(0);
+
+            //Unbinds the program
+            GL20.glUseProgram(0);
         }
-
-        //Binds the vertex array object
-        GL30.glBindVertexArray(vaoID);
-        GL20.glEnableVertexAttribArray(0);
-        GL20.glEnableVertexAttribArray(1);
-
-        //Draws the mesh
-        GL11.glDrawElements(GL11.GL_TRIANGLES, numIndices, GL11.GL_UNSIGNED_SHORT, 0);
-
-        //Unbinds the vertex array object
-        GL20.glDisableVertexAttribArray(0);
-        GL20.glDisableVertexAttribArray(1);
-        GL30.glBindVertexArray(0);
-
-        //Unbinds the program
-        GL20.glUseProgram(0);
     }
 
     public void translate(Vector3f translation) {
@@ -304,5 +308,13 @@ public class Mesh {
             return RenderManager.textureMesh;
         }
         return null;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }

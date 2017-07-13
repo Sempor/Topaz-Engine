@@ -6,15 +6,14 @@ import topaz.core.CoreUser;
 import topaz.rendering.objects.Box;
 import topaz.util.Color4f;
 
-public class Test extends CoreUser {
+public class TestCamera extends CoreUser {
 
     private static String TITLE = "GameEngine Test";
-    private static int WIDTH = 640, HEIGHT = 480;
-    private Box box1, box2;
+    private static int WIDTH = 1000, HEIGHT = 800;
     private float speed = 0.01f;
 
     public static void main(String[] args) {
-        CoreEngine core = new CoreEngine(new Test(), TITLE, WIDTH, HEIGHT);
+        CoreEngine core = new CoreEngine(new TestCamera(), TITLE, WIDTH, HEIGHT);
         core.setPrintVersionData(false);
         core.setPrintFramesPerSecond(false);
         core.start();
@@ -22,12 +21,12 @@ public class Test extends CoreUser {
 
     @Override
     public void init() {
-        box1 = new Box(1, 1, 1);
+        Box box1 = new Box(1, 1, 1);
         box1.setTextures(new Texture("/topaz/assets/textures/testPicture.png"));
         box1.setLocation(0, 0, 0);
         box1.generate();
 
-        box2 = new Box(1, 1, 1);
+        Box box2 = new Box(1, 1, 1);
         box2.setColor(Color4f.CYAN);
         box2.setLocation(-2, 0, 0);
         box2.generate();
