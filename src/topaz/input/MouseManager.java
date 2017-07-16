@@ -7,16 +7,18 @@ import java.nio.DoubleBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import topaz.core.Display;
-import static topaz.rendering.RenderSettings.getDisplayHeight;
-import static topaz.rendering.RenderSettings.getDisplayWidth;
 
 public class MouseManager implements MouseListener, MouseMotionListener {
 
+    private Display display;
+    
     private boolean leftPressed, rightPressed;
     private float mouseSpeed;
 
-    public MouseManager() {
-        mouseSpeed = 0.0005f;
+    public MouseManager(Display display) {
+        this.display = display;
+        
+        mouseSpeed = 0.0001f;
     }
 
     public boolean isLeftPressed() {
@@ -76,30 +78,30 @@ public class MouseManager implements MouseListener, MouseMotionListener {
     public double getCursorX() {
         DoubleBuffer xBuffer = BufferUtils.createDoubleBuffer(1);
         DoubleBuffer yBuffer = BufferUtils.createDoubleBuffer(1);
-        GLFW.glfwGetCursorPos(Display.getWindowID(), xBuffer, yBuffer);
+        GLFW.glfwGetCursorPos(display.getWindowID(), xBuffer, yBuffer);
         return xBuffer.get(0);
     }
 
     public double getCursorY() {
         DoubleBuffer xBuffer = BufferUtils.createDoubleBuffer(1);
         DoubleBuffer yBuffer = BufferUtils.createDoubleBuffer(1);
-        GLFW.glfwGetCursorPos(Display.getWindowID(), xBuffer, yBuffer);
+        GLFW.glfwGetCursorPos(display.getWindowID(), xBuffer, yBuffer);
         return yBuffer.get(0);
     }
 
     public void setCursorLocation(double x, double y) {
-        GLFW.glfwSetCursorPos(Display.getWindowID(), x, y);
+        GLFW.glfwSetCursorPos(display.getWindowID(), x, y);
     }
 
     public void centerCursor() {
-        GLFW.glfwSetCursorPos(Display.getWindowID(), getDisplayWidth() / 2, getDisplayHeight() / 2);
+        GLFW.glfwSetCursorPos(display.getWindowID(), display.getWidth() / 2, display.getHeight() / 2);
     }
 
     public void makeCursorVisible(boolean isVisible) {
         if (isVisible) {
-            GLFW.glfwSetInputMode(Display.getWindowID(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+            GLFW.glfwSetInputMode(display.getWindowID(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
         } else {
-            GLFW.glfwSetInputMode(Display.getWindowID(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+            GLFW.glfwSetInputMode(display.getWindowID(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
         }
     }
 }

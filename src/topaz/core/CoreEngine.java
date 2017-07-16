@@ -10,13 +10,13 @@ import org.lwjgl.opengl.GL13;
 import topaz.physics.PhysicsManager;
 import topaz.rendering.Camera;
 import topaz.rendering.RenderManager;
-import topaz.rendering.RenderSettings;
 import topaz.util.Color4f;
 
 public class CoreEngine implements Runnable {
 
     private String title;
     private int width, height;
+    private Display display;
 
     private boolean running;
     private Thread thread;
@@ -33,13 +33,15 @@ public class CoreEngine implements Runnable {
     private boolean printFramesPerSecond = true;
     private boolean printVersionData = false;
 
+    public CoreEngine(CoreUser coreUser, int width, int height) {
+        this(coreUser, "Topaz Application", width, height);
+    }
+
     public CoreEngine(CoreUser coreUser, String title, int width, int height) {
         this.coreUser = coreUser;
         this.title = title;
         this.width = width;
         this.height = height;
-        keyManager = new KeyManager();
-        mouseManager = new MouseManager();
     }
 
     /**
@@ -83,7 +85,7 @@ public class CoreEngine implements Runnable {
                 GLFW.glfwPollEvents();
 
                 //Swaps color buffers
-                GLFW.glfwSwapBuffers(Display.getWindowID());
+                GLFW.glfwSwapBuffers(display.getWindowID());
             }
 
             if (timer > 1000000000D) {
@@ -94,7 +96,7 @@ public class CoreEngine implements Runnable {
                 timer = 0;
             }
 
-            if (GLFW.glfwWindowShouldClose(Display.getWindowID())) {
+            if (GLFW.glfwWindowShouldClose(display.getWindowID())) {
                 running = false;
             }
         }
@@ -103,7 +105,7 @@ public class CoreEngine implements Runnable {
     }
 
     public void init() {
-        Display.init(title, width, height);
+        display = new Display(title, width, height);
 
         GL.createCapabilities();
 
@@ -118,22 +120,26 @@ public class CoreEngine implements Runnable {
             System.out.println("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION));
         }
 
-        RenderSettings.setBackgroundColor(Color4f.BLACK);
+        keyManager = new KeyManager();
+        mouseManager = new MouseManager(display);
+        mouseManager.makeCursorVisible(false);
 
-        renderManager = new RenderManager(mouseManager);
+        display.setBackgroundColor(Color4f.BLACK);
+        camera = new Camera(display, mouseManager);
+        camera.setFollowingMouse(true);
+        renderManager = new RenderManager(display, mouseManager, camera);
         physicsManager = new PhysicsManager();
-        camera = new Camera(mouseManager);
 
-        coreUser.setUp(renderManager, physicsManager, camera, keyManager, mouseManager);
+        coreUser.setUp(display, renderManager, physicsManager, camera, keyManager, mouseManager);
         coreUser.init();
     }
 
     public void tick(double delta) {
-        renderManager.tick(camera, mouseManager, delta);
+        renderManager.tick(delta);
         camera.tick(delta);
         mouseManager.centerCursor();
 
-        keyManager.tick(Display.getWindowID());
+        keyManager.tick(display.getWindowID());
 
         coreUser.tick(delta);
     }
@@ -163,11 +169,11 @@ public class CoreEngine implements Runnable {
         }
     }
 
-    public void setPrintFramesPerSecond(boolean printFramesPerSecond) {
-        this.printFramesPerSecond = printFramesPerSecond;
+    public void enablePrintFramesPerSecond(boolean toggle) {
+        this.printFramesPerSecond = toggle;
     }
 
-    public void setPrintVersionData(boolean printVersionData) {
-        this.printVersionData = printVersionData;
+    public void enablePrintVersionData(boolean toggle) {
+        this.printVersionData = toggle;
     }
 }

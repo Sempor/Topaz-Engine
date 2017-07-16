@@ -1,21 +1,28 @@
 package topaz.core;
 
 import java.nio.IntBuffer;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-import topaz.rendering.RenderSettings;
+import topaz.util.Color4f;
 
 public class Display {
 
-    private static long windowID;
-    private static String windowTitle;
+    public static final int NUM_SAMPLES = 4;
 
-    public static void init(String title, int width, int height) {
-        windowTitle = title;
-        
+    private long windowID;
+    private String title;
+    private boolean visible = true;
+    private int vSync = 1;
+
+    public Display(String title, int width, int height) {
+        this.title = title;
+
         //Creates error callback to print error messages in System.err
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -24,13 +31,11 @@ public class Display {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
 
-        //Configures GLFW
         GLFW.glfwDefaultWindowHints();
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
-        GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, RenderSettings.getNumSamples());
+        GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, NUM_SAMPLES);
 
-        //Creates window
         windowID = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
         if (windowID == MemoryUtil.NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
@@ -55,25 +60,103 @@ public class Display {
 
         GLFW.glfwMakeContextCurrent(windowID);
 
-        //Sets vSync
-        GLFW.glfwSwapInterval(RenderSettings.getVSync());
+        GLFW.glfwSwapInterval(vSync);
 
-        //Makes window visible if it needs to be visible
-        if (RenderSettings.isDisplayVisible()) {
+        if (visible) {
             GLFW.glfwShowWindow(windowID);
         }
     }
 
-    public static long getWindowID() {
+    public long getWindowID() {
         return windowID;
     }
 
-    public static void setTitle(String newTitle) {
-        GLFW.glfwSetWindowTitle(windowID, newTitle);
-        windowTitle = newTitle;
+    public void setTitle(String title) {
+        GLFW.glfwSetWindowTitle(windowID, title);
+        this.title = title;
     }
 
-    public static String getTitle() {
-        return windowTitle;
+    public String getTitle() {
+        return title;
+    }
+
+    public void setSize(int width, int height) {
+        GLFW.glfwSetWindowSize(windowID, width, height);
+    }
+
+    public void setWidth(int width) {
+        GLFW.glfwSetWindowSize(windowID, width, getHeight());
+    }
+
+    public void setHeight(int height) {
+        GLFW.glfwSetWindowSize(windowID, getWidth(), height);
+    }
+
+    public int getWidth() {
+        IntBuffer widthBuffer = BufferUtils.createIntBuffer(1);
+        IntBuffer heightBuffer = BufferUtils.createIntBuffer(1);
+        GLFW.glfwGetWindowSize(windowID, widthBuffer, heightBuffer);
+        return widthBuffer.get(0);
+    }
+
+    public int getHeight() {
+        IntBuffer widthBuffer = BufferUtils.createIntBuffer(1);
+        IntBuffer heightBuffer = BufferUtils.createIntBuffer(1);
+        GLFW.glfwGetWindowSize(windowID, widthBuffer, heightBuffer);
+        return heightBuffer.get(0);
+    }
+
+    public void setBackgroundColor(Color4f backgroundColor) {
+        setBackgroundColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+    }
+
+    public void setBackgroundColor(float r, float g, float b, float a) {
+        GL11.glClearColor(r, g, b, a);
+    }
+
+    public void setVisible(boolean visible) {
+        if (visible) {
+            GLFW.glfwShowWindow(windowID);
+        } else {
+            GLFW.glfwShowWindow(0);
+        }
+        this.visible = visible;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void enableZBuffer(boolean toggle) {
+        if (toggle) {
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+        } else {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+        }
+    }
+
+    public void enableMultisampling(boolean toggle) {
+        if (toggle) {
+            GL11.glEnable(GL13.GL_MULTISAMPLE);
+        } else {
+            GL11.glDisable(GL13.GL_MULTISAMPLE);
+        }
+    }
+
+    public void enableFaceCulling(boolean toggle) {
+        if (toggle) {
+            GL11.glEnable(GL11.GL_CULL_FACE);
+        } else {
+            GL11.glDisable(GL11.GL_CULL_FACE);
+        }
+    }
+
+    public void setVSync(int vSync) {
+        this.vSync = vSync;
+        GLFW.glfwSwapInterval(vSync);
+    }
+
+    public int getVSync() {
+        return vSync;
     }
 }

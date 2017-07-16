@@ -2,13 +2,15 @@ package topaz.rendering;
 
 import java.util.ArrayList;
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL20;
+import topaz.core.Display;
 import topaz.input.MouseManager;
-import topaz.rendering.shaders.Shader;
-import topaz.rendering.shaders.ShaderBuilder;
 import topaz.rendering.shaders.ShaderProgram;
 
 public class RenderManager {
+
+    private Display display;
+    private MouseManager mouseManager;
+    private Camera camera;
 
     public ShaderProgram colorMesh;
     public ShaderProgram textureMesh;
@@ -19,18 +21,14 @@ public class RenderManager {
 
     private ArrayList<Mesh> meshes = new ArrayList<>();
 
-    public RenderManager(MouseManager mouseManager) {
-        Shader vsColorMesh = ShaderBuilder.createVertexShader("/topaz/assets/shaders/colorMesh.vs");
-        Shader fsColorMesh = ShaderBuilder.createFragmentShader("/topaz/assets/shaders/colorMesh.fs");
-        colorMesh = new ShaderProgram(vsColorMesh, fsColorMesh);
-
-        Shader vsTextureMesh = ShaderBuilder.createVertexShader("/topaz/assets/shaders/textureMesh.vs");
-        Shader fsTextureMesh = ShaderBuilder.createFragmentShader("/topaz/assets/shaders/textureMesh.fs");
-        textureMesh = new ShaderProgram(vsTextureMesh, fsTextureMesh);
+    public RenderManager(Display display, MouseManager mouseManager, Camera camera) {
+        this.display = display;
+        this.mouseManager = mouseManager;
+        this.camera = camera;
     }
 
-    public void tick(Camera camera, MouseManager mouseManager, double delta) {
-        float aspectRatio = (float) RenderSettings.getDisplayWidth() / (float) RenderSettings.getDisplayHeight();
+    public void tick(double delta) {
+        float aspectRatio = (float) display.getWidth() / (float) display.getHeight();
 
         Matrix4f viewProjectionMatrix = new Matrix4f();
         viewProjectionMatrix.perspective((float) Math.toRadians(fieldOfView), aspectRatio, nearPlane, farPlane);
@@ -39,22 +37,18 @@ public class RenderManager {
         }
 
         for (Mesh mesh : meshes) {
-            mesh.tick(this, viewProjectionMatrix, delta);
+            mesh.tick(viewProjectionMatrix, delta);
         }
     }
 
     public void render() {
         for (Mesh mesh : meshes) {
-            mesh.render(this);
+            mesh.render();
         }
     }
 
-    public void addMesh(Mesh mesh) {
+    public void add(Mesh mesh) {
         meshes.add(mesh);
-    }
-
-    public int getMVPMatrixLocation(ShaderProgram program) {
-        return GL20.glGetUniformLocation(program.getProgramID(), "mvpMatrix");
     }
 
     public float getFieldOfView() {

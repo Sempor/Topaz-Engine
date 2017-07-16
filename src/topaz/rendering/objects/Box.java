@@ -1,31 +1,19 @@
 package topaz.rendering.objects;
 
+import org.joml.Vector3f;
 import topaz.assets.AssetLoader;
-import topaz.assets.Texture;
+import topaz.physics.AxisAlignedBoundingBox;
+import topaz.physics.PhysicsManager;
+import topaz.rendering.ColoredMesh;
+import topaz.rendering.GameObject;
 import topaz.rendering.Mesh;
 import topaz.rendering.RenderManager;
+import topaz.rendering.TexturedMesh;
 import topaz.util.Color4f;
 
 public class Box {
 
-    private Mesh mesh;
-
-    private float[] vertices;
-
-    private Color4f color = Color4f.RED;
-
-    private float[] textureCoords;
-    private int[] textureIDs = null;
-
-    private float x = 0;
-    private float y = 0;
-    private float z = 0;
-
-    private float width = 1;
-    private float height = 1;
-    private float depth = 1;
-
-    private boolean meshCreated = false;
+    private GameObject gameObject;
 
     private short[] indices = new short[]{
         // front
@@ -48,42 +36,62 @@ public class Box {
         6, 7, 3
     };
 
-    public Box() {
+    public Box(RenderManager renderManager, PhysicsManager physicsManager, float width, float height, float depth, Color4f color) {
+        this(renderManager, physicsManager, 0, 0, 0, width, height, depth, color);
     }
 
-    public Box(float width, float height, float depth) {
-        this.width = width;
-        this.height = height;
-        this.depth = depth;
+    public Box(RenderManager renderManager, PhysicsManager physicsManager, float x, float y, float z, float width, float height, float depth, Color4f color) {
+        float[] vertices = getVertices(x, y, z, width, height, depth);
+
+        float[] colors = new float[]{
+            color.r, color.g, color.b, color.a,
+            color.r, color.g, color.b, color.a,
+            color.r, color.g, color.b, color.a,
+            color.r, color.g, color.b, color.a,
+            color.r, color.g, color.b, color.a,
+            color.r, color.g, color.b, color.a,
+            color.r, color.g, color.b, color.a,
+            color.r, color.g, color.b, color.a
+        };
+
+        Mesh mesh = new ColoredMesh(renderManager, vertices, indices, colors);
+        renderManager.add(mesh);
+        AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
+        physicsManager.add(boundingBox);
+
+        gameObject = new GameObject(mesh, boundingBox);
     }
 
-    public Box(float x, float y, float z, float width, float height, float depth) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.width = width;
-        this.height = height;
-        this.depth = depth;
+    public Box(RenderManager renderManager, PhysicsManager physicsManager, float width, float height, float depth, String... textureFilePaths) {
+        this(renderManager, physicsManager, 0, 0, 0, width, height, depth, textureFilePaths);
     }
 
-    public void setColor(Color4f color) {
-        this.color = color;
-    }
+    public Box(RenderManager renderManager, PhysicsManager physicsManager, float x, float y, float z, float width, float height, float depth, String... textureFilePaths) {
+        int[] textureIDs = new int[textureFilePaths.length];
 
-    public Color4f getColor() {
-        return color;
-    }
-
-    public void setTextures(Texture... textures) {
-        textureIDs = new int[textures.length];
-
-        for (int i = 0; i < textures.length; i++) {
-            textureIDs[i] = AssetLoader.loadPNGTexture(textures[i].getFilePath());
+        for (int i = 0; i < textureFilePaths.length; i++) {
+            textureIDs[i] = AssetLoader.loadPNGTexture(textureFilePaths[i]);
         }
+
+        float[] vertices = getVertices(x, y, z, width, height, depth);
+
+        float[] textureCoords = new float[]{
+            0, 0, //first vertex
+            0, 1, //second vertex
+            1, 1, //third vertex
+            1, 0 //fourth vertex
+        };
+
+        Mesh mesh = new TexturedMesh(renderManager, vertices, indices, textureCoords, textureIDs);
+        renderManager.add(mesh);
+        AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
+        physicsManager.add(boundingBox);
+
+        gameObject = new GameObject(mesh, boundingBox);
     }
 
-    public void generate(RenderManager renderManager) {
-        vertices = new float[]{
+    private float[] getVertices(float x, float y, float z, float width, float height, float depth) {
+        return new float[]{
             x, y, z + depth, //Bottom left, front
             x + width, y, z + depth, //Bottom right, front
             x + width, y + height, z + depth, //Top right, front
@@ -93,94 +101,9 @@ public class Box {
             x + width, y + height, z, //Top right, back
             x, y + height, z //Top left, back
         };
-
-        if (textureIDs == null) {
-            float[] colors = new float[]{
-                color.r, color.g, color.b, color.a,
-                color.r, color.g, color.b, color.a,
-                color.r, color.g, color.b, color.a,
-                color.r, color.g, color.b, color.a,
-                color.r, color.g, color.b, color.a,
-                color.r, color.g, color.b, color.a,
-                color.r, color.g, color.b, color.a,
-                color.r, color.g, color.b, color.a
-            };
-            mesh = new Mesh(renderManager, vertices, indices, colors);
-        } else {
-            textureCoords = new float[]{
-                0, 0, //first vertex
-                0, 1, //second vertex
-                1, 1, //third vertex
-                1, 0 //fourth vertex
-            };
-
-            mesh = new Mesh(renderManager, vertices, indices, textureCoords, textureIDs);
-        }
-
-        meshCreated = true;
     }
 
-    public void translate(float x, float y, float z) {
-        if (meshCreated) {
-            mesh.translate(x, y, z);
-        } else {
-            this.x += x;
-            this.y += y;
-            this.z += z;
-        }
-    }
-
-    public void rotate(float x, float y, float z) {
-        if (meshCreated) {
-            mesh.rotate(x, y, z);
-        } else {
-            this.x += x;
-            this.y += y;
-            this.z += z;
-        }
-    }
-
-    public void scale(float x, float y, float z) {
-        if (meshCreated) {
-            mesh.scale(x, y, z);
-        } else {
-            this.x += x;
-            this.y += y;
-            this.z += z;
-        }
-    }
-
-    public void setLocation(float x, float y, float z) {
-        if (meshCreated) {
-            mesh.setLocation(x, y, z);
-        } else {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    }
-
-    public void setRotation(float x, float y, float z) {
-        if (meshCreated) {
-            mesh.setRotation(x, y, z);
-        } else {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    }
-
-    public void setScale(float x, float y, float z) {
-        if (meshCreated) {
-            mesh.setScale(x, y, z);
-        } else {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    }
-
-    public void setVisible(boolean visible) {
-        mesh.setVisible(visible);
+    public GameObject getGameObject() {
+        return gameObject;
     }
 }

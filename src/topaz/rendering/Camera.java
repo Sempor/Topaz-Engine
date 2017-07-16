@@ -1,10 +1,12 @@
 package topaz.rendering;
 
 import org.joml.Vector3f;
+import topaz.core.Display;
 import topaz.input.MouseManager;
 
 public class Camera {
 
+    private Display display;
     private MouseManager mouseManager;
 
     private Vector3f location;
@@ -13,11 +15,12 @@ public class Camera {
     private Vector3f up;
 
     private float horizontalAngle = 0f;
-    private float verticalAngle = 0;
+    private float verticalAngle = 0f;
 
-    private boolean followingMouse = true;
+    private boolean followingMouse;
 
-    public Camera(MouseManager mouseManager) {
+    public Camera(Display display, MouseManager mouseManager) {
+        this.display = display;
         this.mouseManager = mouseManager;
 
         location = new Vector3f(0, 0, -2);
@@ -27,8 +30,8 @@ public class Camera {
     }
 
     public void tick(double delta) {
-        horizontalAngle += mouseManager.getMouseSpeed() * delta * ((float) RenderSettings.getDisplayWidth() / 2f - (float) mouseManager.getCursorX());
-        verticalAngle += mouseManager.getMouseSpeed() * delta * ((float) RenderSettings.getDisplayHeight() / 2f - (float) mouseManager.getCursorY());
+        horizontalAngle += mouseManager.getMouseSpeed() * delta * ((float) display.getWidth() / 2f - (float) mouseManager.getCursorX());
+        verticalAngle += mouseManager.getMouseSpeed() * delta * ((float) display.getHeight() / 2f - (float) mouseManager.getCursorY());
 
         forward = new Vector3f((float) (Math.cos(verticalAngle) * Math.sin(horizontalAngle)),
                 (float) Math.sin(verticalAngle),
@@ -103,19 +106,31 @@ public class Camera {
         return new Vector3f(forward);
     }
 
+    public Vector3f getBackward() {
+        return new Vector3f(forward).negate();
+    }
+
     public Vector3f getRight() {
         return new Vector3f(right);
+    }
+
+    public Vector3f getLeft() {
+        return new Vector3f(right).negate();
     }
 
     public Vector3f getUp() {
         return new Vector3f(up);
     }
 
+    public Vector3f getDown() {
+        return new Vector3f(up).negate();
+    }
+
     public boolean isFollowingMouse() {
         return followingMouse;
     }
 
-    public void setFollowingMouse(boolean followMouse) {
-        this.followingMouse = followMouse;
+    public void setFollowingMouse(boolean followingMouse) {
+        this.followingMouse = followingMouse;
     }
 }
