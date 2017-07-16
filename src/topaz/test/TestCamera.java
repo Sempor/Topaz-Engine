@@ -23,10 +23,12 @@ public class TestCamera extends CoreUser {
         GameObject box1 = new Box(renderManager, physicsManager, 1, 1, 1, Color4f.RED).getGameObject();
         box1.setLocation(0, 0, 0);
         box1.setVisible(true);
+        objectManager.add(box1);
 
         GameObject box2 = new Box(renderManager, physicsManager, 1, 1, 1, Color4f.CYAN).getGameObject();
         box2.setLocation(-2, 0, 0);
         box2.setVisible(true);
+        objectManager.add(box2);
     }
 
     @Override

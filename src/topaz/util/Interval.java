@@ -5,9 +5,14 @@ public class Interval {
     private float min;
     private float max;
 
-    public Interval(float min, float max) {
-        this.min = min;
-        this.max = max;
+    public Interval(float num1, float num2) {
+        if (num1 > num2) {
+            max = num1;
+            min = num2;
+        } else {
+            max = num2;
+            min = num1;
+        }
     }
 
     public boolean overlaps(Interval interval) {

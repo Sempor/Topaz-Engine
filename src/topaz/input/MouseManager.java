@@ -1,70 +1,28 @@
 package topaz.input;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.nio.DoubleBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import topaz.core.Display;
 
-public class MouseManager implements MouseListener, MouseMotionListener {
+public class MouseManager {
 
     private Display display;
-    
-    private boolean leftPressed, rightPressed;
+
+    public boolean BUTTON_LEFT, BUTTON_RIGHT, BUTTON_MIDDLE;
+
     private float mouseSpeed;
 
     public MouseManager(Display display) {
         this.display = display;
-        
+
         mouseSpeed = 0.0001f;
     }
 
-    public boolean isLeftPressed() {
-        return leftPressed;
-    }
-
-    public boolean isRightPressed() {
-        return rightPressed;
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            leftPressed = true;
-        } else if (e.getButton() == MouseEvent.BUTTON3) {
-            rightPressed = true;
-        }
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            leftPressed = false;
-        } else if (e.getButton() == MouseEvent.BUTTON3) {
-            rightPressed = false;
-        }
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
+    public void tick(long window) {
+        BUTTON_LEFT = (GLFW.GLFW_PRESS == GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_LEFT));
+        BUTTON_RIGHT = (GLFW.GLFW_PRESS == GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_RIGHT));
+        BUTTON_MIDDLE = (GLFW.GLFW_PRESS == GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_MIDDLE));
     }
 
     public void setMouseSpeed(float mouseSpeed) {

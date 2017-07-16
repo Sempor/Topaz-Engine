@@ -1,6 +1,7 @@
 package topaz.rendering;
 
 import topaz.physics.AxisAlignedBoundingBox;
+import topaz.physics.PhysicsManager;
 
 public class GameObject {
 
@@ -11,6 +12,12 @@ public class GameObject {
     public GameObject(Mesh mesh, AxisAlignedBoundingBox boundingBox) {
         this.mesh = mesh;
         this.boundingBox = boundingBox;
+    }
+
+    public void removeFromAllManagers(ObjectManager objectManager, RenderManager renderManager, PhysicsManager physicsManager) {
+        objectManager.remove(this);
+        renderManager.remove(mesh);
+        physicsManager.remove(boundingBox);
     }
 
     public void translate(float x, float y, float z) {
@@ -53,5 +60,21 @@ public class GameObject {
 
     public void setVisible(boolean visible) {
         mesh.setVisible(visible);
+    }
+
+    public Mesh getMesh() {
+        return mesh;
+    }
+
+    public void setMesh(Mesh mesh) {
+        this.mesh = mesh;
+    }
+
+    public AxisAlignedBoundingBox getBoundingBox() {
+        return boundingBox;
+    }
+
+    public void setBoundingBox(AxisAlignedBoundingBox boundingBox) {
+        this.boundingBox = boundingBox;
     }
 }

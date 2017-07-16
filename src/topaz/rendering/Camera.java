@@ -3,6 +3,7 @@ package topaz.rendering;
 import org.joml.Vector3f;
 import topaz.core.Display;
 import topaz.input.MouseManager;
+import topaz.physics.Raycast;
 
 public class Camera {
 
@@ -100,6 +101,10 @@ public class Camera {
 
     public void setZ(float z) {
         location.z = z;
+    }
+
+    public Raycast getForwardRaycast(float rayCastDistance) {
+        return new Raycast(new Vector3f(location), new Vector3f(location).add(new Vector3f(forward).mul(rayCastDistance)));
     }
 
     public Vector3f getForward() {

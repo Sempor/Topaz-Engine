@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import topaz.physics.PhysicsManager;
 import topaz.rendering.Camera;
+import topaz.rendering.ObjectManager;
 import topaz.rendering.RenderManager;
 import topaz.util.Color4f;
 
@@ -24,6 +25,7 @@ public class CoreEngine implements Runnable {
     private KeyManager keyManager;
     private MouseManager mouseManager;
 
+    private ObjectManager objectManager;
     private RenderManager renderManager;
     private PhysicsManager physicsManager;
     private Camera camera;
@@ -122,15 +124,16 @@ public class CoreEngine implements Runnable {
 
         keyManager = new KeyManager();
         mouseManager = new MouseManager(display);
-        mouseManager.makeCursorVisible(false);
+        //mouseManager.makeCursorVisible(false);
 
         display.setBackgroundColor(Color4f.BLACK);
         camera = new Camera(display, mouseManager);
         camera.setFollowingMouse(true);
         renderManager = new RenderManager(display, mouseManager, camera);
         physicsManager = new PhysicsManager();
+        objectManager = new ObjectManager();
 
-        coreUser.setUp(display, renderManager, physicsManager, camera, keyManager, mouseManager);
+        coreUser.setUp(display, renderManager, physicsManager, objectManager, camera, keyManager, mouseManager);
         coreUser.init();
     }
 
@@ -140,6 +143,7 @@ public class CoreEngine implements Runnable {
         mouseManager.centerCursor();
 
         keyManager.tick(display.getWindowID());
+        mouseManager.tick(display.getWindowID());
 
         coreUser.tick(delta);
     }

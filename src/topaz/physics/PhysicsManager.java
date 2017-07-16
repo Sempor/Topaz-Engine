@@ -10,6 +10,10 @@ public class PhysicsManager {
         boundingBoxes.add(box);
     }
 
+    public void remove(AxisAlignedBoundingBox box) {
+        boundingBoxes.remove(box);
+    }
+
     public ArrayList<AxisAlignedBoundingBox> getBoundingBoxes() {
         return boundingBoxes;
     }

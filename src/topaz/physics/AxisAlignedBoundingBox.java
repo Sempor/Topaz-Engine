@@ -5,13 +5,13 @@ import topaz.util.Interval;
 
 public class AxisAlignedBoundingBox {
 
+    private PhysicsManager physicsManager;
+
     public float x = 0, y = 0, z = 0; //Default values
     public float width, height, depth;
-    private float scaleX = 1, scaleY = 1, scaleZ = 1;
+    public float scaleX = 1, scaleY = 1, scaleZ = 1;
 
     private boolean active;
-
-    private PhysicsManager physicsManager;
 
     public AxisAlignedBoundingBox(PhysicsManager physicsManager, float width, float height, float depth) {
         this(physicsManager, new Vector3f(width, height, depth));
@@ -66,6 +66,19 @@ public class AxisAlignedBoundingBox {
         }
         if (new Interval(z, z + depth * scaleZ).overlaps(
                 new Interval(boundingBox.z, boundingBox.z + boundingBox.depth * boundingBox.scaleZ)) == false) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isPointContained(Vector3f point) {
+        if (point.x < x || point.x > x + width * scaleX) {
+            return false;
+        }
+        if (point.y < y || point.y > y + height * scaleY) {
+            return false;
+        }
+        if (point.z < z || point.z > z + depth * scaleZ) {
             return false;
         }
         return true;
