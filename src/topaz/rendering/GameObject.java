@@ -1,5 +1,6 @@
 package topaz.rendering;
 
+import org.joml.Vector3f;
 import topaz.physics.AxisAlignedBoundingBox;
 import topaz.physics.PhysicsManager;
 
@@ -38,6 +39,10 @@ public class GameObject {
     public void setLocation(float x, float y, float z) {
         mesh.setLocation(x, y, z);
         boundingBox.setLocation(x, y, z);
+    }
+
+    public Vector3f getLocation() {
+        return mesh.getLocation();
     }
 
     //Bounding box doesn't work that well with rotations
