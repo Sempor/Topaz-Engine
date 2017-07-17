@@ -25,7 +25,7 @@ public class Raycast {
             Vector3f point = new Vector3f(startPoint).add(new Vector3f(deltaVector).mul(i));
 
             for (int j = 0; j < objectManager.getGameObjects().size(); j++) {
-                if (objectManager.getGameObjects().get(j).getBoundingBox().isPointContained(point)) {
+                if (objectManager.getGameObjects().get(j).getBoundingBox().containsPoint(point)) {
                     closestIntersectingObjects.add(objectManager.getGameObjects().get(j));
                     closestObjectsFound = true;
                 }

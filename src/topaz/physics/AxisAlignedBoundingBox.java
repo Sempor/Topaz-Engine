@@ -71,7 +71,7 @@ public class AxisAlignedBoundingBox {
         return true;
     }
 
-    public boolean isPointContained(Vector3f point) {
+    public boolean containsPoint(Vector3f point) {
         if (point.x < x || point.x > x + width * scaleX) {
             return false;
         }

@@ -33,14 +33,14 @@ public class TestCamera extends CoreUser {
 
     @Override
     public void tick(double delta) {
-        if (keyManager.KEY_W) {
+        if (keyManager.KEY_W.isPressed()) {
             camera.translate(camera.getForward().mul((float) delta).mul(speed));
-        } else if (keyManager.KEY_S) {
+        } else if (keyManager.KEY_S.isPressed()) {
             camera.translate(camera.getBackward().mul((float) delta).mul(speed));
         }
-        if (keyManager.KEY_A) {
+        if (keyManager.KEY_A.isPressed()) {
             camera.translate(camera.getLeft().mul((float) delta).mul(speed));
-        } else if (keyManager.KEY_D) {
+        } else if (keyManager.KEY_D.isPressed()) {
             camera.translate(camera.getRight().mul((float) delta).mul(speed));
         }
     }

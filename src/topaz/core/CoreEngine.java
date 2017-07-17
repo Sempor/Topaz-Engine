@@ -124,7 +124,7 @@ public class CoreEngine implements Runnable {
 
         keyManager = new KeyManager();
         mouseManager = new MouseManager(display);
-        //mouseManager.makeCursorVisible(false);
+        mouseManager.makeCursorVisible(false);
 
         display.setBackgroundColor(Color4f.BLACK);
         camera = new Camera(display, mouseManager);
