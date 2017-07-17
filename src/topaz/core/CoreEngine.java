@@ -122,11 +122,11 @@ public class CoreEngine implements Runnable {
             System.out.println("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION));
         }
 
-        keyManager = new KeyManager();
-        mouseManager = new MouseManager(display);
-        mouseManager.makeCursorVisible(false);
+        keyManager = new KeyManager(display.getWindowID());
+        mouseManager = new MouseManager(display.getWindowID());
 
         display.setBackgroundColor(Color4f.BLACK);
+        display.makeCursorVisible(false);
         camera = new Camera(display, mouseManager);
         camera.setFollowingMouse(true);
         renderManager = new RenderManager(display, mouseManager, camera);
@@ -140,7 +140,7 @@ public class CoreEngine implements Runnable {
     public void tick(double delta) {
         renderManager.tick(delta);
         camera.tick(delta);
-        mouseManager.centerCursor();
+        display.centerCursor();
 
         keyManager.tick(display.getWindowID());
         mouseManager.tick(display.getWindowID());

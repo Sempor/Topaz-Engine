@@ -31,8 +31,8 @@ public class Camera {
     }
 
     public void tick(double delta) {
-        horizontalAngle += mouseManager.getMouseSpeed() * delta * ((float) display.getWidth() / 2f - (float) mouseManager.getCursorX());
-        verticalAngle += mouseManager.getMouseSpeed() * delta * ((float) display.getHeight() / 2f - (float) mouseManager.getCursorY());
+        horizontalAngle += mouseManager.getMouseSpeed() * delta * ((float) display.getWidth() / 2f - (float) display.getCursorX());
+        verticalAngle += mouseManager.getMouseSpeed() * delta * ((float) display.getHeight() / 2f - (float) display.getCursorY());
 
         forward = new Vector3f((float) (Math.cos(verticalAngle) * Math.sin(horizontalAngle)),
                 (float) Math.sin(verticalAngle),

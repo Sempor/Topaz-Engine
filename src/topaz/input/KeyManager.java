@@ -130,7 +130,7 @@ public class KeyManager {
         }
     }
 
-    public KeyManager() {
+    public KeyManager(long windowID) {
         //Alphabet keys
         KEY_A = new KeyButton(GLFW.GLFW_KEY_A);
         KEY_B = new KeyButton(GLFW.GLFW_KEY_B);
@@ -221,6 +221,13 @@ public class KeyManager {
         KEY_SCROLL_LOCK = new KeyButton(GLFW.GLFW_KEY_SCROLL_LOCK);
         KEY_PRINT_SCREEN = new KeyButton(GLFW.GLFW_KEY_PRINT_SCREEN);
         KEY_PAUSE = new KeyButton(GLFW.GLFW_KEY_PAUSE);
+        
+        //Creates key callback that is called whenever a key event occurs
+        GLFW.glfwSetKeyCallback(windowID, (window, key, scancode, action, mods) -> {
+            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
+                GLFW.glfwSetWindowShouldClose(window, true);
+            }
+        });
     }
 
     public void tick(long window) {

@@ -1,5 +1,6 @@
 package topaz.core;
 
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
@@ -40,13 +41,6 @@ public class Display {
         if (windowID == MemoryUtil.NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
         }
-
-        //Creates key callback that is called whenever a key event occurs
-        GLFW.glfwSetKeyCallback(windowID, (window, key, scancode, action, mods) -> {
-            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
-                GLFW.glfwSetWindowShouldClose(window, true);
-            }
-        });
 
         //Gets thread atack and pushes new frame
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -158,5 +152,35 @@ public class Display {
 
     public int getVSync() {
         return vSync;
+    }
+
+    public double getCursorX() {
+        DoubleBuffer xBuffer = BufferUtils.createDoubleBuffer(1);
+        DoubleBuffer yBuffer = BufferUtils.createDoubleBuffer(1);
+        GLFW.glfwGetCursorPos(windowID, xBuffer, yBuffer);
+        return xBuffer.get(0);
+    }
+
+    public double getCursorY() {
+        DoubleBuffer xBuffer = BufferUtils.createDoubleBuffer(1);
+        DoubleBuffer yBuffer = BufferUtils.createDoubleBuffer(1);
+        GLFW.glfwGetCursorPos(windowID, xBuffer, yBuffer);
+        return yBuffer.get(0);
+    }
+
+    public void setCursorLocation(double x, double y) {
+        GLFW.glfwSetCursorPos(windowID, x, y);
+    }
+
+    public void centerCursor() {
+        GLFW.glfwSetCursorPos(windowID, getWidth() / 2, getHeight() / 2);
+    }
+
+    public void makeCursorVisible(boolean isVisible) {
+        if (isVisible) {
+            GLFW.glfwSetInputMode(windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+        } else {
+            GLFW.glfwSetInputMode(windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+        }
     }
 }
