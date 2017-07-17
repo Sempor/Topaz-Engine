@@ -8,7 +8,8 @@ public class MouseManager {
 
     private float mouseSpeed;
 
-    public double SCROLL_X, SCROLL_Y;
+    private double scrollX, scrollY;
+    private boolean scrollUp, scrollDown, scrollLeft, scrollRight;
 
     public class MouseButton {
 
@@ -60,8 +61,8 @@ public class MouseManager {
 
         //Creates scroll callback that is called whenever a scroll event occurs
         GLFW.glfwSetScrollCallback(windowID, (window, xoffset, yoffset) -> {
-            SCROLL_X = xoffset;
-            SCROLL_Y = yoffset;
+            scrollX = xoffset;
+            scrollY = yoffset;
         });
     }
 
@@ -69,6 +70,22 @@ public class MouseManager {
         BUTTON_LEFT.tick(window);
         BUTTON_RIGHT.tick(window);
         BUTTON_MIDDLE.tick(window);
+
+        if (scrollX > 0) {
+            scrollRight = true;
+            scrollX = 0;
+        } else if (scrollX < 0) {
+            scrollLeft = true;
+            scrollX = 0;
+        }
+
+        if (scrollY > 0) {
+            scrollUp = true;
+            scrollY = 0;
+        } else if (scrollY < 0) {
+            scrollDown = true;
+            scrollY = 0;
+        }
     }
 
     public void setMouseSpeed(float mouseSpeed) {
@@ -77,5 +94,21 @@ public class MouseManager {
 
     public float getMouseSpeed() {
         return mouseSpeed;
+    }
+
+    public boolean scrollUpEvent() {
+        return scrollUp;
+    }
+
+    public boolean scrollDownEvent() {
+        return scrollDown;
+    }
+
+    public boolean scrollLeftEvent() {
+        return scrollLeft;
+    }
+
+    public boolean scrollRightEvent() {
+        return scrollRight;
     }
 }
