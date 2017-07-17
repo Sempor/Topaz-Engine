@@ -4,21 +4,21 @@ import java.util.ArrayList;
 
 public class PhysicsManager {
 
-    private ArrayList<AxisAlignedBoundingBox> boundingBoxes = new ArrayList<>();
+    private ArrayList<CollisionObject> collisionObjects = new ArrayList<>();
 
-    public void add(AxisAlignedBoundingBox box) {
-        boundingBoxes.add(box);
+    public void add(CollisionObject collisionObject) {
+        collisionObjects.add(collisionObject);
     }
 
-    public void remove(AxisAlignedBoundingBox box) {
-        boundingBoxes.remove(box);
+    public void remove(CollisionObject collisionObject) {
+        collisionObjects.remove(collisionObject);
     }
 
-    public ArrayList<AxisAlignedBoundingBox> getBoundingBoxes() {
-        return boundingBoxes;
+    public ArrayList<CollisionObject> getCollisionObjects() {
+        return collisionObjects;
     }
 
-    public void setBoundingBoxes(ArrayList<AxisAlignedBoundingBox> boundingBoxes) {
-        this.boundingBoxes = boundingBoxes;
+    public void setCollisionObjects(ArrayList<CollisionObject> collisionObjects) {
+        this.collisionObjects = collisionObjects;
     }
 }

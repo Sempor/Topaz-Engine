@@ -2,7 +2,7 @@ package topaz.game;
 
 import org.joml.Vector3f;
 import topaz.input.KeyManager;
-import topaz.physics.AxisAlignedBoundingBox;
+import topaz.physics.CollisionObject;
 import topaz.rendering.Camera;
 
 public class BasicPlayer {
@@ -10,7 +10,7 @@ public class BasicPlayer {
     private KeyManager keyManager;
     private Camera camera;
 
-    private AxisAlignedBoundingBox boundingBox;
+    private CollisionObject collisionObject;
 
     private float gravityAcceleration;
     private float jumpVelocity;
@@ -20,13 +20,13 @@ public class BasicPlayer {
 
     private boolean useDefaultInput = true;
 
-    public BasicPlayer(KeyManager keyManager, Camera camera, AxisAlignedBoundingBox boundingBox) {
+    public BasicPlayer(KeyManager keyManager, Camera camera, CollisionObject collisionObject) {
         this.keyManager = keyManager;
         this.camera = camera;
 
-        this.boundingBox = boundingBox;
-        this.boundingBox.centerOn(camera.getLocation());
-        this.boundingBox.setActive(true);
+        this.collisionObject = collisionObject;
+        this.collisionObject.centerOn(camera.getLocation());
+        this.collisionObject.setActive(true);
 
         gravityAcceleration = -0.0003f;
         jumpVelocity = 0.06f;
@@ -55,9 +55,9 @@ public class BasicPlayer {
     }
 
     private void applyGravity(double delta) {
-        boundingBox.y += verticalVelocity;
-        if (boundingBox.checkBoundingBoxCollisions()) {
-            boundingBox.centerOn(camera.getLocation());
+        collisionObject.y += verticalVelocity;
+        if (collisionObject.checkCollisions()) {
+            collisionObject.centerOn(camera.getLocation());
             verticalVelocity = 0;
         } else {
             camera.translateY(verticalVelocity);
@@ -71,17 +71,17 @@ public class BasicPlayer {
 
     public void move(Vector3f translation) {
         //Move in x direction
-        boundingBox.x += translation.x;
-        if (boundingBox.checkBoundingBoxCollisions()) {
-            boundingBox.centerOn(camera.getLocation());
+        collisionObject.x += translation.x;
+        if (collisionObject.checkCollisions()) {
+            collisionObject.centerOn(camera.getLocation());
         } else {
             camera.translateX(translation.x);
         }
 
         //Move in z direction
-        boundingBox.z += translation.z;
-        if (boundingBox.checkBoundingBoxCollisions()) {
-            boundingBox.centerOn(camera.getLocation());
+        collisionObject.z += translation.z;
+        if (collisionObject.checkCollisions()) {
+            collisionObject.centerOn(camera.getLocation());
         } else {
             camera.translateZ(translation.z);
         }
@@ -100,7 +100,7 @@ public class BasicPlayer {
 
     public void setLocation(float x, float y, float z) {
         camera.setLocation(x, y, z);
-        boundingBox.centerOn(camera.getLocation());
+        collisionObject.centerOn(camera.getLocation());
     }
 
     public Vector3f getLocation() {
