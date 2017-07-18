@@ -87,7 +87,24 @@ public class KeyManager {
             KEY_NUM_LOCK,
             KEY_SCROLL_LOCK,
             KEY_PRINT_SCREEN,
-            KEY_PAUSE;
+            KEY_PAUSE,
+            KEY_KEYPAD_0, //Keypad keys
+            KEY_KEYPAD_1,
+            KEY_KEYPAD_2,
+            KEY_KEYPAD_3,
+            KEY_KEYPAD_4,
+            KEY_KEYPAD_5,
+            KEY_KEYPAD_6,
+            KEY_KEYPAD_7,
+            KEY_KEYPAD_8,
+            KEY_KEYPAD_9,
+            KEY_KEYPAD_DECIMAL,
+            KEY_KEYPAD_DIVIDE,
+            KEY_KEYPAD_MULTIPLY,
+            KEY_KEYPAD_SUBTRACT,
+            KEY_KEYPAD_ADD,
+            KEY_KEYPAD_ENTER,
+            KEY_KEYPAD_EQUAL;
 
     public class KeyButton {
 
@@ -221,7 +238,25 @@ public class KeyManager {
         KEY_SCROLL_LOCK = new KeyButton(GLFW.GLFW_KEY_SCROLL_LOCK);
         KEY_PRINT_SCREEN = new KeyButton(GLFW.GLFW_KEY_PRINT_SCREEN);
         KEY_PAUSE = new KeyButton(GLFW.GLFW_KEY_PAUSE);
-        
+        //Keypad keys
+        KEY_KEYPAD_0 = new KeyButton(GLFW.GLFW_KEY_KP_0);
+        KEY_KEYPAD_1 = new KeyButton(GLFW.GLFW_KEY_KP_1);
+        KEY_KEYPAD_2 = new KeyButton(GLFW.GLFW_KEY_KP_2);
+        KEY_KEYPAD_3 = new KeyButton(GLFW.GLFW_KEY_KP_3);
+        KEY_KEYPAD_4 = new KeyButton(GLFW.GLFW_KEY_KP_4);
+        KEY_KEYPAD_5 = new KeyButton(GLFW.GLFW_KEY_KP_5);
+        KEY_KEYPAD_6 = new KeyButton(GLFW.GLFW_KEY_KP_6);
+        KEY_KEYPAD_7 = new KeyButton(GLFW.GLFW_KEY_KP_7);
+        KEY_KEYPAD_8 = new KeyButton(GLFW.GLFW_KEY_KP_8);
+        KEY_KEYPAD_9 = new KeyButton(GLFW.GLFW_KEY_KP_9);
+        KEY_KEYPAD_DECIMAL = new KeyButton(GLFW.GLFW_KEY_KP_DECIMAL);
+        KEY_KEYPAD_DIVIDE = new KeyButton(GLFW.GLFW_KEY_KP_DIVIDE);
+        KEY_KEYPAD_MULTIPLY = new KeyButton(GLFW.GLFW_KEY_KP_MULTIPLY);
+        KEY_KEYPAD_SUBTRACT = new KeyButton(GLFW.GLFW_KEY_KP_SUBTRACT);
+        KEY_KEYPAD_ADD = new KeyButton(GLFW.GLFW_KEY_KP_ADD);
+        KEY_KEYPAD_ENTER = new KeyButton(GLFW.GLFW_KEY_KP_ENTER);
+        KEY_KEYPAD_EQUAL = new KeyButton(GLFW.GLFW_KEY_KP_EQUAL);
+
         //Creates key callback that is called whenever a key event occurs
         GLFW.glfwSetKeyCallback(windowID, (window, key, scancode, action, mods) -> {
             if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) {
@@ -321,5 +356,23 @@ public class KeyManager {
         KEY_SCROLL_LOCK.tick(window);
         KEY_PRINT_SCREEN.tick(window);
         KEY_PAUSE.tick(window);
+        //Keypad keys
+        KEY_KEYPAD_0.tick(window);
+        KEY_KEYPAD_1.tick(window);
+        KEY_KEYPAD_2.tick(window);
+        KEY_KEYPAD_3.tick(window);
+        KEY_KEYPAD_4.tick(window);
+        KEY_KEYPAD_5.tick(window);
+        KEY_KEYPAD_6.tick(window);
+        KEY_KEYPAD_7.tick(window);
+        KEY_KEYPAD_8.tick(window);
+        KEY_KEYPAD_9.tick(window);
+        KEY_KEYPAD_DECIMAL.tick(window);
+        KEY_KEYPAD_DIVIDE.tick(window);
+        KEY_KEYPAD_MULTIPLY.tick(window);
+        KEY_KEYPAD_SUBTRACT.tick(window);
+        KEY_KEYPAD_ADD.tick(window);
+        KEY_KEYPAD_ENTER.tick(window);
+        KEY_KEYPAD_EQUAL.tick(window);
     }
 }

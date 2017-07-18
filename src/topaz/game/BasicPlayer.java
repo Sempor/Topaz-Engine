@@ -19,6 +19,8 @@ public class BasicPlayer {
     private float verticalVelocity = 0f;
 
     private boolean useDefaultInput = true;
+    
+    private int health;
 
     public BasicPlayer(KeyManager keyManager, Camera camera, CollisionObject collisionObject) {
         this.keyManager = keyManager;
@@ -31,6 +33,8 @@ public class BasicPlayer {
         gravityAcceleration = -0.0003f;
         jumpVelocity = 0.06f;
         moveSpeed = 0.003f;
+        
+        health = 10;
     }
 
     public void tick(double delta) {
@@ -129,5 +133,13 @@ public class BasicPlayer {
 
     public void setMoveSpeed(float moveSpeed) {
         this.moveSpeed = moveSpeed;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
     }
 }

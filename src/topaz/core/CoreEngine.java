@@ -11,6 +11,7 @@ import topaz.physics.PhysicsManager;
 import topaz.rendering.Camera;
 import topaz.rendering.ObjectManager;
 import topaz.rendering.RenderManager;
+import topaz.rendering.ui.UIManager;
 import topaz.util.Color4f;
 
 public class CoreEngine implements Runnable {
@@ -29,6 +30,7 @@ public class CoreEngine implements Runnable {
     private RenderManager renderManager;
     private PhysicsManager physicsManager;
     private Camera camera;
+    private UIManager uiManager;
 
     private CoreUser coreUser;
 
@@ -132,8 +134,9 @@ public class CoreEngine implements Runnable {
         renderManager = new RenderManager(display, mouseManager, camera);
         physicsManager = new PhysicsManager();
         objectManager = new ObjectManager();
+        uiManager = new UIManager(display);
 
-        coreUser.setUp(display, renderManager, physicsManager, objectManager, camera, keyManager, mouseManager);
+        coreUser.setUp(display, renderManager, physicsManager, objectManager, uiManager, camera, keyManager, mouseManager);
         coreUser.init();
     }
 
@@ -141,11 +144,14 @@ public class CoreEngine implements Runnable {
         renderManager.tick(delta);
         camera.tick(delta);
         display.centerCursor();
+        uiManager.tick(delta);
 
         keyManager.tick(display.getWindowID());
         mouseManager.tick(display.getWindowID());
 
-        coreUser.tick(delta);
+        if (coreUser.isPaused() == false) {
+            coreUser.tick(delta);
+        }
     }
 
     public void render() {
@@ -153,6 +159,7 @@ public class CoreEngine implements Runnable {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         renderManager.render();
+        uiManager.render();
 
         coreUser.render();
     }
