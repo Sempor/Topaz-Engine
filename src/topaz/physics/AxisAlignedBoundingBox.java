@@ -13,7 +13,6 @@ public class AxisAlignedBoundingBox extends CollisionObject {
 
     public AxisAlignedBoundingBox(PhysicsManager physicsManager, Vector3f dimensions) {
         super(physicsManager);
-
         width = dimensions.x;
         height = dimensions.y;
         depth = dimensions.z;
@@ -25,7 +24,6 @@ public class AxisAlignedBoundingBox extends CollisionObject {
 
     public AxisAlignedBoundingBox(PhysicsManager physicsManager, Vector3f location, Vector3f dimensions) {
         super(physicsManager, location);
-
         width = dimensions.x;
         height = dimensions.y;
         depth = dimensions.z;
@@ -66,9 +64,17 @@ public class AxisAlignedBoundingBox extends CollisionObject {
     }
 
     @Override
-    public void centerOn(Vector3f location) {
-        x = location.x - width * scaleX / 2f;
-        y = location.y - height * scaleY / 2f;
-        z = location.z - depth * scaleZ / 2f;
+    public float getWidth() {
+        return width * scaleX;
+    }
+
+    @Override
+    public float getHeight() {
+        return height * scaleY;
+    }
+
+    @Override
+    public float getDepth() {
+        return depth * scaleZ;
     }
 }

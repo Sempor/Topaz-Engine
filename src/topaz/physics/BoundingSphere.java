@@ -8,7 +8,6 @@ public class BoundingSphere extends CollisionObject {
 
     public BoundingSphere(PhysicsManager physicsManager, float radius) {
         super(physicsManager);
-
         this.radius = radius;
     }
 
@@ -16,9 +15,8 @@ public class BoundingSphere extends CollisionObject {
         this(physicsManager, new Vector3f(x, y, z), radius);
     }
 
-    public BoundingSphere(PhysicsManager physicsManager, Vector3f center, float radius) {
-        super(physicsManager, center);
-
+    public BoundingSphere(PhysicsManager physicsManager, Vector3f location, float radius) {
+        super(physicsManager, location);
         this.radius = radius;
     }
 
@@ -30,20 +28,28 @@ public class BoundingSphere extends CollisionObject {
 
     @Override
     public boolean intersectsSphere(BoundingSphere sphere) {
-        Vector3f separationVector = new Vector3f(x, y, z).sub(new Vector3f(sphere.x, sphere.y, sphere.z));
+        Vector3f separationVector = getCenter().sub(sphere.getCenter());
         return separationVector.lengthSquared() <= Math.pow(radius + sphere.radius, 2.0);
     }
 
     @Override
     public boolean containsPoint(Vector3f point) {
-        Vector3f separationVector = new Vector3f(x, y, z).sub(point);
+        Vector3f separationVector = getCenter().sub(point);
         return separationVector.lengthSquared() <= Math.pow(radius, 2.0);
     }
 
     @Override
-    public void centerOn(Vector3f location) {
-        this.x = location.x;
-        this.y = location.y;
-        this.z = location.z;
+    public float getWidth() {
+        return radius * 2f * scaleX;
+    }
+
+    @Override
+    public float getHeight() {
+        return radius * 2f * scaleY;
+    }
+
+    @Override
+    public float getDepth() {
+        return radius * 2f * scaleZ;
     }
 }

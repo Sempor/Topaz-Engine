@@ -27,7 +27,7 @@ public abstract class CollisionObject {
         this(physicsManager, location.x, location.y, location.z);
     }
 
-    public boolean checkCollisions() {
+    public CollisionObject checkForCollisions() {
         for (CollisionObject collisionObject : physicsManager.getCollisionObjects()) {
             if (collisionObject.equals(this)) {
                 continue;
@@ -36,10 +36,10 @@ public abstract class CollisionObject {
                 continue;
             }
             if (intersects(collisionObject)) {
-                return true;
+                return collisionObject;
             }
         }
-        return false;
+        return null;
     }
 
     public boolean intersects(CollisionObject collisionObject) {
@@ -57,7 +57,21 @@ public abstract class CollisionObject {
 
     public abstract boolean containsPoint(Vector3f point);
 
-    public abstract void centerOn(Vector3f location);
+    public abstract float getWidth();
+
+    public abstract float getHeight();
+
+    public abstract float getDepth();
+
+    public void setCenter(Vector3f center) {
+        x = center.x - getWidth() / 2f;
+        y = center.y - getHeight() / 2f;
+        z = center.z - getDepth() / 2f;
+    }
+
+    public Vector3f getCenter() {
+        return new Vector3f(x + getWidth() / 2f, y + getHeight() / 2f, z + getDepth() / 2f);
+    }
 
     public void translate(float dx, float dy, float dz) {
         translate(new Vector3f(dx, dy, dz));
@@ -77,6 +91,10 @@ public abstract class CollisionObject {
         x = location.x;
         y = location.y;
         z = location.z;
+    }
+
+    public Vector3f getLocation() {
+        return new Vector3f(x, y, z);
     }
 
     public void scale(float dx, float dy, float dz) {

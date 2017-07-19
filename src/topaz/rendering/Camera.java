@@ -10,7 +10,8 @@ public class Camera {
     private Display display;
     private MouseManager mouseManager;
 
-    private Vector3f location;
+    public float x, y, z;
+
     private Vector3f forward;
     private Vector3f right;
     private Vector3f up;
@@ -24,7 +25,9 @@ public class Camera {
         this.display = display;
         this.mouseManager = mouseManager;
 
-        location = new Vector3f(0, 0, -2);
+        x = 0;
+        y = 0;
+        z = -2;
         forward = new Vector3f(0, 0, 0);
         right = new Vector3f(0, 0, 0);
         up = new Vector3f(0, 1, 0);
@@ -48,63 +51,31 @@ public class Camera {
     }
 
     public void translate(float dx, float dy, float dz) {
-        translate(new Vector3f(dx, dy, dz));
-    }
-
-    public void translateX(float dx) {
-        location.x += dx;
-    }
-
-    public void translateY(float dy) {
-        location.y += dy;
-    }
-
-    public void translateZ(float dz) {
-        location.z += dz;
+        x += dx;
+        y += dy;
+        z += dz;
     }
 
     public void translate(Vector3f translation) {
-        location.add(translation);
+        translate(translation.x, translation.y, translation.z);
     }
 
     public Vector3f getLocation() {
-        return new Vector3f(location);
-    }
-
-    public float getX() {
-        return location.x;
-    }
-
-    public float getY() {
-        return location.y;
-    }
-
-    public float getZ() {
-        return location.z;
+        return new Vector3f(x, y, z);
     }
 
     public void setLocation(Vector3f location) {
-        this.location = location;
+        setLocation(location.x, location.y, location.z);
     }
 
     public void setLocation(float x, float y, float z) {
-        setLocation(new Vector3f(x, y, z));
-    }
-
-    public void setX(float x) {
-        location.x = x;
-    }
-
-    public void setY(float y) {
-        location.y = y;
-    }
-
-    public void setZ(float z) {
-        location.z = z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     public Raycast getForwardRaycast(float rayCastDistance) {
-        return new Raycast(new Vector3f(location), new Vector3f(location).add(new Vector3f(forward).mul(rayCastDistance)));
+        return new Raycast(new Vector3f(x, y, z), new Vector3f(x, y, z).add(new Vector3f(forward).mul(rayCastDistance)));
     }
 
     public Vector3f getForward() {
