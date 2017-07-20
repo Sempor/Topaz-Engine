@@ -2,7 +2,7 @@ package topaz.game;
 
 import org.joml.Vector3f;
 import topaz.input.KeyManager;
-import topaz.physics.CollisionObject;
+import topaz.physics.PhysicalObject;
 import topaz.rendering.Camera;
 
 public class BasicPlayer {
@@ -10,36 +10,30 @@ public class BasicPlayer {
     private KeyManager keyManager;
     private Camera camera;
 
-    private CollisionObject collisionObject;
-
-    private float gravityAcceleration;
+    private PhysicalObject physicalObject;
     private float jumpVelocity;
     private float moveSpeed;
-
-    private float verticalVelocity = 0f;
 
     private boolean useDefaultInput = true;
 
     private int health;
 
-    public BasicPlayer(KeyManager keyManager, Camera camera, CollisionObject collisionObject) {
+    public BasicPlayer(KeyManager keyManager, Camera camera, PhysicalObject physicalObject) {
         this.keyManager = keyManager;
         this.camera = camera;
 
-        this.collisionObject = collisionObject;
-        this.collisionObject.setCenter(camera.getLocation());
-        this.collisionObject.setActive(true);
+        this.physicalObject = physicalObject;
+        this.physicalObject.getCollisionObject().setCenter(camera.getLocation());
+        this.physicalObject.getCollisionObject().setActive(true);
+        this.physicalObject.setGravityEnabled(true);
 
-        gravityAcceleration = -0.00098f;
-        jumpVelocity = 0.1f;
+        jumpVelocity = 0.03f;
         moveSpeed = 0.002f;
 
         health = 10;
     }
 
     public void tick(double delta) {
-        applyGravity(delta);
-
         if (useDefaultInput) {
             if (keyManager.KEY_W.isPressed()) {
                 move(camera.getForward().mul((float) delta).mul(moveSpeed));
@@ -51,24 +45,12 @@ public class BasicPlayer {
             } else if (keyManager.KEY_D.isPressed()) {
                 move(camera.getRight().mul((float) delta).mul(moveSpeed));
             }
-
             if (keyManager.KEY_SPACE.isPressed()) {
                 jump();
             }
         }
-    }
 
-    private void applyGravity(double delta) {
-        collisionObject.y += verticalVelocity;
-        CollisionObject collidingObject = collisionObject.checkForCollisions();
-        if (collidingObject != null) {
-            collisionObject.y = collidingObject.y + collidingObject.getHeight();
-            camera.setLocation(collisionObject.getCenter());
-            verticalVelocity = 0;
-        } else {
-            camera.translate(0, verticalVelocity, 0);
-            verticalVelocity += gravityAcceleration * delta;
-        }
+        camera.setLocation(physicalObject.getCollisionObject().getCenter());
     }
 
     public void move(float dx, float dy, float dz) {
@@ -76,40 +58,15 @@ public class BasicPlayer {
     }
 
     public void move(Vector3f translation) {
-        //Move in x direction
-        collisionObject.x += translation.x;
-        CollisionObject collidingObject = collisionObject.checkForCollisions();
-        if (collidingObject != null) {
-            if (translation.x > 0) {
-                collisionObject.x = collidingObject.x - collisionObject.getWidth();
-            } else {
-                collisionObject.x = collidingObject.x + collidingObject.getWidth();
-            }
-            camera.setLocation(collisionObject.getCenter());
-        } else {
-            camera.translate(translation.x, 0, 0);
-        }
-
-        //Move in z direction
-        collisionObject.z += translation.z;
-        collidingObject = collisionObject.checkForCollisions();
-        if (collidingObject != null) {
-            if (translation.z > 0) {
-                collisionObject.z = collidingObject.z - collisionObject.getDepth();
-            } else {
-                collisionObject.z = collidingObject.z + collidingObject.getDepth();
-            }
-            camera.setLocation(collisionObject.getCenter());
-        } else {
-            camera.translate(0, 0, translation.z);
-        }
+        physicalObject.getCollisionObject().translatePhysicallyX(translation.x);
+        physicalObject.getCollisionObject().translatePhysicallyZ(translation.z);
     }
 
     public void jump() {
-        if (verticalVelocity != 0) {
+        if (physicalObject.getVelocity().y != 0) {
             return;
         }
-        verticalVelocity = jumpVelocity;
+        physicalObject.setVelocity(new Vector3f(0, jumpVelocity, 0));
     }
 
     public void enableDefaultInput(boolean toggle) {
@@ -117,20 +74,12 @@ public class BasicPlayer {
     }
 
     public void setLocation(float x, float y, float z) {
-        camera.setLocation(x, y, z);
-        collisionObject.setCenter(camera.getLocation());
+        physicalObject.getCollisionObject().setLocation(x, y, z);
+        camera.setLocation(physicalObject.getCollisionObject().getCenter());
     }
 
     public Vector3f getLocation() {
-        return collisionObject.getLocation();
-    }
-
-    public float getGravityAcceleration() {
-        return gravityAcceleration;
-    }
-
-    public void setGravityAcceleration(float gravityAcceleration) {
-        this.gravityAcceleration = gravityAcceleration;
+        return physicalObject.getCollisionObject().getLocation();
     }
 
     public float getJumpVelocity() {

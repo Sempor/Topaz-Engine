@@ -1,4 +1,4 @@
-package topaz.physics;
+package topaz.physics.collisions;
 
 import java.util.ArrayList;
 import org.joml.Vector3f;
@@ -25,7 +25,7 @@ public class Raycast {
             Vector3f point = new Vector3f(startPoint).add(new Vector3f(deltaVector).mul(i));
 
             for (int j = 0; j < objectManager.getGameObjects().size(); j++) {
-                if (objectManager.getGameObjects().get(j).getCollisionObject().containsPoint(point)) {
+                if (objectManager.getGameObjects().get(j).getPhysicalObject().getCollisionObject().containsPoint(point)) {
                     closestIntersectingObjects.add(objectManager.getGameObjects().get(j));
                     closestObjectsFound = true;
                 }

@@ -2,25 +2,25 @@ package topaz.rendering;
 
 import java.util.ArrayList;
 import org.joml.Vector3f;
-import topaz.physics.CollisionObject;
+import topaz.physics.PhysicalObject;
 import topaz.physics.PhysicsManager;
 
 public class GameObject {
 
     private Mesh mesh;
-    private CollisionObject collisionObject;
+    private PhysicalObject physicalObject;
     private ArrayList<GameObject> children = new ArrayList<>();
 
     //Currently shallow copies, maybe make deep copy later
-    public GameObject(Mesh mesh, CollisionObject collisionObject) {
+    public GameObject(Mesh mesh, PhysicalObject physicalObject) {
         this.mesh = mesh;
-        this.collisionObject = collisionObject;
+        this.physicalObject = physicalObject;
     }
 
     public void removeFromAllManagers(ObjectManager objectManager, RenderManager renderManager, PhysicsManager physicsManager) {
         objectManager.remove(this);
         renderManager.remove(mesh);
-        physicsManager.remove(collisionObject);
+        physicsManager.remove(physicalObject);
     }
 
     public void attachChild(GameObject child) {
@@ -37,7 +37,7 @@ public class GameObject {
 
     public void translate(float dx, float dy, float dz) {
         mesh.translate(dx, dy, dz);
-        collisionObject.translate(dx, dy, dz);
+        physicalObject.getCollisionObject().translate(dx, dy, dz);
 
         for (int i = 0; i < children.size(); i++) {
             children.get(i).translate(dx, dy, dz);
@@ -63,7 +63,7 @@ public class GameObject {
 
     public void scale(float dx, float dy, float dz) {
         mesh.scale(dx, dy, dz);
-        collisionObject.scale(dx, dy, dz);
+        physicalObject.getCollisionObject().scale(dx, dy, dz);
 
         for (int i = 0; i < children.size(); i++) {
             children.get(i).scale(dx, dy, dz);
@@ -82,7 +82,7 @@ public class GameObject {
         }
 
         mesh.setLocation(x, y, z);
-        collisionObject.setLocation(x, y, z);
+        physicalObject.setLocation(new Vector3f(x, y, z));
     }
 
     public Vector3f getLocation() {
@@ -120,7 +120,7 @@ public class GameObject {
         }
 
         mesh.setScale(x, y, z);
-        collisionObject.setScale(x, y, z);
+        physicalObject.getCollisionObject().setScale(x, y, z);
     }
 
     public Vector3f getScale() {
@@ -128,7 +128,7 @@ public class GameObject {
     }
 
     public void enableCollisions(boolean collisions) {
-        collisionObject.setActive(collisions);
+        physicalObject.getCollisionObject().setActive(collisions);
     }
 
     public boolean isVisible() {
@@ -147,11 +147,11 @@ public class GameObject {
         this.mesh = mesh;
     }
 
-    public CollisionObject getCollisionObject() {
-        return collisionObject;
+    public PhysicalObject getPhysicalObject() {
+        return physicalObject;
     }
 
-    public void setCollisionObject(CollisionObject collisionObject) {
-        this.collisionObject = collisionObject;
+    public void setPhysicalObject(PhysicalObject physicalObject) {
+        this.physicalObject = physicalObject;
     }
 }

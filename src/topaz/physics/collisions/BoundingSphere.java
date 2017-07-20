@@ -1,6 +1,7 @@
-package topaz.physics;
+package topaz.physics.collisions;
 
 import org.joml.Vector3f;
+import topaz.physics.PhysicsManager;
 
 public class BoundingSphere extends CollisionObject {
 

@@ -120,6 +120,7 @@ public class CoreEngine implements Runnable {
     }
 
     private void tick(double delta) {
+        coreApp.physicsManager.tick(delta);
         coreApp.renderManager.tick(delta);
         coreApp.camera.tick(delta);
         coreApp.display.setCursorLocation(coreApp.display.getWidth() / 2, coreApp.display.getHeight() / 2);

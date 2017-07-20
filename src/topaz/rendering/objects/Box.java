@@ -2,7 +2,8 @@ package topaz.rendering.objects;
 
 import org.joml.Vector3f;
 import topaz.assets.AssetLoader;
-import topaz.physics.AxisAlignedBoundingBox;
+import topaz.physics.PhysicalObject;
+import topaz.physics.collisions.AxisAlignedBoundingBox;
 import topaz.physics.PhysicsManager;
 import topaz.rendering.ColoredMesh;
 import topaz.rendering.GameObject;
@@ -14,6 +15,7 @@ import topaz.util.Color4f;
 public class Box {
 
     private GameObject gameObject;
+    private float mass = 1f;
 
     private short[] indices = new short[]{
         // front
@@ -57,9 +59,10 @@ public class Box {
         Mesh mesh = new ColoredMesh(renderManager, vertices, indices, colors);
         renderManager.add(mesh);
         AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
-        physicsManager.add(boundingBox);
+        PhysicalObject physicalObject = new PhysicalObject(boundingBox, mass);
+        physicsManager.add(physicalObject);
 
-        gameObject = new GameObject(mesh, boundingBox);
+        gameObject = new GameObject(mesh, physicalObject);
     }
 
     public Box(RenderManager renderManager, PhysicsManager physicsManager, float width, float height, float depth, String... textureFilePaths) {
@@ -85,9 +88,10 @@ public class Box {
         Mesh mesh = new TexturedMesh(renderManager, vertices, indices, textureCoords, textureIDs);
         renderManager.add(mesh);
         AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
-        physicsManager.add(boundingBox);
+        PhysicalObject physicalObject = new PhysicalObject(boundingBox, mass);
+        physicsManager.add(physicalObject);
 
-        gameObject = new GameObject(mesh, boundingBox);
+        gameObject = new GameObject(mesh, physicalObject);
     }
 
     private float[] getVertices(float x, float y, float z, float width, float height, float depth) {

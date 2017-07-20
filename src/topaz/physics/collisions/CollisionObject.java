@@ -1,6 +1,8 @@
-package topaz.physics;
+package topaz.physics.collisions;
 
 import org.joml.Vector3f;
+import topaz.physics.PhysicalObject;
+import topaz.physics.PhysicsManager;
 
 public abstract class CollisionObject {
 
@@ -27,8 +29,9 @@ public abstract class CollisionObject {
         this(physicsManager, location.x, location.y, location.z);
     }
 
-    public CollisionObject checkForCollisions() {
-        for (CollisionObject collisionObject : physicsManager.getCollisionObjects()) {
+    public CollisionObject getCollidingObject() {
+        for (PhysicalObject physicalObject : physicsManager.getPhysicalObjects()) {
+            CollisionObject collisionObject = physicalObject.getCollisionObject();
             if (collisionObject.equals(this)) {
                 continue;
             }
@@ -71,6 +74,49 @@ public abstract class CollisionObject {
 
     public Vector3f getCenter() {
         return new Vector3f(x + getWidth() / 2f, y + getHeight() / 2f, z + getDepth() / 2f);
+    }
+
+    //Returns true if there is a collision, false if not
+    public boolean translatePhysicallyX(float dx) {
+        x += dx;
+        CollisionObject collidingObject = getCollidingObject();
+        if (collidingObject != null) {
+            if (dx > 0) {
+                x = collidingObject.x - getWidth();
+            } else if (dx < 0) {
+                x = collidingObject.x + collidingObject.getWidth();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean translatePhysicallyY(float dy) {
+        y += dy;
+        CollisionObject collidingObject = getCollidingObject();
+        if (collidingObject != null) {
+            if (dy > 0) {
+                y = collidingObject.y - getHeight();
+            } else if (dy < 0) {
+                y = collidingObject.y + collidingObject.getHeight();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean translatePhysicallyZ(float dz) {
+        z += dz;
+        CollisionObject collidingObject = getCollidingObject();
+        if (collidingObject != null) {
+            if (dz > 0) {
+                z = collidingObject.z - getDepth();
+            } else if (dz < 0) {
+                z = collidingObject.z + collidingObject.getDepth();
+            }
+            return true;
+        }
+        return false;
     }
 
     public void translate(float dx, float dy, float dz) {
