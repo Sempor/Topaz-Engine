@@ -18,31 +18,18 @@ public class CoreEngine implements Runnable {
 
     private String title;
     private int width, height;
-    private Display display;
-
     private boolean running;
     private Thread thread;
+    private CoreApp coreApp;
+    private boolean printFPS = true;
+    private boolean printSoftwareInformation = false;
 
-    private KeyManager keyManager;
-    private MouseManager mouseManager;
-
-    private ObjectManager objectManager;
-    private RenderManager renderManager;
-    private PhysicsManager physicsManager;
-    private Camera camera;
-    private UIManager uiManager;
-
-    private CoreUser coreUser;
-
-    private boolean printFramesPerSecond = true;
-    private boolean printVersionData = false;
-
-    public CoreEngine(CoreUser coreUser, int width, int height) {
-        this(coreUser, "Topaz Application", width, height);
+    public CoreEngine(CoreApp coreApp, int width, int height) {
+        this(coreApp, "Topaz Game Engine - An Application", width, height);
     }
 
-    public CoreEngine(CoreUser coreUser, String title, int width, int height) {
-        this.coreUser = coreUser;
+    public CoreEngine(CoreApp coreApp, String title, int width, int height) {
+        this.coreApp = coreApp;
         this.title = title;
         this.width = width;
         this.height = height;
@@ -65,8 +52,7 @@ public class CoreEngine implements Runnable {
     public void run() {
         init();
 
-        int fps = 60;
-        double nsPerTick = 1000000000D / fps;
+        double nsPerTick = 1000000000D / coreApp.display.getFPS();
         double delta = 0;
         long now;
         long lastTime = System.nanoTime();
@@ -85,22 +71,19 @@ public class CoreEngine implements Runnable {
                 ticks++;
                 delta--;
 
-                //Polls for window events
                 GLFW.glfwPollEvents();
-
-                //Swaps color buffers
-                GLFW.glfwSwapBuffers(display.getWindowID());
+                GLFW.glfwSwapBuffers(coreApp.display.getWindowID());
             }
 
             if (timer > 1000000000D) {
-                if (printFramesPerSecond) {
+                if (printFPS) {
                     System.out.println("Frames per second: " + ticks);
                 }
                 ticks = 0;
                 timer = 0;
             }
 
-            if (GLFW.glfwWindowShouldClose(display.getWindowID())) {
+            if (GLFW.glfwWindowShouldClose(coreApp.display.getWindowID())) {
                 running = false;
             }
         }
@@ -108,60 +91,54 @@ public class CoreEngine implements Runnable {
         stop();
     }
 
-    public void init() {
-        display = new Display(title, width, height);
-
+    private void init() {
+        coreApp.display = new Display(title, width, height);
+        
         GL.createCapabilities();
-
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL13.GL_MULTISAMPLE);
         GL11.glEnable(GL11.GL_CULL_FACE);
 
-        if (printVersionData) {
+        if (printSoftwareInformation) {
             System.out.println("OS Name: " + System.getProperty("os.name"));
             System.out.println("OS Version: " + System.getProperty("os.version"));
-            System.out.println("LWJGL Version: " + Version.getVersion());
             System.out.println("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION));
+            System.out.println("LWJGL Version: " + Version.getVersion());
         }
 
-        keyManager = new KeyManager(display.getWindowID());
-        mouseManager = new MouseManager(display.getWindowID());
+        coreApp.display.setBackgroundColor(Color4f.BLACK);
+        
+        coreApp.keyManager = new KeyManager(coreApp.display.getWindowID());
+        coreApp.mouseManager = new MouseManager(coreApp.display.getWindowID());
+        coreApp.camera = new Camera(coreApp.display, coreApp.mouseManager);
+        coreApp.renderManager = new RenderManager(coreApp.display, coreApp.mouseManager, coreApp.camera);
+        coreApp.physicsManager = new PhysicsManager();
+        coreApp.objectManager = new ObjectManager();
+        coreApp.uiManager = new UIManager(coreApp.display);
 
-        display.setBackgroundColor(Color4f.BLACK);
-        display.makeCursorVisible(false);
-        camera = new Camera(display, mouseManager);
-        camera.setFollowingMouse(true);
-        renderManager = new RenderManager(display, mouseManager, camera);
-        physicsManager = new PhysicsManager();
-        objectManager = new ObjectManager();
-        uiManager = new UIManager(display);
-
-        coreUser.setUp(display, renderManager, physicsManager, objectManager, uiManager, camera, keyManager, mouseManager);
-        coreUser.init();
+        coreApp.init();
     }
 
-    public void tick(double delta) {
-        renderManager.tick(delta);
-        camera.tick(delta);
-        display.centerCursor();
-        uiManager.tick(delta);
+    private void tick(double delta) {
+        coreApp.renderManager.tick(delta);
+        coreApp.camera.tick(delta);
+        coreApp.display.setCursorLocation(coreApp.display.getWidth() / 2, coreApp.display.getHeight() / 2);
+        coreApp.uiManager.tick(delta);
+        coreApp.keyManager.tick();
+        coreApp.mouseManager.tick();
 
-        keyManager.tick(display.getWindowID());
-        mouseManager.tick(display.getWindowID());
-
-        if (coreUser.isPaused() == false) {
-            coreUser.tick(delta);
+        if (!coreApp.isPaused()) {
+            coreApp.tick(delta);
         }
     }
 
-    public void render() {
-        //Clears frame-buffer and z-buffer
+    private void render() {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-        renderManager.render();
-        uiManager.render();
+        coreApp.renderManager.render();
+        coreApp.uiManager.render();
 
-        coreUser.render();
+        coreApp.render();
     }
 
     /**
@@ -180,11 +157,11 @@ public class CoreEngine implements Runnable {
         }
     }
 
-    public void enablePrintFramesPerSecond(boolean toggle) {
-        this.printFramesPerSecond = toggle;
+    public void setPrintFPS(boolean toggle) {
+        this.printFPS = toggle;
     }
 
-    public void enablePrintVersionData(boolean toggle) {
-        this.printVersionData = toggle;
+    public void setPrintSoftwareInformation(boolean toggle) {
+        this.printSoftwareInformation = toggle;
     }
 }

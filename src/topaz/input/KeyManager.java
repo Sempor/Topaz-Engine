@@ -4,6 +4,8 @@ import org.lwjgl.glfw.GLFW;
 
 public class KeyManager {
 
+    private long windowID;
+    
     public KeyButton KEY_A, //Alphabet keys
             KEY_B,
             KEY_C,
@@ -148,6 +150,8 @@ public class KeyManager {
     }
 
     public KeyManager(long windowID) {
+        this.windowID = windowID;
+        
         //Alphabet keys
         KEY_A = new KeyButton(GLFW.GLFW_KEY_A);
         KEY_B = new KeyButton(GLFW.GLFW_KEY_B);
@@ -265,114 +269,114 @@ public class KeyManager {
         });
     }
 
-    public void tick(long window) {
+    public void tick() {
         //Alphabet keys
-        KEY_A.tick(window);
-        KEY_B.tick(window);
-        KEY_C.tick(window);
-        KEY_D.tick(window);
-        KEY_E.tick(window);
-        KEY_F.tick(window);
-        KEY_G.tick(window);
-        KEY_H.tick(window);
-        KEY_I.tick(window);
-        KEY_J.tick(window);
-        KEY_K.tick(window);
-        KEY_L.tick(window);
-        KEY_M.tick(window);
-        KEY_N.tick(window);
-        KEY_O.tick(window);
-        KEY_P.tick(window);
-        KEY_Q.tick(window);
-        KEY_R.tick(window);
-        KEY_S.tick(window);
-        KEY_T.tick(window);
-        KEY_U.tick(window);
-        KEY_V.tick(window);
-        KEY_W.tick(window);
-        KEY_X.tick(window);
-        KEY_Y.tick(window);
-        KEY_Z.tick(window);
+        KEY_A.tick(windowID);
+        KEY_B.tick(windowID);
+        KEY_C.tick(windowID);
+        KEY_D.tick(windowID);
+        KEY_E.tick(windowID);
+        KEY_F.tick(windowID);
+        KEY_G.tick(windowID);
+        KEY_H.tick(windowID);
+        KEY_I.tick(windowID);
+        KEY_J.tick(windowID);
+        KEY_K.tick(windowID);
+        KEY_L.tick(windowID);
+        KEY_M.tick(windowID);
+        KEY_N.tick(windowID);
+        KEY_O.tick(windowID);
+        KEY_P.tick(windowID);
+        KEY_Q.tick(windowID);
+        KEY_R.tick(windowID);
+        KEY_S.tick(windowID);
+        KEY_T.tick(windowID);
+        KEY_U.tick(windowID);
+        KEY_V.tick(windowID);
+        KEY_W.tick(windowID);
+        KEY_X.tick(windowID);
+        KEY_Y.tick(windowID);
+        KEY_Z.tick(windowID);
         //Number keys
-        KEY_1.tick(window);
-        KEY_2.tick(window);
-        KEY_3.tick(window);
-        KEY_4.tick(window);
-        KEY_5.tick(window);
-        KEY_6.tick(window);
-        KEY_7.tick(window);
-        KEY_8.tick(window);
-        KEY_9.tick(window);
-        KEY_0.tick(window);
+        KEY_1.tick(windowID);
+        KEY_2.tick(windowID);
+        KEY_3.tick(windowID);
+        KEY_4.tick(windowID);
+        KEY_5.tick(windowID);
+        KEY_6.tick(windowID);
+        KEY_7.tick(windowID);
+        KEY_8.tick(windowID);
+        KEY_9.tick(windowID);
+        KEY_0.tick(windowID);
         //Punctuation mark keys
-        KEY_APOSTROPHE.tick(window);
-        KEY_COMMA.tick(window);
-        KEY_MINUS.tick(window);
-        KEY_PERIOD.tick(window);
-        KEY_SLASH.tick(window);
-        KEY_SEMICOLON.tick(window);
-        KEY_EQUAL.tick(window);
-        KEY_BRACKET_LEFT.tick(window);
-        KEY_BRACKET_RIGHT.tick(window);
-        KEY_BACKSLASH.tick(window);
+        KEY_APOSTROPHE.tick(windowID);
+        KEY_COMMA.tick(windowID);
+        KEY_MINUS.tick(windowID);
+        KEY_PERIOD.tick(windowID);
+        KEY_SLASH.tick(windowID);
+        KEY_SEMICOLON.tick(windowID);
+        KEY_EQUAL.tick(windowID);
+        KEY_BRACKET_LEFT.tick(windowID);
+        KEY_BRACKET_RIGHT.tick(windowID);
+        KEY_BACKSLASH.tick(windowID);
         //F keys
-        KEY_F1.tick(window);
-        KEY_F2.tick(window);
-        KEY_F3.tick(window);
-        KEY_F4.tick(window);
-        KEY_F5.tick(window);
-        KEY_F6.tick(window);
-        KEY_F7.tick(window);
-        KEY_F8.tick(window);
-        KEY_F9.tick(window);
-        KEY_F10.tick(window);
-        KEY_F11.tick(window);
-        KEY_F12.tick(window);
+        KEY_F1.tick(windowID);
+        KEY_F2.tick(windowID);
+        KEY_F3.tick(windowID);
+        KEY_F4.tick(windowID);
+        KEY_F5.tick(windowID);
+        KEY_F6.tick(windowID);
+        KEY_F7.tick(windowID);
+        KEY_F8.tick(windowID);
+        KEY_F9.tick(windowID);
+        KEY_F10.tick(windowID);
+        KEY_F11.tick(windowID);
+        KEY_F12.tick(windowID);
         //Arrow keys
-        KEY_UP.tick(window);
-        KEY_DOWN.tick(window);
-        KEY_LEFT.tick(window);
-        KEY_RIGHT.tick(window);
+        KEY_UP.tick(windowID);
+        KEY_DOWN.tick(windowID);
+        KEY_LEFT.tick(windowID);
+        KEY_RIGHT.tick(windowID);
         //Other keys
-        KEY_SPACE.tick(window);
-        KEY_ENTER.tick(window);
-        KEY_ESCAPE.tick(window);
-        KEY_TAB.tick(window);
-        KEY_CAPS_LOCK.tick(window);
-        KEY_SHIFT_LEFT.tick(window);
-        KEY_SHIFT_RIGHT.tick(window);
-        KEY_CONTROL_LEFT.tick(window);
-        KEY_CONTROL_RIGHT.tick(window);
-        KEY_ALT_LEFT.tick(window);
-        KEY_ALT_RIGHT.tick(window);
-        KEY_BACKSPACE.tick(window);
-        KEY_DELETE.tick(window);
-        KEY_INSERT.tick(window);
-        KEY_PAGE_UP.tick(window);
-        KEY_PAGE_DOWN.tick(window);
-        KEY_HOME.tick(window);
-        KEY_END.tick(window);
-        KEY_NUM_LOCK.tick(window);
-        KEY_SCROLL_LOCK.tick(window);
-        KEY_PRINT_SCREEN.tick(window);
-        KEY_PAUSE.tick(window);
+        KEY_SPACE.tick(windowID);
+        KEY_ENTER.tick(windowID);
+        KEY_ESCAPE.tick(windowID);
+        KEY_TAB.tick(windowID);
+        KEY_CAPS_LOCK.tick(windowID);
+        KEY_SHIFT_LEFT.tick(windowID);
+        KEY_SHIFT_RIGHT.tick(windowID);
+        KEY_CONTROL_LEFT.tick(windowID);
+        KEY_CONTROL_RIGHT.tick(windowID);
+        KEY_ALT_LEFT.tick(windowID);
+        KEY_ALT_RIGHT.tick(windowID);
+        KEY_BACKSPACE.tick(windowID);
+        KEY_DELETE.tick(windowID);
+        KEY_INSERT.tick(windowID);
+        KEY_PAGE_UP.tick(windowID);
+        KEY_PAGE_DOWN.tick(windowID);
+        KEY_HOME.tick(windowID);
+        KEY_END.tick(windowID);
+        KEY_NUM_LOCK.tick(windowID);
+        KEY_SCROLL_LOCK.tick(windowID);
+        KEY_PRINT_SCREEN.tick(windowID);
+        KEY_PAUSE.tick(windowID);
         //Keypad keys
-        KEY_KEYPAD_0.tick(window);
-        KEY_KEYPAD_1.tick(window);
-        KEY_KEYPAD_2.tick(window);
-        KEY_KEYPAD_3.tick(window);
-        KEY_KEYPAD_4.tick(window);
-        KEY_KEYPAD_5.tick(window);
-        KEY_KEYPAD_6.tick(window);
-        KEY_KEYPAD_7.tick(window);
-        KEY_KEYPAD_8.tick(window);
-        KEY_KEYPAD_9.tick(window);
-        KEY_KEYPAD_DECIMAL.tick(window);
-        KEY_KEYPAD_DIVIDE.tick(window);
-        KEY_KEYPAD_MULTIPLY.tick(window);
-        KEY_KEYPAD_SUBTRACT.tick(window);
-        KEY_KEYPAD_ADD.tick(window);
-        KEY_KEYPAD_ENTER.tick(window);
-        KEY_KEYPAD_EQUAL.tick(window);
+        KEY_KEYPAD_0.tick(windowID);
+        KEY_KEYPAD_1.tick(windowID);
+        KEY_KEYPAD_2.tick(windowID);
+        KEY_KEYPAD_3.tick(windowID);
+        KEY_KEYPAD_4.tick(windowID);
+        KEY_KEYPAD_5.tick(windowID);
+        KEY_KEYPAD_6.tick(windowID);
+        KEY_KEYPAD_7.tick(windowID);
+        KEY_KEYPAD_8.tick(windowID);
+        KEY_KEYPAD_9.tick(windowID);
+        KEY_KEYPAD_DECIMAL.tick(windowID);
+        KEY_KEYPAD_DIVIDE.tick(windowID);
+        KEY_KEYPAD_MULTIPLY.tick(windowID);
+        KEY_KEYPAD_SUBTRACT.tick(windowID);
+        KEY_KEYPAD_ADD.tick(windowID);
+        KEY_KEYPAD_ENTER.tick(windowID);
+        KEY_KEYPAD_EQUAL.tick(windowID);
     }
 }

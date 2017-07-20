@@ -11,7 +11,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import topaz.core.Display;
 
-public class Screenshot {
+public class ScreenshotUtil {
 
     public static final int BBP = 4;
 
@@ -59,7 +59,7 @@ public class Screenshot {
                     break;
             }
         } catch (IOException ex) {
-            Logger.getLogger(Screenshot.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ScreenshotUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

@@ -20,6 +20,7 @@ public class Display {
     private String title;
     private boolean visible = true;
     private int vSync = 1;
+    private int fps = 60;
 
     public Display(String title, int width, int height) {
         this.title = title;
@@ -59,6 +60,8 @@ public class Display {
         if (visible) {
             GLFW.glfwShowWindow(windowID);
         }
+
+        setCursorVisible(false);
     }
 
     public long getWindowID() {
@@ -101,27 +104,23 @@ public class Display {
     }
 
     public void setBackgroundColor(Color4f backgroundColor) {
-        setBackgroundColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
-    }
-
-    public void setBackgroundColor(float r, float g, float b, float a) {
-        GL11.glClearColor(r, g, b, a);
+        GL11.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     }
 
     public void setVisible(boolean visible) {
+        this.visible = visible;
         if (visible) {
             GLFW.glfwShowWindow(windowID);
         } else {
             GLFW.glfwShowWindow(0);
         }
-        this.visible = visible;
     }
 
     public boolean isVisible() {
         return visible;
     }
 
-    public void enableZBuffer(boolean toggle) {
+    public void setZBuffer(boolean toggle) {
         if (toggle) {
             GL11.glEnable(GL11.GL_DEPTH_TEST);
         } else {
@@ -129,7 +128,7 @@ public class Display {
         }
     }
 
-    public void enableMultisampling(boolean toggle) {
+    public void setMultisampling(boolean toggle) {
         if (toggle) {
             GL11.glEnable(GL13.GL_MULTISAMPLE);
         } else {
@@ -137,7 +136,7 @@ public class Display {
         }
     }
 
-    public void enableFaceCulling(boolean toggle) {
+    public void setFaceCulling(boolean toggle) {
         if (toggle) {
             GL11.glEnable(GL11.GL_CULL_FACE);
         } else {
@@ -172,15 +171,19 @@ public class Display {
         GLFW.glfwSetCursorPos(windowID, x, y);
     }
 
-    public void centerCursor() {
-        GLFW.glfwSetCursorPos(windowID, getWidth() / 2, getHeight() / 2);
-    }
-
-    public void makeCursorVisible(boolean isVisible) {
-        if (isVisible) {
+    public void setCursorVisible(boolean visible) {
+        if (visible) {
             GLFW.glfwSetInputMode(windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
         } else {
             GLFW.glfwSetInputMode(windowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
         }
+    }
+
+    public void setFPS(int fps) {
+        this.fps = fps;
+    }
+
+    public int getFPS() {
+        return fps;
     }
 }

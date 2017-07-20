@@ -2,7 +2,7 @@ package topaz.input;
 
 import org.lwjgl.glfw.GLFW;
 
-public class Clipboard {
+public class ClipboardUtil {
 
     public static String getClipboardText(long window) {
         return GLFW.glfwGetClipboardString(window);

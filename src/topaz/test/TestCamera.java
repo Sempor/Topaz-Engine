@@ -1,20 +1,20 @@
 package topaz.test;
 
 import topaz.core.CoreEngine;
-import topaz.core.CoreUser;
+import topaz.core.CoreApp;
 import topaz.rendering.GameObject;
 import topaz.rendering.objects.Box;
 import topaz.util.Color4f;
 
-public class TestCamera extends CoreUser {
+public class TestCamera extends CoreApp {
 
     private static int WIDTH = 1000, HEIGHT = 800;
     private float speed = 0.01f;
 
     public static void main(String[] args) {
         CoreEngine core = new CoreEngine(new TestCamera(), WIDTH, HEIGHT);
-        core.enablePrintVersionData(false);
-        core.enablePrintFramesPerSecond(false);
+        core.setPrintSoftwareInformation(false);
+        core.setPrintFPS(false);
         core.start();
     }
 

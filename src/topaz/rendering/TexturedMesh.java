@@ -2,6 +2,8 @@ package topaz.rendering;
 
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -9,7 +11,6 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import topaz.rendering.shaders.Shader;
-import topaz.rendering.shaders.ShaderBuilder;
 import topaz.rendering.shaders.ShaderProgram;
 
 public class TexturedMesh extends Mesh {
@@ -23,10 +24,15 @@ public class TexturedMesh extends Mesh {
         super(renderManager, vertices, indices);
 
         this.textureIDs = Arrays.copyOf(textureIDs, textureIDs.length);
-        
-        Shader vsTextureMesh = ShaderBuilder.createVertexShader("/topaz/assets/shaders/textureMesh.vs");
-        Shader fsTextureMesh = ShaderBuilder.createFragmentShader("/topaz/assets/shaders/textureMesh.fs");
-        shaderProgram = new ShaderProgram(vsTextureMesh, fsTextureMesh);
+
+        Shader vsTextureMesh, fsTextureMesh;
+        try {
+            vsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.vs", GL20.GL_VERTEX_SHADER);
+            fsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.fs", GL20.GL_FRAGMENT_SHADER);
+            shaderProgram = new ShaderProgram(vsTextureMesh, fsTextureMesh);
+        } catch (Exception ex) {
+            Logger.getLogger(TexturedMesh.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         //Stores the texture coordinates in a buffer
         FloatBuffer textureCoordsBuffer = BufferUtils.createFloatBuffer(textureCoords.length);

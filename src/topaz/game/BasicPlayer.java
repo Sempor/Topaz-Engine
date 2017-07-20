@@ -30,9 +30,9 @@ public class BasicPlayer {
         this.collisionObject.setCenter(camera.getLocation());
         this.collisionObject.setActive(true);
 
-        gravityAcceleration = -0.0005f;
-        jumpVelocity = 0.12f;
-        moveSpeed = 0.0008f;
+        gravityAcceleration = -0.00098f;
+        jumpVelocity = 0.1f;
+        moveSpeed = 0.002f;
 
         health = 10;
     }
@@ -81,7 +81,7 @@ public class BasicPlayer {
         CollisionObject collidingObject = collisionObject.checkForCollisions();
         if (collidingObject != null) {
             if (translation.x > 0) {
-                collisionObject.x = collidingObject.x - collidingObject.getWidth();
+                collisionObject.x = collidingObject.x - collisionObject.getWidth();
             } else {
                 collisionObject.x = collidingObject.x + collidingObject.getWidth();
             }
@@ -95,7 +95,7 @@ public class BasicPlayer {
         collidingObject = collisionObject.checkForCollisions();
         if (collidingObject != null) {
             if (translation.z > 0) {
-                collisionObject.z = collidingObject.z - collidingObject.getDepth();
+                collisionObject.z = collidingObject.z - collisionObject.getDepth();
             } else {
                 collisionObject.z = collidingObject.z + collidingObject.getDepth();
             }

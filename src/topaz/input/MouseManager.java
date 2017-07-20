@@ -5,9 +5,9 @@ import org.lwjgl.glfw.GLFW;
 public class MouseManager {
 
     public MouseButton BUTTON_LEFT, BUTTON_RIGHT, BUTTON_MIDDLE;
-
+    
+    private long windowID;
     private float mouseSpeed;
-
     private double scrollX, scrollY;
     private boolean scrollUp, scrollDown, scrollLeft, scrollRight;
 
@@ -53,6 +53,8 @@ public class MouseManager {
     }
 
     public MouseManager(long windowID) {
+        this.windowID = windowID;
+        
         mouseSpeed = 0.0001f;
 
         BUTTON_LEFT = new MouseButton(GLFW.GLFW_MOUSE_BUTTON_LEFT);
@@ -66,10 +68,10 @@ public class MouseManager {
         });
     }
 
-    public void tick(long window) {
-        BUTTON_LEFT.tick(window);
-        BUTTON_RIGHT.tick(window);
-        BUTTON_MIDDLE.tick(window);
+    public void tick() {
+        BUTTON_LEFT.tick(windowID);
+        BUTTON_RIGHT.tick(windowID);
+        BUTTON_MIDDLE.tick(windowID);
 
         if (scrollX > 0) {
             scrollRight = true;

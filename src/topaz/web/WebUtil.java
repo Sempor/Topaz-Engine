@@ -7,14 +7,14 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class WebBrowser {
+public class WebUtil {
     
-    public static void goToWebPage(String webpage) {
+    public static void openWebPage(String webpage) {
         if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().browse(new URI(webpage));
             } catch (IOException | URISyntaxException ex) {
-                Logger.getLogger(WebBrowser.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WebUtil.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

@@ -1,12 +1,13 @@
 package topaz.rendering;
 
 import java.nio.FloatBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import topaz.rendering.shaders.Shader;
-import topaz.rendering.shaders.ShaderBuilder;
 import topaz.rendering.shaders.ShaderProgram;
 
 public class ColoredMesh extends Mesh {
@@ -16,9 +17,14 @@ public class ColoredMesh extends Mesh {
     public ColoredMesh(RenderManager renderManager, float[] vertices, short[] indices, float[] colors) {
         super(renderManager, vertices, indices);
         
-        Shader vsColorMesh = ShaderBuilder.createVertexShader("/topaz/assets/shaders/colorMesh.vs");
-        Shader fsColorMesh = ShaderBuilder.createFragmentShader("/topaz/assets/shaders/colorMesh.fs");
-        shaderProgram = new ShaderProgram(vsColorMesh, fsColorMesh);
+        Shader vsColorMesh, fsColorMesh;
+        try {
+            vsColorMesh = new Shader("/topaz/assets/shaders/colorMesh.vs", GL20.GL_VERTEX_SHADER);
+            fsColorMesh = new Shader("/topaz/assets/shaders/colorMesh.fs", GL20.GL_FRAGMENT_SHADER);
+            shaderProgram = new ShaderProgram(vsColorMesh, fsColorMesh);
+        } catch (Exception ex) {
+            Logger.getLogger(ColoredMesh.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         //Stores the colors in a buffer
         FloatBuffer colorsBuffer = BufferUtils.createFloatBuffer(colors.length);

@@ -31,6 +31,8 @@ public class Camera {
         forward = new Vector3f(0, 0, 0);
         right = new Vector3f(0, 0, 0);
         up = new Vector3f(0, 1, 0);
+        
+        followingMouse = true;
     }
 
     public void tick(double delta) {
