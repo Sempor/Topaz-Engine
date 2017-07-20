@@ -2,7 +2,7 @@ package topaz.game;
 
 import org.joml.Vector3f;
 import topaz.input.KeyManager;
-import topaz.physics.PhysicalObject;
+import topaz.physics.PhysicsObject;
 import topaz.rendering.Camera;
 
 public class BasicPlayer {
@@ -10,7 +10,7 @@ public class BasicPlayer {
     private KeyManager keyManager;
     private Camera camera;
 
-    private PhysicalObject physicalObject;
+    private PhysicsObject physicalObject;
     private float jumpVelocity;
     private float moveSpeed;
 
@@ -18,7 +18,7 @@ public class BasicPlayer {
 
     private int health;
 
-    public BasicPlayer(KeyManager keyManager, Camera camera, PhysicalObject physicalObject) {
+    public BasicPlayer(KeyManager keyManager, Camera camera, PhysicsObject physicalObject) {
         this.keyManager = keyManager;
         this.camera = camera;
 

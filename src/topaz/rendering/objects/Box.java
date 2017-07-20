@@ -2,7 +2,7 @@ package topaz.rendering.objects;
 
 import org.joml.Vector3f;
 import topaz.assets.AssetLoader;
-import topaz.physics.PhysicalObject;
+import topaz.physics.PhysicsObject;
 import topaz.physics.collisions.AxisAlignedBoundingBox;
 import topaz.physics.PhysicsManager;
 import topaz.rendering.ColoredMesh;
@@ -59,7 +59,7 @@ public class Box {
         Mesh mesh = new ColoredMesh(renderManager, vertices, indices, colors);
         renderManager.add(mesh);
         AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
-        PhysicalObject physicalObject = new PhysicalObject(boundingBox, mass);
+        PhysicsObject physicalObject = new PhysicsObject(boundingBox, mass);
         physicsManager.add(physicalObject);
 
         gameObject = new GameObject(mesh, physicalObject);
@@ -88,7 +88,7 @@ public class Box {
         Mesh mesh = new TexturedMesh(renderManager, vertices, indices, textureCoords, textureIDs);
         renderManager.add(mesh);
         AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
-        PhysicalObject physicalObject = new PhysicalObject(boundingBox, mass);
+        PhysicsObject physicalObject = new PhysicsObject(boundingBox, mass);
         physicsManager.add(physicalObject);
 
         gameObject = new GameObject(mesh, physicalObject);

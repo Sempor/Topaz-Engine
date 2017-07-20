@@ -3,7 +3,7 @@ package topaz.physics;
 import topaz.physics.collisions.CollisionObject;
 import org.joml.Vector3f;
 
-public class PhysicalObject {
+public class PhysicsObject {
 
     private CollisionObject collisionObject;
     private Vector3f netForce;
@@ -15,7 +15,7 @@ public class PhysicalObject {
     
     private float timeDamper;
 
-    public PhysicalObject(CollisionObject collisionObject, float mass) {
+    public PhysicsObject(CollisionObject collisionObject, float mass) {
         this.collisionObject = collisionObject;
         this.mass = mass;
 

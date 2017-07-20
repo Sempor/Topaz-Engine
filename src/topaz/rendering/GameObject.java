@@ -2,17 +2,17 @@ package topaz.rendering;
 
 import java.util.ArrayList;
 import org.joml.Vector3f;
-import topaz.physics.PhysicalObject;
+import topaz.physics.PhysicsObject;
 import topaz.physics.PhysicsManager;
 
 public class GameObject {
 
     private Mesh mesh;
-    private PhysicalObject physicalObject;
+    private PhysicsObject physicalObject;
     private ArrayList<GameObject> children = new ArrayList<>();
 
     //Currently shallow copies, maybe make deep copy later
-    public GameObject(Mesh mesh, PhysicalObject physicalObject) {
+    public GameObject(Mesh mesh, PhysicsObject physicalObject) {
         this.mesh = mesh;
         this.physicalObject = physicalObject;
     }
@@ -147,11 +147,11 @@ public class GameObject {
         this.mesh = mesh;
     }
 
-    public PhysicalObject getPhysicalObject() {
+    public PhysicsObject getPhysicalObject() {
         return physicalObject;
     }
 
-    public void setPhysicalObject(PhysicalObject physicalObject) {
+    public void setPhysicalObject(PhysicsObject physicalObject) {
         this.physicalObject = physicalObject;
     }
 }

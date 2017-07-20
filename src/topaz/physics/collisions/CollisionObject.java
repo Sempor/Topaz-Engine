@@ -1,7 +1,7 @@
 package topaz.physics.collisions;
 
 import org.joml.Vector3f;
-import topaz.physics.PhysicalObject;
+import topaz.physics.PhysicsObject;
 import topaz.physics.PhysicsManager;
 
 public abstract class CollisionObject {
@@ -30,7 +30,7 @@ public abstract class CollisionObject {
     }
 
     public CollisionObject getCollidingObject() {
-        for (PhysicalObject physicalObject : physicsManager.getPhysicalObjects()) {
+        for (PhysicsObject physicalObject : physicsManager.getPhysicalObjects()) {
             CollisionObject collisionObject = physicalObject.getCollisionObject();
             if (collisionObject.equals(this)) {
                 continue;

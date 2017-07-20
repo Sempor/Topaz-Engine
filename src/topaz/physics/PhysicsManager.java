@@ -4,27 +4,27 @@ import java.util.ArrayList;
 
 public class PhysicsManager {
 
-    private ArrayList<PhysicalObject> physicalObjects = new ArrayList<>();
+    private ArrayList<PhysicsObject> physicalObjects = new ArrayList<>();
 
     public void tick(double delta) {
-        for (PhysicalObject p : physicalObjects) {
+        for (PhysicsObject p : physicalObjects) {
             p.tick(delta);
         }
     }
 
-    public void add(PhysicalObject physicalObject) {
+    public void add(PhysicsObject physicalObject) {
         physicalObjects.add(physicalObject);
     }
 
-    public void remove(PhysicalObject physicalObject) {
+    public void remove(PhysicsObject physicalObject) {
         physicalObjects.remove(physicalObject);
     }
 
-    public ArrayList<PhysicalObject> getPhysicalObjects() {
+    public ArrayList<PhysicsObject> getPhysicalObjects() {
         return physicalObjects;
     }
 
-    public void setPhysicalObjects(ArrayList<PhysicalObject> physicalObjects) {
+    public void setPhysicalObjects(ArrayList<PhysicsObject> physicalObjects) {
         this.physicalObjects = physicalObjects;
     }
 }
