@@ -1,11 +1,15 @@
 package topaz.physics.collisions;
 
+import java.util.ArrayList;
 import org.joml.Vector3f;
 import topaz.physics.PhysicsObject;
 import topaz.physics.PhysicsManager;
+import topaz.rendering.GameObject;
+import topaz.rendering.ObjectManager;
 
 public abstract class CollisionObject {
 
+    protected ObjectManager objectManager;
     protected PhysicsManager physicsManager;
 
     public float x = 0f, y = 0f, z = 0f; //Default values
@@ -13,20 +17,21 @@ public abstract class CollisionObject {
 
     protected boolean active;
 
-    public CollisionObject(PhysicsManager physicsManager) {
+    public CollisionObject(PhysicsManager physicsManager, ObjectManager objectManager) {
         this.physicsManager = physicsManager;
+        this.objectManager = objectManager;
     }
 
-    public CollisionObject(PhysicsManager physicsManager, float x, float y, float z) {
-        this(physicsManager);
+    public CollisionObject(PhysicsManager physicsManager, ObjectManager objectManager, float x, float y, float z) {
+        this(physicsManager, objectManager);
 
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public CollisionObject(PhysicsManager physicsManager, Vector3f location) {
-        this(physicsManager, location.x, location.y, location.z);
+    public CollisionObject(PhysicsManager physicsManager, ObjectManager objectManager, Vector3f location) {
+        this(physicsManager, objectManager, location.x, location.y, location.z);
     }
 
     public CollisionObject getCollidingObject() {
@@ -76,47 +81,72 @@ public abstract class CollisionObject {
         return new Vector3f(x + getWidth() / 2f, y + getHeight() / 2f, z + getDepth() / 2f);
     }
 
+    //Need to replace this with a shape cast
     //Returns true if there is a collision, false if not
     public boolean translatePhysicallyX(float dx) {
-        x += dx;
-        CollisionObject collidingObject = getCollidingObject();
-        if (collidingObject != null) {
+        Raycast raycast;
+        if (dx >= 0) {
+            raycast = new Raycast(getCenter(), getCenter().add(dx + getWidth() / 2f, 0, 0));
+        } else {
+            raycast = new Raycast(getCenter(), getCenter().add(dx - getWidth() / 2f, 0, 0));
+        }
+        ArrayList<GameObject> closestIntersectingObjects = raycast.getClosestIntersectingObjects(objectManager, 0.01f, this);
+        if (closestIntersectingObjects != null) {
+            CollisionObject collidingObject = closestIntersectingObjects.get(0).getPhysicalObject().getCollisionObject();
             if (dx > 0) {
                 x = collidingObject.x - getWidth();
             } else if (dx < 0) {
                 x = collidingObject.x + collidingObject.getWidth();
             }
             return true;
+        } else {
+            x += dx;
+            return false;
         }
-        return false;
     }
 
     public boolean translatePhysicallyY(float dy) {
-        y += dy;
-        CollisionObject collidingObject = getCollidingObject();
-        if (collidingObject != null) {
+        Raycast raycast;
+        if (dy >= 0) {
+            raycast = new Raycast(getCenter(), getCenter().add(0, dy + getHeight() / 2f, 0));
+        } else {
+            raycast = new Raycast(getCenter(), getCenter().add(0, dy - getHeight() / 2f, 0));
+        }
+        ArrayList<GameObject> closestIntersectingObjects = raycast.getClosestIntersectingObjects(objectManager, 0.01f, this);
+        if (closestIntersectingObjects != null) {
+            CollisionObject collidingObject = closestIntersectingObjects.get(0).getPhysicalObject().getCollisionObject();
             if (dy > 0) {
                 y = collidingObject.y - getHeight();
             } else if (dy < 0) {
                 y = collidingObject.y + collidingObject.getHeight();
             }
             return true;
+        } else {
+            y += dy;
+            return false;
         }
-        return false;
     }
 
     public boolean translatePhysicallyZ(float dz) {
-        z += dz;
-        CollisionObject collidingObject = getCollidingObject();
-        if (collidingObject != null) {
+        Raycast raycast;
+        if (dz >= 0) {
+            raycast = new Raycast(getCenter(), getCenter().add(0, 0, dz + getDepth() / 2f));
+        } else {
+            raycast = new Raycast(getCenter(), getCenter().add(0, 0, dz - getDepth() / 2f));
+        }
+        ArrayList<GameObject> closestIntersectingObjects = raycast.getClosestIntersectingObjects(objectManager, 0.01f, this);
+        if (closestIntersectingObjects != null) {
+            CollisionObject collidingObject = closestIntersectingObjects.get(0).getPhysicalObject().getCollisionObject();
             if (dz > 0) {
                 z = collidingObject.z - getDepth();
             } else if (dz < 0) {
                 z = collidingObject.z + collidingObject.getDepth();
             }
             return true;
+        } else {
+            z += dz;
+            return false;
         }
-        return false;
     }
 
     public void translate(float dx, float dy, float dz) {

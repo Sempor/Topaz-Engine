@@ -55,7 +55,7 @@ public class MouseManager {
     public MouseManager(long windowID) {
         this.windowID = windowID;
         
-        mouseSpeed = 0.0001f;
+        mouseSpeed = 0.00002f;
 
         BUTTON_LEFT = new MouseButton(GLFW.GLFW_MOUSE_BUTTON_LEFT);
         BUTTON_RIGHT = new MouseButton(GLFW.GLFW_MOUSE_BUTTON_RIGHT);

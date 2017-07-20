@@ -8,6 +8,7 @@ import topaz.physics.PhysicsManager;
 import topaz.rendering.ColoredMesh;
 import topaz.rendering.GameObject;
 import topaz.rendering.Mesh;
+import topaz.rendering.ObjectManager;
 import topaz.rendering.RenderManager;
 import topaz.rendering.TexturedMesh;
 import topaz.util.Color4f;
@@ -38,11 +39,11 @@ public class Box {
         6, 7, 3
     };
 
-    public Box(RenderManager renderManager, PhysicsManager physicsManager, float width, float height, float depth, Color4f color) {
-        this(renderManager, physicsManager, 0, 0, 0, width, height, depth, color);
+    public Box(RenderManager renderManager, PhysicsManager physicsManager, ObjectManager objectManager, float width, float height, float depth, Color4f color) {
+        this(renderManager, physicsManager, objectManager, 0, 0, 0, width, height, depth, color);
     }
 
-    public Box(RenderManager renderManager, PhysicsManager physicsManager, float x, float y, float z, float width, float height, float depth, Color4f color) {
+    public Box(RenderManager renderManager, PhysicsManager physicsManager, ObjectManager objectManager, float x, float y, float z, float width, float height, float depth, Color4f color) {
         float[] vertices = getVertices(x, y, z, width, height, depth);
 
         float[] colors = new float[]{
@@ -58,18 +59,18 @@ public class Box {
 
         Mesh mesh = new ColoredMesh(renderManager, vertices, indices, colors);
         renderManager.add(mesh);
-        AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
+        AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, objectManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
         PhysicsObject physicalObject = new PhysicsObject(boundingBox, mass);
         physicsManager.add(physicalObject);
 
         gameObject = new GameObject(mesh, physicalObject);
     }
 
-    public Box(RenderManager renderManager, PhysicsManager physicsManager, float width, float height, float depth, String... textureFilePaths) {
-        this(renderManager, physicsManager, 0, 0, 0, width, height, depth, textureFilePaths);
+    public Box(RenderManager renderManager, PhysicsManager physicsManager, ObjectManager objectManager, float width, float height, float depth, String... textureFilePaths) {
+        this(renderManager, physicsManager, objectManager, 0, 0, 0, width, height, depth, textureFilePaths);
     }
 
-    public Box(RenderManager renderManager, PhysicsManager physicsManager, float x, float y, float z, float width, float height, float depth, String... textureFilePaths) {
+    public Box(RenderManager renderManager, PhysicsManager physicsManager, ObjectManager objectManager, float x, float y, float z, float width, float height, float depth, String... textureFilePaths) {
         int[] textureIDs = new int[textureFilePaths.length];
 
         for (int i = 0; i < textureFilePaths.length; i++) {
@@ -87,7 +88,7 @@ public class Box {
 
         Mesh mesh = new TexturedMesh(renderManager, vertices, indices, textureCoords, textureIDs);
         renderManager.add(mesh);
-        AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
+        AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, objectManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
         PhysicsObject physicalObject = new PhysicsObject(boundingBox, mass);
         physicsManager.add(physicalObject);
 

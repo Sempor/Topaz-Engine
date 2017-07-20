@@ -15,7 +15,7 @@ public class Raycast {
         this.endPoint = new Vector3f(endPoint);
     }
 
-    public ArrayList<GameObject> getClosestIntersectingObjects(ObjectManager objectManager, float step) {
+    public ArrayList<GameObject> getClosestIntersectingObjects(ObjectManager objectManager, float step, CollisionObject... excludedCollisionObjects) {
         ArrayList<GameObject> closestIntersectingObjects = new ArrayList<>();
         Vector3f deltaVector = new Vector3f(endPoint).sub(startPoint);
         boolean closestObjectsFound = false;
@@ -24,8 +24,15 @@ public class Raycast {
         while (i <= 1f) {
             Vector3f point = new Vector3f(startPoint).add(new Vector3f(deltaVector).mul(i));
 
+            objectIterator:
             for (int j = 0; j < objectManager.getGameObjects().size(); j++) {
-                if (objectManager.getGameObjects().get(j).getPhysicalObject().getCollisionObject().containsPoint(point)) {
+                CollisionObject collisionObject = objectManager.getGameObjects().get(j).getPhysicalObject().getCollisionObject();
+                for (CollisionObject c : excludedCollisionObjects) {
+                    if (c.equals(collisionObject)) {
+                        continue objectIterator;
+                    }
+                }
+                if (collisionObject.containsPoint(point)) {
                     closestIntersectingObjects.add(objectManager.getGameObjects().get(j));
                     closestObjectsFound = true;
                 }
@@ -34,7 +41,7 @@ public class Raycast {
             if (closestObjectsFound) {
                 return closestIntersectingObjects;
             }
-            
+
             i += step;
         }
         return null;

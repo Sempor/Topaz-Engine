@@ -2,29 +2,30 @@ package topaz.physics.collisions;
 
 import org.joml.Vector3f;
 import topaz.physics.PhysicsManager;
+import topaz.rendering.ObjectManager;
 import topaz.util.Interval;
 
 public class AxisAlignedBoundingBox extends CollisionObject {
 
     public float width, height, depth;
 
-    public AxisAlignedBoundingBox(PhysicsManager physicsManager, float width, float height, float depth) {
-        this(physicsManager, new Vector3f(width, height, depth));
+    public AxisAlignedBoundingBox(PhysicsManager physicsManager, ObjectManager objectManager, float width, float height, float depth) {
+        this(physicsManager, objectManager, new Vector3f(width, height, depth));
     }
 
-    public AxisAlignedBoundingBox(PhysicsManager physicsManager, Vector3f dimensions) {
-        super(physicsManager);
+    public AxisAlignedBoundingBox(PhysicsManager physicsManager, ObjectManager objectManager, Vector3f dimensions) {
+        super(physicsManager, objectManager);
         width = dimensions.x;
         height = dimensions.y;
         depth = dimensions.z;
     }
 
-    public AxisAlignedBoundingBox(PhysicsManager physicsManager, float x, float y, float z, float width, float height, float depth) {
-        this(physicsManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
+    public AxisAlignedBoundingBox(PhysicsManager physicsManager, ObjectManager objectManager, float x, float y, float z, float width, float height, float depth) {
+        this(physicsManager, objectManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
     }
 
-    public AxisAlignedBoundingBox(PhysicsManager physicsManager, Vector3f location, Vector3f dimensions) {
-        super(physicsManager, location);
+    public AxisAlignedBoundingBox(PhysicsManager physicsManager, ObjectManager objectManager, Vector3f location, Vector3f dimensions) {
+        super(physicsManager, objectManager, location);
         width = dimensions.x;
         height = dimensions.y;
         depth = dimensions.z;

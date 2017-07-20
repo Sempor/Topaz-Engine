@@ -52,7 +52,7 @@ public class CoreEngine implements Runnable {
     public void run() {
         init();
 
-        double nsPerTick = 1000000000D / coreApp.display.getFPS();
+        double nsPerTick = 1_000_000_000D / coreApp.display.getFPS();
         double delta = 0;
         long now;
         long lastTime = System.nanoTime();
@@ -93,7 +93,7 @@ public class CoreEngine implements Runnable {
 
     private void init() {
         coreApp.display = new Display(title, width, height);
-        
+
         GL.createCapabilities();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL13.GL_MULTISAMPLE);
@@ -107,12 +107,12 @@ public class CoreEngine implements Runnable {
         }
 
         coreApp.display.setBackgroundColor(Color4f.BLACK);
-        
+
         coreApp.keyManager = new KeyManager(coreApp.display.getWindowID());
         coreApp.mouseManager = new MouseManager(coreApp.display.getWindowID());
         coreApp.camera = new Camera(coreApp.display, coreApp.mouseManager);
         coreApp.renderManager = new RenderManager(coreApp.display, coreApp.mouseManager, coreApp.camera);
-        coreApp.physicsManager = new PhysicsManager();
+        coreApp.physicsManager = new PhysicsManager(coreApp.display);
         coreApp.objectManager = new ObjectManager();
         coreApp.uiManager = new UIManager(coreApp.display);
 

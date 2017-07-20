@@ -13,6 +13,7 @@ public class BasicPlayer {
     private PhysicsObject physicalObject;
     private float jumpVelocity;
     private float moveSpeed;
+    private Vector3f addedLinearVelocity;
 
     private boolean useDefaultInput = true;
 
@@ -25,48 +26,50 @@ public class BasicPlayer {
         this.physicalObject = physicalObject;
         this.physicalObject.getCollisionObject().setCenter(camera.getLocation());
         this.physicalObject.getCollisionObject().setActive(true);
+        this.physicalObject.setAccelerationFromGravity(-0.0008f);
         this.physicalObject.setGravityEnabled(true);
 
-        jumpVelocity = 0.03f;
-        moveSpeed = 0.002f;
+        addedLinearVelocity = new Vector3f(0, 0, 0);
+        jumpVelocity = 0.025f;
+        moveSpeed = 0.009f;
 
         health = 10;
     }
 
     public void tick(double delta) {
         if (useDefaultInput) {
+            physicalObject.addLinearVelocity(new Vector3f(addedLinearVelocity).negate());
+            addedLinearVelocity = new Vector3f(0, 0, 0);
+
             if (keyManager.KEY_W.isPressed()) {
-                move(camera.getForward().mul((float) delta).mul(moveSpeed));
+                move(camera.getForward().mul(moveSpeed));
             } else if (keyManager.KEY_S.isPressed()) {
-                move(camera.getBackward().mul((float) delta).mul(moveSpeed));
+                move(camera.getBackward().mul(moveSpeed));
             }
             if (keyManager.KEY_A.isPressed()) {
-                move(camera.getLeft().mul((float) delta).mul(moveSpeed));
+                move(camera.getLeft().mul(moveSpeed));
             } else if (keyManager.KEY_D.isPressed()) {
-                move(camera.getRight().mul((float) delta).mul(moveSpeed));
+                move(camera.getRight().mul(moveSpeed));
             }
             if (keyManager.KEY_SPACE.isPressed()) {
                 jump();
             }
+
+            physicalObject.addLinearVelocity(addedLinearVelocity);
         }
 
         camera.setLocation(physicalObject.getCollisionObject().getCenter());
     }
 
-    public void move(float dx, float dy, float dz) {
-        move(new Vector3f(dx, dy, dz));
-    }
-
     public void move(Vector3f translation) {
-        physicalObject.getCollisionObject().translatePhysicallyX(translation.x);
-        physicalObject.getCollisionObject().translatePhysicallyZ(translation.z);
+        addedLinearVelocity.add(new Vector3f(translation.x, 0, translation.z));
     }
 
     public void jump() {
-        if (physicalObject.getVelocity().y != 0) {
+        if (physicalObject.getLinearVelocity().y != 0) {
             return;
         }
-        physicalObject.setVelocity(new Vector3f(0, jumpVelocity, 0));
+        physicalObject.getLinearVelocity().y = jumpVelocity;
     }
 
     public void enableDefaultInput(boolean toggle) {

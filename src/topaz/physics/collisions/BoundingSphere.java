@@ -2,22 +2,23 @@ package topaz.physics.collisions;
 
 import org.joml.Vector3f;
 import topaz.physics.PhysicsManager;
+import topaz.rendering.ObjectManager;
 
 public class BoundingSphere extends CollisionObject {
 
     public float radius;
 
-    public BoundingSphere(PhysicsManager physicsManager, float radius) {
-        super(physicsManager);
+    public BoundingSphere(PhysicsManager physicsManager, ObjectManager objectManager, float radius) {
+        super(physicsManager, objectManager);
         this.radius = radius;
     }
 
-    public BoundingSphere(PhysicsManager physicsManager, float x, float y, float z, float radius) {
-        this(physicsManager, new Vector3f(x, y, z), radius);
+    public BoundingSphere(PhysicsManager physicsManager, ObjectManager objectManager, float x, float y, float z, float radius) {
+        this(physicsManager, objectManager, new Vector3f(x, y, z), radius);
     }
 
-    public BoundingSphere(PhysicsManager physicsManager, Vector3f location, float radius) {
-        super(physicsManager, location);
+    public BoundingSphere(PhysicsManager physicsManager, ObjectManager objectManager, Vector3f location, float radius) {
+        super(physicsManager, objectManager, location);
         this.radius = radius;
     }
 
