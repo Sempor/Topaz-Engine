@@ -1,24 +1,13 @@
 package topaz.rendering.objects;
 
-import org.joml.Vector3f;
-import topaz.assets.AssetLoader;
-import topaz.physics.PhysicsObject;
-import topaz.physics.collisions.AxisAlignedBoundingBox;
-import topaz.physics.PhysicsManager;
-import topaz.rendering.ColoredMesh;
 import topaz.rendering.GameObject;
-import topaz.rendering.Mesh;
-import topaz.rendering.ObjectManager;
-import topaz.rendering.RenderManager;
-import topaz.rendering.TexturedMesh;
-import topaz.util.Color4f;
 
-public class Box {
+public abstract class Box {
 
-    private GameObject gameObject;
-    private float mass = 1f;
+    protected GameObject gameObject;
+    protected float mass = 1f;
 
-    private short[] indices = new short[]{
+    protected short[] indices = new short[]{
         // front
         0, 1, 2,
         2, 3, 0,
@@ -39,63 +28,7 @@ public class Box {
         6, 7, 3
     };
 
-    public Box(RenderManager renderManager, PhysicsManager physicsManager, ObjectManager objectManager, float width, float height, float depth, Color4f color) {
-        this(renderManager, physicsManager, objectManager, 0, 0, 0, width, height, depth, color);
-    }
-
-    public Box(RenderManager renderManager, PhysicsManager physicsManager, ObjectManager objectManager, float x, float y, float z, float width, float height, float depth, Color4f color) {
-        float[] vertices = getVertices(x, y, z, width, height, depth);
-
-        float[] colors = new float[]{
-            color.r, color.g, color.b, color.a,
-            color.r, color.g, color.b, color.a,
-            color.r, color.g, color.b, color.a,
-            color.r, color.g, color.b, color.a,
-            color.r, color.g, color.b, color.a,
-            color.r, color.g, color.b, color.a,
-            color.r, color.g, color.b, color.a,
-            color.r, color.g, color.b, color.a
-        };
-
-        Mesh mesh = new ColoredMesh(renderManager, vertices, indices, colors);
-        renderManager.add(mesh);
-        AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, objectManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
-        PhysicsObject physicalObject = new PhysicsObject(boundingBox, mass);
-        physicsManager.add(physicalObject);
-
-        gameObject = new GameObject(mesh, physicalObject);
-    }
-
-    public Box(RenderManager renderManager, PhysicsManager physicsManager, ObjectManager objectManager, float width, float height, float depth, String... textureFilePaths) {
-        this(renderManager, physicsManager, objectManager, 0, 0, 0, width, height, depth, textureFilePaths);
-    }
-
-    public Box(RenderManager renderManager, PhysicsManager physicsManager, ObjectManager objectManager, float x, float y, float z, float width, float height, float depth, String... textureFilePaths) {
-        int[] textureIDs = new int[textureFilePaths.length];
-
-        for (int i = 0; i < textureFilePaths.length; i++) {
-            textureIDs[i] = AssetLoader.loadPNGTexture(textureFilePaths[i]);
-        }
-
-        float[] vertices = getVertices(x, y, z, width, height, depth);
-
-        float[] textureCoords = new float[]{
-            0, 0, //first vertex
-            0, 1, //second vertex
-            1, 1, //third vertex
-            1, 0 //fourth vertex
-        };
-
-        Mesh mesh = new TexturedMesh(renderManager, vertices, indices, textureCoords, textureIDs);
-        renderManager.add(mesh);
-        AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(physicsManager, objectManager, new Vector3f(x, y, z), new Vector3f(width, height, depth));
-        PhysicsObject physicalObject = new PhysicsObject(boundingBox, mass);
-        physicsManager.add(physicalObject);
-
-        gameObject = new GameObject(mesh, physicalObject);
-    }
-
-    private float[] getVertices(float x, float y, float z, float width, float height, float depth) {
+    protected float[] getVertices(float x, float y, float z, float width, float height, float depth) {
         return new float[]{
             x, y, z + depth, //Bottom left, front
             x + width, y, z + depth, //Bottom right, front

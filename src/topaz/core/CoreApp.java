@@ -19,7 +19,7 @@ public abstract class CoreApp {
     public KeyManager keyManager;
     public MouseManager mouseManager;
 
-    private boolean paused = false;
+    private boolean paused;
     
     public abstract void init();
 

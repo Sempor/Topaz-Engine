@@ -158,11 +158,11 @@ public class CoreEngine implements Runnable {
         }
     }
 
-    public void setPrintFPS(boolean toggle) {
-        this.printFPS = toggle;
+    public void setPrintFPS(boolean enabled) {
+        this.printFPS = enabled;
     }
 
-    public void setPrintSoftwareInformation(boolean toggle) {
-        this.printSoftwareInformation = toggle;
+    public void setPrintSoftwareInformation(boolean enabled) {
+        this.printSoftwareInformation = enabled;
     }
 }

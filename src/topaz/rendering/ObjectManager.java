@@ -7,10 +7,16 @@ public class ObjectManager {
     private ArrayList<GameObject> gameObjects = new ArrayList<>();
 
     public void add(GameObject gameObject) {
+        if (gameObject == null) {
+            return;
+        }
         gameObjects.add(gameObject);
     }
 
     public void remove(GameObject gameObject) {
+        if (gameObject == null) {
+            return;
+        }
         gameObjects.remove(gameObject);
     }
 

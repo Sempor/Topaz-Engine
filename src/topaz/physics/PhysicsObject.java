@@ -34,15 +34,15 @@ public class PhysicsObject {
             linearVelocity.add(dv);
 
             //Updates position - adjusts for collisions
-            boolean collision = collisionObject.translatePhysicallyX(linearVelocity.x * (float) elapsedSeconds);
+            boolean collision = collisionObject.translateX(linearVelocity.x * (float) elapsedSeconds);
             if (collision) {
                 linearVelocity.x = 0;
             }
-            collision = collisionObject.translatePhysicallyY(linearVelocity.y * (float) elapsedSeconds);
+            collision = collisionObject.translateY(linearVelocity.y * (float) elapsedSeconds);
             if (collision) {
                 linearVelocity.y = 0;
             }
-            collision = collisionObject.translatePhysicallyZ(linearVelocity.z * (float) elapsedSeconds);
+            collision = collisionObject.translateZ(linearVelocity.z * (float) elapsedSeconds);
             if (collision) {
                 linearVelocity.z = 0;
             }
@@ -104,6 +104,16 @@ public class PhysicsObject {
 
     public void setLocation(Vector3f location) {
         collisionObject.setLocation(location);
+        sleeping = false;
+    }
+
+    public Vector3f getScale() {
+        sleeping = false;
+        return collisionObject.getScale();
+    }
+
+    public void setScale(Vector3f scale) {
+        collisionObject.setScale(scale);
         sleeping = false;
     }
 

@@ -7,7 +7,7 @@ public class PhysicsManager {
 
     private Display display;
 
-    private ArrayList<PhysicsObject> physicalObjects = new ArrayList<>();
+    private ArrayList<PhysicsObject> physicsObjects = new ArrayList<>();
 
     public PhysicsManager(Display display) {
         this.display = display;
@@ -15,24 +15,30 @@ public class PhysicsManager {
 
     public void tick(double delta) {
         double elapsedSeconds = delta / (double) display.getFPS();
-        for (PhysicsObject p : physicalObjects) {
+        for (PhysicsObject p : physicsObjects) {
             p.tick(elapsedSeconds);
         }
     }
 
-    public void add(PhysicsObject physicalObject) {
-        physicalObjects.add(physicalObject);
+    public void add(PhysicsObject physicsObject) {
+        if (physicsObject == null) {
+            return;
+        }
+        physicsObjects.add(physicsObject);
     }
 
-    public void remove(PhysicsObject physicalObject) {
-        physicalObjects.remove(physicalObject);
+    public void remove(PhysicsObject physicsObject) {
+        if (physicsObject == null) {
+            return;
+        }
+        physicsObjects.remove(physicsObject);
     }
 
-    public ArrayList<PhysicsObject> getPhysicalObjects() {
-        return physicalObjects;
+    public ArrayList<PhysicsObject> getPhysicsObjects() {
+        return physicsObjects;
     }
 
-    public void setPhysicalObjects(ArrayList<PhysicsObject> physicalObjects) {
-        this.physicalObjects = physicalObjects;
+    public void setPhysicsObjects(ArrayList<PhysicsObject> physicsObjects) {
+        this.physicsObjects = physicsObjects;
     }
 }

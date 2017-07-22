@@ -25,9 +25,6 @@ public class Camera {
         this.display = display;
         this.mouseManager = mouseManager;
 
-        x = 0;
-        y = 0;
-        z = -2;
         forward = new Vector3f(0, 0, 0);
         right = new Vector3f(0, 0, 0);
         up = new Vector3f(0, 1, 0);

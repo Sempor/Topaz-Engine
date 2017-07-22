@@ -26,7 +26,7 @@ public class Raycast {
 
             objectIterator:
             for (int j = 0; j < objectManager.getGameObjects().size(); j++) {
-                CollisionObject collisionObject = objectManager.getGameObjects().get(j).getPhysicalObject().getCollisionObject();
+                CollisionObject collisionObject = objectManager.getGameObjects().get(j).getPhysicsObject().getCollisionObject();
                 for (CollisionObject c : excludedCollisionObjects) {
                     if (c.equals(collisionObject)) {
                         continue objectIterator;

@@ -25,10 +25,9 @@ public class TexturedMesh extends Mesh {
 
         this.textureIDs = Arrays.copyOf(textureIDs, textureIDs.length);
 
-        Shader vsTextureMesh, fsTextureMesh;
         try {
-            vsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.vs", GL20.GL_VERTEX_SHADER);
-            fsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.fs", GL20.GL_FRAGMENT_SHADER);
+            Shader vsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.vs", GL20.GL_VERTEX_SHADER);
+            Shader fsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.fs", GL20.GL_FRAGMENT_SHADER);
             shaderProgram = new ShaderProgram(vsTextureMesh, fsTextureMesh);
         } catch (Exception ex) {
             Logger.getLogger(TexturedMesh.class.getName()).log(Level.SEVERE, null, ex);

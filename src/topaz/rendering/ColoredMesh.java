@@ -17,10 +17,9 @@ public class ColoredMesh extends Mesh {
     public ColoredMesh(RenderManager renderManager, float[] vertices, short[] indices, float[] colors) {
         super(renderManager, vertices, indices);
         
-        Shader vsColorMesh, fsColorMesh;
         try {
-            vsColorMesh = new Shader("/topaz/assets/shaders/colorMesh.vs", GL20.GL_VERTEX_SHADER);
-            fsColorMesh = new Shader("/topaz/assets/shaders/colorMesh.fs", GL20.GL_FRAGMENT_SHADER);
+            Shader vsColorMesh = new Shader("/topaz/assets/shaders/colorMesh.vs", GL20.GL_VERTEX_SHADER);
+            Shader fsColorMesh = new Shader("/topaz/assets/shaders/colorMesh.fs", GL20.GL_FRAGMENT_SHADER);
             shaderProgram = new ShaderProgram(vsColorMesh, fsColorMesh);
         } catch (Exception ex) {
             Logger.getLogger(ColoredMesh.class.getName()).log(Level.SEVERE, null, ex);

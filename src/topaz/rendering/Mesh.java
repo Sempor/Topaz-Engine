@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import topaz.rendering.shaders.ShaderProgram;
 
-public class Mesh {
+public abstract class Mesh {
 
     private RenderManager renderManager;
 
@@ -25,16 +25,16 @@ public class Mesh {
 
     protected ShaderProgram shaderProgram;
 
-    private Vector3f location = new Vector3f(0, 0, 0);
-    private Vector3f rotation = new Vector3f(0, 0, 0);
-    private Vector3f scale = new Vector3f(1, 1, 1);
+    private float x, y, z;
+    private float rotateX, rotateY, rotateZ;
+    private float scaleX = 1f, scaleY = 1f, scaleZ = 1f;
 
     protected boolean visible;
 
     public Mesh(RenderManager renderManager, float[] vertices, short[] indices) {
         this.renderManager = renderManager;
-        numIndices = indices.length;
 
+        numIndices = indices.length;
         matrix44Buffer = BufferUtils.createFloatBuffer(16);
 
         //Creates a vertex array object
@@ -70,11 +70,11 @@ public class Mesh {
     public void tick(Matrix4f viewProjectionMatrix, double delta) {
         Matrix4f modelMatrix = new Matrix4f();
 
-        modelMatrix.scale(scale);
-        modelMatrix.translate(location);
-        modelMatrix.rotate((float) Math.toRadians(rotation.z), new Vector3f(0, 0, 1));
-        modelMatrix.rotate((float) Math.toRadians(rotation.y), new Vector3f(0, 1, 0));
-        modelMatrix.rotate((float) Math.toRadians(rotation.x), new Vector3f(1, 0, 0));
+        modelMatrix.scale(scaleX, scaleY, scaleZ);
+        modelMatrix.translate(x, y, z);
+        modelMatrix.rotate((float) Math.toRadians(rotateZ), 0, 0, 1);
+        modelMatrix.rotate((float) Math.toRadians(rotateY), 0, 1, 0);
+        modelMatrix.rotate((float) Math.toRadians(rotateX), 1, 0, 0);
 
         Matrix4f modelViewProjectionMatrix = new Matrix4f(viewProjectionMatrix).mul(modelMatrix);
 
@@ -126,63 +126,75 @@ public class Mesh {
     }
 
     public void translate(Vector3f translation) {
-        location.x += translation.x;
-        location.y += translation.y;
-        location.z += translation.z;
+        translate(translation.x, translation.y, translation.z);
     }
 
     public void translate(float dx, float dy, float dz) {
-        translate(new Vector3f(dx, dy, dz));
+        x += dx;
+        y += dy;
+        z += dz;
     }
 
     public void rotate(Vector3f rotation) {
-        this.rotation.x += rotation.x;
-        this.rotation.y += rotation.y;
-        this.rotation.z += rotation.z;
+        rotate(rotation.x, rotation.y, rotation.z);
     }
 
     public void rotate(float dx, float dy, float dz) {
-        rotate(new Vector3f(dx, dy, dz));
+        rotateX += dx;
+        rotateY += dy;
+        rotateZ += dz;
     }
 
     public void scale(Vector3f scale) {
-        this.scale.x += scale.x;
-        this.scale.y += scale.y;
-        this.scale.z += scale.z;
+        scale(scale.x, scale.y, scale.z);
     }
 
     public void scale(float dx, float dy, float dz) {
-        scale(new Vector3f(dx, dy, dz));
+        scaleX += dx;
+        scaleY += dy;
+        scaleZ += dz;
     }
 
     public Vector3f getLocation() {
-        return location;
+        return new Vector3f(x, y, z);
     }
 
     public void setLocation(float x, float y, float z) {
-        location.x = x;
-        location.y = y;
-        location.z = z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public void setLocation(Vector3f location) {
+        setLocation(location.x, location.y, location.z);
     }
 
     public Vector3f getRotation() {
-        return rotation;
+        return new Vector3f(rotateX, rotateY, rotateZ);
     }
 
-    public void setRotation(float x, float y, float z) {
-        rotation.x = x;
-        rotation.y = y;
-        rotation.z = z;
+    public void setRotation(float rotateX, float rotateY, float rotateZ) {
+        this.rotateX = rotateX;
+        this.rotateY = rotateY;
+        this.rotateZ = rotateZ;
+    }
+
+    public void setRotation(Vector3f rotation) {
+        setRotation(rotation.x, rotation.y, rotation.z);
     }
 
     public Vector3f getScale() {
-        return scale;
+        return new Vector3f(scaleX, scaleY, scaleZ);
     }
 
-    public void setScale(float x, float y, float z) {
-        scale.x = x;
-        scale.y = y;
-        scale.z = z;
+    public void setScale(float scaleX, float scaleY, float scaleZ) {
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.scaleZ = scaleZ;
+    }
+
+    public void setScale(Vector3f scale) {
+        setScale(scale.x, scale.y, scale.z);
     }
 
     public boolean isVisible() {

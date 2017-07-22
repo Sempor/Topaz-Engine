@@ -7,27 +7,50 @@ import topaz.physics.PhysicsManager;
 
 public class GameObject {
 
+    private ObjectManager objectManager;
+    private RenderManager renderManager;
+    private PhysicsManager physicsManager;
+
     private Mesh mesh;
-    private PhysicsObject physicalObject;
+
+    private PhysicsObject physicsObject;
+    private boolean collisionsEnabled;
+
     private ArrayList<GameObject> children = new ArrayList<>();
 
-    //Currently shallow copies, maybe make deep copy later
-    public GameObject(Mesh mesh, PhysicsObject physicalObject) {
+    public GameObject(ObjectManager objectManager, RenderManager renderManager, PhysicsManager physicsManager, Mesh mesh) {
+        this.objectManager = objectManager;
+        this.renderManager = renderManager;
+        this.physicsManager = physicsManager;
+
         this.mesh = mesh;
-        this.physicalObject = physicalObject;
     }
 
-    public void removeFromAllManagers(ObjectManager objectManager, RenderManager renderManager, PhysicsManager physicsManager) {
+    //Currently shallow copies, maybe make deep copy later
+    public GameObject(ObjectManager objectManager, RenderManager renderManager, PhysicsManager physicsManager,
+            Mesh mesh, PhysicsObject physicsObject) {
+        this(objectManager, renderManager, physicsManager, mesh);
+
+        this.physicsObject = physicsObject;
+    }
+
+    public void removeFromAllManagers() {
         objectManager.remove(this);
         renderManager.remove(mesh);
-        physicsManager.remove(physicalObject);
+        physicsManager.remove(physicsObject);
     }
 
     public void attachChild(GameObject child) {
+        if (child == null) {
+            return;
+        }
         children.add(child);
     }
 
     public void removeChild(GameObject child) {
+        if (child == null) {
+            return;
+        }
         children.remove(child);
     }
 
@@ -37,7 +60,9 @@ public class GameObject {
 
     public void translate(float dx, float dy, float dz) {
         mesh.translate(dx, dy, dz);
-        physicalObject.getCollisionObject().translate(dx, dy, dz);
+        if (physicsObject != null) {
+            physicsObject.getCollisionObject().translate(dx, dy, dz);
+        }
 
         for (int i = 0; i < children.size(); i++) {
             children.get(i).translate(dx, dy, dz);
@@ -63,7 +88,9 @@ public class GameObject {
 
     public void scale(float dx, float dy, float dz) {
         mesh.scale(dx, dy, dz);
-        physicalObject.getCollisionObject().scale(dx, dy, dz);
+        if (physicsObject != null) {
+            physicsObject.getCollisionObject().scale(dx, dy, dz);
+        }
 
         for (int i = 0; i < children.size(); i++) {
             children.get(i).scale(dx, dy, dz);
@@ -82,7 +109,9 @@ public class GameObject {
         }
 
         mesh.setLocation(x, y, z);
-        physicalObject.setLocation(new Vector3f(x, y, z));
+        if (physicsObject != null) {
+            physicsObject.setLocation(new Vector3f(x, y, z));
+        }
     }
 
     public Vector3f getLocation() {
@@ -120,15 +149,20 @@ public class GameObject {
         }
 
         mesh.setScale(x, y, z);
-        physicalObject.getCollisionObject().setScale(x, y, z);
+        if (physicsObject != null) {
+            physicsObject.getCollisionObject().setScale(x, y, z);
+        }
     }
 
     public Vector3f getScale() {
         return mesh.getScale();
     }
 
-    public void enableCollisions(boolean collisions) {
-        physicalObject.getCollisionObject().setActive(collisions);
+    public void setCollisionsEnabled(boolean enabled) {
+        this.collisionsEnabled = enabled;
+        if (physicsObject != null) {
+            physicsObject.getCollisionObject().setActive(enabled);
+        }
     }
 
     public boolean isVisible() {
@@ -147,11 +181,16 @@ public class GameObject {
         this.mesh = mesh;
     }
 
-    public PhysicsObject getPhysicalObject() {
-        return physicalObject;
+    public PhysicsObject getPhysicsObject() {
+        return physicsObject;
     }
 
-    public void setPhysicalObject(PhysicsObject physicalObject) {
-        this.physicalObject = physicalObject;
+    public void setPhysicsObject(PhysicsObject physicsObject) {
+        this.physicsObject = physicsObject;
+        this.physicsObject.setLocation(mesh.getLocation());
+        this.physicsObject.setScale(mesh.getScale());
+        if (collisionsEnabled) {
+            physicsObject.getCollisionObject().setActive(true);
+        }
     }
 }
