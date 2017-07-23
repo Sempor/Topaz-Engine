@@ -113,7 +113,7 @@ public class CoreEngine implements Runnable {
         coreApp.camera = new Camera(coreApp.display, coreApp.mouseManager);
         coreApp.renderManager = new RenderManager(coreApp.display, coreApp.mouseManager, coreApp.camera);
         coreApp.physicsManager = new PhysicsManager(coreApp.display);
-        coreApp.objectManager = new ObjectManager();
+        coreApp.objectManager = new ObjectManager(coreApp.renderManager, coreApp.physicsManager);
         coreApp.uiManager = new UIManager(coreApp.display);
 
         coreApp.init();

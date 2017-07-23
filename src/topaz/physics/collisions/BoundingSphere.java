@@ -2,23 +2,13 @@ package topaz.physics.collisions;
 
 import org.joml.Vector3f;
 import topaz.physics.PhysicsManager;
-import topaz.rendering.ObjectManager;
 
 public class BoundingSphere extends CollisionObject {
 
     public float radius;
 
-    public BoundingSphere(PhysicsManager physicsManager, ObjectManager objectManager, float radius) {
-        super(physicsManager, objectManager);
-        this.radius = radius;
-    }
-
-    public BoundingSphere(PhysicsManager physicsManager, ObjectManager objectManager, float x, float y, float z, float radius) {
-        this(physicsManager, objectManager, new Vector3f(x, y, z), radius);
-    }
-
-    public BoundingSphere(PhysicsManager physicsManager, ObjectManager objectManager, Vector3f location, float radius) {
-        super(physicsManager, objectManager, location);
+    public BoundingSphere(PhysicsManager physicsManager, float radius) {
+        super(physicsManager);
         this.radius = radius;
     }
 
@@ -31,13 +21,13 @@ public class BoundingSphere extends CollisionObject {
     @Override
     public boolean intersectsSphere(BoundingSphere sphere) {
         Vector3f separationVector = getCenter().sub(sphere.getCenter());
-        return separationVector.lengthSquared() <= Math.pow(radius + sphere.radius, 2.0);
+        return separationVector.lengthSquared() <= (radius + sphere.radius) * (radius + sphere.radius);
     }
 
     @Override
-    public boolean containsPoint(Vector3f point) {
-        Vector3f separationVector = getCenter().sub(point);
-        return separationVector.lengthSquared() <= Math.pow(radius, 2.0);
+    public boolean containsPoint(float pointX, float pointY, float pointZ) {
+        Vector3f separationVector = getCenter().sub(pointX, pointY, pointZ);
+        return separationVector.lengthSquared() <= radius * radius;
     }
 
     @Override

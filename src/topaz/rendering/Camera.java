@@ -73,10 +73,6 @@ public class Camera {
         this.z = z;
     }
 
-    public Raycast getForwardRaycast(float rayCastDistance) {
-        return new Raycast(new Vector3f(x, y, z), new Vector3f(x, y, z).add(new Vector3f(forward).mul(rayCastDistance)));
-    }
-
     public Vector3f getForward() {
         return new Vector3f(forward);
     }

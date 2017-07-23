@@ -17,8 +17,6 @@ public class BasicPlayer {
 
     private boolean useDefaultInput = true;
 
-    private int health;
-
     public BasicPlayer(KeyManager keyManager, Camera camera, PhysicsObject physicalObject) {
         this.keyManager = keyManager;
         this.camera = camera;
@@ -26,14 +24,12 @@ public class BasicPlayer {
         this.physicalObject = physicalObject;
         this.physicalObject.getCollisionObject().setCenter(camera.getLocation());
         this.physicalObject.getCollisionObject().setActive(true);
-        this.physicalObject.setAccelerationFromGravity(-0.0008f);
+        this.physicalObject.setAccelerationFromGravity(-0.016f);
         this.physicalObject.setGravityEnabled(true);
 
         addedLinearVelocity = new Vector3f(0, 0, 0);
-        jumpVelocity = 0.025f;
-        moveSpeed = 0.009f;
-
-        health = 10;
+        jumpVelocity = 0.15f;
+        moveSpeed = 0.09f;
     }
 
     public void tick(double delta) {
@@ -99,13 +95,5 @@ public class BasicPlayer {
 
     public void setMoveSpeed(float moveSpeed) {
         this.moveSpeed = moveSpeed;
-    }
-
-    public int getHealth() {
-        return health;
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
     }
 }

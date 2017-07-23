@@ -1,61 +1,57 @@
-package topaz.physics.collisions;
+package topaz.rendering;
 
 import java.util.ArrayList;
 import org.joml.Vector3f;
-import topaz.physics.PhysicsManager;
-import topaz.physics.PhysicsObject;
 
-public class Raycast {
+public class GameObjectRaycast {
 
-    private PhysicsManager physicsManager;
+    private ObjectManager objectManager;
 
     private Vector3f startPoint;
     private Vector3f endPoint;
     private float step;
-    private ArrayList<CollisionObject> excludedCollisionObjects = new ArrayList<>();
+    private ArrayList<GameObject> excludedGameObjects = new ArrayList<>();
 
-    public Raycast(PhysicsManager physicsManager, Vector3f startPoint, Vector3f endPoint, float step) {
-        this.physicsManager = physicsManager;
+    public GameObjectRaycast(ObjectManager objectManager, Vector3f startPoint, Vector3f endPoint, float step) {
+        this.objectManager = objectManager;
         this.startPoint = new Vector3f(startPoint);
         this.endPoint = new Vector3f(endPoint);
         this.step = step;
     }
-    
-    public ArrayList<CollisionObject> getIntersectingCollisionObjects() {
-        ArrayList<CollisionObject> intersectingObjects = new ArrayList<>();
+
+    public ArrayList<GameObject> getIntersectingGameObjects() {
+        ArrayList<GameObject> intersectingObjects = new ArrayList<>();
         Vector3f separationVector = new Vector3f(endPoint).sub(startPoint);
 
         for (float i = 0; i <= 1f; i += step) {
             Vector3f point = new Vector3f(startPoint).add(new Vector3f(separationVector).mul(i));
 
-            for (PhysicsObject physicsObject : physicsManager.getPhysicsObjects()) {
-                CollisionObject collisionObject = physicsObject.getCollisionObject();
-                if (excludedCollisionObjects.contains(collisionObject)) {
+            for (GameObject gameObject : objectManager.getGameObjects()) {
+                if (excludedGameObjects.contains(gameObject)) {
                     break;
                 }
-                if (collisionObject.containsPoint(point)) {
-                    intersectingObjects.add(collisionObject);
+                if (gameObject.getPhysicsObject().getCollisionObject().containsPoint(point)) {
+                    intersectingObjects.add(gameObject);
                 }
             }
         }
         return intersectingObjects;
     }
 
-    public ArrayList<CollisionObject> getClosestIntersectingCollisionObjects() {
-        ArrayList<CollisionObject> intersectingObjects = new ArrayList<>();
+    public ArrayList<GameObject> getClosestIntersectingGameObjects() {
+        ArrayList<GameObject> intersectingObjects = new ArrayList<>();
         Vector3f separationVector = new Vector3f(endPoint).sub(startPoint);
         boolean intersectingObjectFound = false;
 
         for (float i = 0; i <= 1f; i += step) {
             Vector3f point = new Vector3f(startPoint).add(new Vector3f(separationVector).mul(i));
 
-            for (PhysicsObject physicsObject : physicsManager.getPhysicsObjects()) {
-                CollisionObject collisionObject = physicsObject.getCollisionObject();
-                if (excludedCollisionObjects.contains(collisionObject)) {
+            for (GameObject gameObject : objectManager.getGameObjects()) {
+                if (excludedGameObjects.contains(gameObject)) {
                     break;
                 }
-                if (collisionObject.containsPoint(point)) {
-                    intersectingObjects.add(collisionObject);
+                if (gameObject.getPhysicsObject().getCollisionObject().containsPoint(point)) {
+                    intersectingObjects.add(gameObject);
                     intersectingObjectFound = true;
                 }
             }
@@ -67,8 +63,8 @@ public class Raycast {
         return intersectingObjects;
     }
 
-    public void addExcludedCollisionObject(CollisionObject collisionObject) {
-        excludedCollisionObjects.add(collisionObject);
+    public void addExcludedGameObject(GameObject gameObject) {
+        excludedGameObjects.add(gameObject);
     }
 
     public Vector3f getStartPoint() {

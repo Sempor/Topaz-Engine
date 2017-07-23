@@ -3,13 +3,10 @@ package topaz.rendering;
 import java.util.ArrayList;
 import org.joml.Vector3f;
 import topaz.physics.PhysicsObject;
-import topaz.physics.PhysicsManager;
 
 public class GameObject {
 
     private ObjectManager objectManager;
-    private RenderManager renderManager;
-    private PhysicsManager physicsManager;
 
     private Mesh mesh;
 
@@ -18,26 +15,21 @@ public class GameObject {
 
     private ArrayList<GameObject> children = new ArrayList<>();
 
-    public GameObject(ObjectManager objectManager, RenderManager renderManager, PhysicsManager physicsManager, Mesh mesh) {
+    public GameObject(ObjectManager objectManager, Mesh mesh) {
         this.objectManager = objectManager;
-        this.renderManager = renderManager;
-        this.physicsManager = physicsManager;
-
         this.mesh = mesh;
     }
 
     //Currently shallow copies, maybe make deep copy later
-    public GameObject(ObjectManager objectManager, RenderManager renderManager, PhysicsManager physicsManager,
-            Mesh mesh, PhysicsObject physicsObject) {
-        this(objectManager, renderManager, physicsManager, mesh);
-
+    public GameObject(ObjectManager objectManager, Mesh mesh, PhysicsObject physicsObject) {
+        this(objectManager, mesh);
         this.physicsObject = physicsObject;
     }
 
     public void removeFromAllManagers() {
         objectManager.remove(this);
-        renderManager.remove(mesh);
-        physicsManager.remove(physicsObject);
+        objectManager.getRenderManager().remove(mesh);
+        objectManager.getPhysicsManager().remove(physicsObject);
     }
 
     public void attachChild(GameObject child) {
