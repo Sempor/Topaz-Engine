@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL20;
 
 public class ShaderProgram {
 
-    private int programID = 0;
+    private int programID;
 
     public ShaderProgram(Shader... shaders) {
         programID = GL20.glCreateProgram();

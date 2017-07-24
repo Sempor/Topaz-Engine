@@ -2,75 +2,42 @@ package topaz.rendering;
 
 import java.nio.FloatBuffer;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import topaz.rendering.shaders.Shader;
-import topaz.rendering.shaders.ShaderProgram;
 
 public class TexturedMesh extends Mesh {
 
     private int vboTexID;
 
     private int[] textureIDs;
-    private int selectedTexture = 0;
+    private int selector;
 
     public TexturedMesh(RenderManager renderManager, float[] vertices, short[] indices, float[] textureCoords, int[] textureIDs) {
         super(renderManager, vertices, indices);
-
         this.textureIDs = Arrays.copyOf(textureIDs, textureIDs.length);
+        shaderProgram = renderManager.getTexturedMeshShaderProgram();
 
-        try {
-            Shader vsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.vs", GL20.GL_VERTEX_SHADER);
-            Shader fsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.fs", GL20.GL_FRAGMENT_SHADER);
-            shaderProgram = new ShaderProgram(vsTextureMesh, fsTextureMesh);
-        } catch (Exception ex) {
-            Logger.getLogger(TexturedMesh.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        //Stores the texture coordinates in a buffer
         FloatBuffer textureCoordsBuffer = BufferUtils.createFloatBuffer(textureCoords.length);
         textureCoordsBuffer.put(textureCoords).flip();
+        
+        GL30.glBindVertexArray(vaoID);
 
-        //Creates a vertex buffer object and uploads the texture coords buffer into the vertex buffer object
         vboTexID = GL15.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboTexID);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, textureCoordsBuffer, GL15.GL_STATIC_DRAW);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, textureCoordsBuffer, GL15.GL_STATIC_DRAW); //Uploads texture coords data into the array buffer of the vao
+        GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 1 of the array buffer of the vao
 
-        //Points the buffer at location 1
-        GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, 0);
-
-        storeIndices(indices);
+        GL30.glBindVertexArray(0);
     }
 
-    @Override
-    public void render() {
-        if (visible) {
-            GL20.glUseProgram(shaderProgram.getProgramID());
-
-            GL13.glActiveTexture(GL13.GL_TEXTURE0);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureIDs[selectedTexture]);
-
-            GL30.glBindVertexArray(vaoID);
-            GL20.glEnableVertexAttribArray(0);
-            GL20.glEnableVertexAttribArray(1);
-
-            GL11.glDrawElements(GL11.GL_TRIANGLES, numIndices, GL11.GL_UNSIGNED_SHORT, 0);
-
-            GL20.glDisableVertexAttribArray(0);
-            GL20.glDisableVertexAttribArray(1);
-            GL30.glBindVertexArray(0);
-
-            GL20.glUseProgram(0);
-        }
+    public int getSelectedTexture() {
+        return textureIDs[selector];
     }
 
-    public void setSelectedTexture(int selectedTexture) {
-        this.selectedTexture = selectedTexture;
+    public void setSelectedTexture(int selector) {
+        this.selector = selector;
     }
 }

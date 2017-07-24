@@ -1,7 +1,7 @@
 #version 430 core
 
-in vec4 position;
-in vec2 textureCoord;
+layout(location = 0) in vec4 position;
+layout(location = 1) in vec2 textureCoord;
 
 uniform mat4 mvpMatrix;
 

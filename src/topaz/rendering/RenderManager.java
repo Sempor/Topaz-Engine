@@ -1,9 +1,14 @@
 package topaz.rendering;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL20;
 import topaz.core.Display;
 import topaz.input.MouseManager;
+import topaz.rendering.shaders.Shader;
+import topaz.rendering.shaders.ShaderProgram;
 
 public class RenderManager {
 
@@ -17,14 +22,19 @@ public class RenderManager {
 
     private ArrayList<Mesh> meshes = new ArrayList<>();
 
+    private ShaderProgram coloredMeshShaderProgram;
+    private ShaderProgram texturedMeshShaderProgram;
+
     public RenderManager(Display display, MouseManager mouseManager, Camera camera) {
         this.display = display;
         this.mouseManager = mouseManager;
         this.camera = camera;
-        
+
         fieldOfView = 45f;
         nearPlane = 0.01f;
         farPlane = 100f;
+
+        setUpShaders();
     }
 
     public void tick(double delta) {
@@ -37,13 +47,27 @@ public class RenderManager {
         }
 
         for (Mesh mesh : meshes) {
-            mesh.tick(viewProjectionMatrix, delta);
+            mesh.tick(delta, viewProjectionMatrix);
         }
     }
 
     public void render() {
         for (Mesh mesh : meshes) {
             mesh.render();
+        }
+    }
+
+    private void setUpShaders() {
+        try {
+            Shader vsColorMesh = new Shader("/topaz/assets/shaders/colorMesh.vs", GL20.GL_VERTEX_SHADER);
+            Shader fsColorMesh = new Shader("/topaz/assets/shaders/colorMesh.fs", GL20.GL_FRAGMENT_SHADER);
+            coloredMeshShaderProgram = new ShaderProgram(vsColorMesh, fsColorMesh);
+
+            Shader vsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.vs", GL20.GL_VERTEX_SHADER);
+            Shader fsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.fs", GL20.GL_FRAGMENT_SHADER);
+            texturedMeshShaderProgram = new ShaderProgram(vsTextureMesh, fsTextureMesh);
+        } catch (Exception ex) {
+            Logger.getLogger(TexturedMesh.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -83,5 +107,13 @@ public class RenderManager {
 
     public void setFarPlane(float farPlane) {
         this.farPlane = farPlane;
+    }
+
+    public ShaderProgram getColoredMeshShaderProgram() {
+        return coloredMeshShaderProgram;
+    }
+
+    public ShaderProgram getTexturedMeshShaderProgram() {
+        return texturedMeshShaderProgram;
     }
 }
