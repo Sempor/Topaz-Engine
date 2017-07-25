@@ -2,7 +2,6 @@ package topaz.test;
 
 import topaz.core.CoreEngine;
 import topaz.core.CoreApp;
-import topaz.rendering.GameObject;
 import topaz.rendering.objects.ColoredBox;
 import topaz.util.Color4f;
 
@@ -44,8 +43,8 @@ public class TestCamera extends CoreApp {
         } else if (keyManager.KEY_D.isPressed()) {
             camera.translate(camera.getRight().mul((float) delta).mul(speed));
         }
-        if (keyManager.KEY_C.isPressed()) {
-            box1.setColor(Color4f.YELLOW);
+        if (keyManager.KEY_C.isJustPressed()) {
+            box1.setColor(Color4f.getRandomColor());
         }
     }
 }

@@ -74,11 +74,11 @@ public abstract class CollisionObject {
     //Need to replace this with a shape cast
     //Returns true if there is a collision, false if not
     public boolean translateX(float dx) {
-        Raycast raycast;
+        CollisionRaycast raycast;
         if (dx >= 0) {
-            raycast = new Raycast(physicsManager, getCenter(), getCenter().add(dx + getWidth() / 2f, 0, 0), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(dx + getWidth() / 2f, 0, 0), 0.01f);
         } else {
-            raycast = new Raycast(physicsManager, getCenter(), getCenter().add(dx - getWidth() / 2f, 0, 0), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(dx - getWidth() / 2f, 0, 0), 0.01f);
         }
         raycast.addExcludedCollisionObject(this);
 
@@ -98,11 +98,11 @@ public abstract class CollisionObject {
     }
 
     public boolean translateY(float dy) {
-        Raycast raycast;
+        CollisionRaycast raycast;
         if (dy >= 0) {
-            raycast = new Raycast(physicsManager, getCenter(), getCenter().add(0, dy + getHeight() / 2f, 0), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, dy + getHeight() / 2f, 0), 0.01f);
         } else {
-            raycast = new Raycast(physicsManager, getCenter(), getCenter().add(0, dy - getHeight() / 2f, 0), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, dy - getHeight() / 2f, 0), 0.01f);
         }
         raycast.addExcludedCollisionObject(this);
 
@@ -122,11 +122,11 @@ public abstract class CollisionObject {
     }
 
     public boolean translateZ(float dz) {
-        Raycast raycast;
+        CollisionRaycast raycast;
         if (dz >= 0) {
-            raycast = new Raycast(physicsManager, getCenter(), getCenter().add(0, 0, dz + getDepth() / 2f), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, 0, dz + getDepth() / 2f), 0.01f);
         } else {
-            raycast = new Raycast(physicsManager, getCenter(), getCenter().add(0, 0, dz - getDepth() / 2f), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, 0, dz - getDepth() / 2f), 0.01f);
         }
         raycast.addExcludedCollisionObject(this);
 

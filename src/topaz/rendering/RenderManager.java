@@ -20,7 +20,8 @@ public class RenderManager {
     private float nearPlane;
     private float farPlane;
 
-    private ArrayList<Mesh> meshes = new ArrayList<>();
+    private ArrayList<ColoredMesh> coloredMeshes = new ArrayList<>();
+    private ArrayList<TexturedMesh> texturedMeshes = new ArrayList<>();
 
     private ShaderProgram coloredMeshShaderProgram;
     private ShaderProgram texturedMeshShaderProgram;
@@ -46,15 +47,26 @@ public class RenderManager {
             viewProjectionMatrix.lookAt(camera.getLocation(), camera.getLocation().add(camera.getForward()), camera.getUp());
         }
 
-        for (Mesh mesh : meshes) {
+        for (ColoredMesh mesh : coloredMeshes) {
+            mesh.tick(delta, viewProjectionMatrix);
+        }
+        for (TexturedMesh mesh : texturedMeshes) {
             mesh.tick(delta, viewProjectionMatrix);
         }
     }
 
     public void render() {
-        for (Mesh mesh : meshes) {
+        GL20.glUseProgram(coloredMeshShaderProgram.getProgramID());
+        for (ColoredMesh mesh : coloredMeshes) {
             mesh.render();
         }
+        GL20.glUseProgram(0);
+
+        GL20.glUseProgram(texturedMeshShaderProgram.getProgramID());
+        for (TexturedMesh mesh : texturedMeshes) {
+            mesh.render();
+        }
+        GL20.glUseProgram(0);
     }
 
     private void setUpShaders() {
@@ -73,16 +85,30 @@ public class RenderManager {
 
     public void add(Mesh mesh) {
         if (mesh == null) {
+            System.out.println("ERROR: Mesh is null!");
             return;
         }
-        meshes.add(mesh);
+        if (mesh instanceof ColoredMesh) {
+            coloredMeshes.add((ColoredMesh) mesh);
+        } else if (mesh instanceof TexturedMesh) {
+            texturedMeshes.add((TexturedMesh) mesh);
+        } else {
+            System.out.println("ERROR: Mesh type is not supported!");
+        }
     }
 
     public void remove(Mesh mesh) {
         if (mesh == null) {
+            System.out.println("ERROR: Mesh is null!");
             return;
         }
-        meshes.remove(mesh);
+        if (mesh instanceof ColoredMesh) {
+            coloredMeshes.remove((ColoredMesh) mesh);
+        } else if (mesh instanceof TexturedMesh) {
+            texturedMeshes.remove((TexturedMesh) mesh);
+        } else {
+            System.out.println("ERROR: Mesh type is not supported!");
+        }
     }
 
     public float getFieldOfView() {

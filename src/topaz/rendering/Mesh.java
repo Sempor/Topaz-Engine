@@ -16,10 +16,10 @@ import topaz.rendering.shaders.ShaderProgram;
 public abstract class Mesh {
 
     private RenderManager renderManager;
-    
+
     protected int vaoID;
-    private int vboVertID;
     private int eboID;
+    private int verticesVboID;
 
     private float[] vertices;
     private short[] indices;
@@ -41,23 +41,37 @@ public abstract class Mesh {
 
         FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
         verticesBuffer.put(vertices).flip();
-        
+
         ShortBuffer indicesBuffer = BufferUtils.createShortBuffer(indices.length);
         indicesBuffer.put(indices).flip();
 
         vaoID = GL30.glGenVertexArrays(); //Creates vao (vertex array object)
         GL30.glBindVertexArray(vaoID);
 
-        vboVertID = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboVertID);
+        verticesVboID = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, verticesVboID);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW); //Uploads vertex data into the array buffer of the vao
         GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 0 of the array buffer in the vao
 
         eboID = GL15.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, eboID);
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW); //Uploads index data into the element array buffer of the vao
-        
+
         GL30.glBindVertexArray(0);
+    }
+
+    public Mesh(Mesh mesh) {
+        this(mesh.renderManager, mesh.vertices, mesh.indices);
+        this.x = mesh.x;
+        this.y = mesh.y;
+        this.z = mesh.z;
+        this.rotateX = mesh.rotateX;
+        this.rotateY = mesh.rotateY;
+        this.rotateZ = mesh.rotateZ;
+        this.scaleX = mesh.scaleX;
+        this.scaleY = mesh.scaleY;
+        this.scaleZ = mesh.scaleZ;
+        this.visible = mesh.visible;
     }
 
     public void tick(double delta, Matrix4f viewProjectionMatrix) {
@@ -74,10 +88,8 @@ public abstract class Mesh {
     }
 
     public void render() {
-        GL20.glUseProgram(shaderProgram.getProgramID());
-        
         GL20.glUniformMatrix4fv(GL20.glGetUniformLocation(shaderProgram.getProgramID(), "mvpMatrix"), false, mvpMatrixBuffer); //Uploads mvpMatrix to the uniform variable
-        
+
         if (visible) {
             if (this instanceof TexturedMesh) {
                 GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -94,8 +106,6 @@ public abstract class Mesh {
             GL20.glDisableVertexAttribArray(1);
             GL30.glBindVertexArray(0);
         }
-        
-        GL20.glUseProgram(0);
     }
 
     public void translate(Vector3f translation) {
@@ -176,5 +186,13 @@ public abstract class Mesh {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    public ShaderProgram getShaderProgram() {
+        return shaderProgram;
+    }
+
+    public void setShaderProgram(ShaderProgram shaderProgram) {
+        this.shaderProgram = shaderProgram;
     }
 }

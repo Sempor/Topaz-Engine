@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL30;
 
 public class TexturedMesh extends Mesh {
 
-    private int vboTexID;
+    private int textureCoordsVboID;
 
     private int[] textureIDs;
     private int selector;
@@ -22,15 +22,20 @@ public class TexturedMesh extends Mesh {
 
         FloatBuffer textureCoordsBuffer = BufferUtils.createFloatBuffer(textureCoords.length);
         textureCoordsBuffer.put(textureCoords).flip();
-        
+
         GL30.glBindVertexArray(vaoID);
 
-        vboTexID = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboTexID);
+        textureCoordsVboID = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, textureCoordsVboID);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, textureCoordsBuffer, GL15.GL_STATIC_DRAW); //Uploads texture coords data into the array buffer of the vao
         GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 1 of the array buffer of the vao
 
         GL30.glBindVertexArray(0);
+    }
+
+    public TexturedMesh(TexturedMesh mesh) {
+        super(mesh);
+        this.selector = mesh.selector;
     }
 
     public int getSelectedTexture() {

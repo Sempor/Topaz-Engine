@@ -1,9 +1,11 @@
 package topaz.util;
 
+import java.util.Random;
+
 public class Color4f {
 
     public float r, g, b, a;
-    
+
     //Rainbow colors
     public static Color4f RED = new Color4f(1, 0, 0, 1);
     public static Color4f ORANGE = new Color4f(1, 0.5f, 0, 1);
@@ -11,7 +13,7 @@ public class Color4f {
     public static Color4f GREEN = new Color4f(0, 1, 0, 1);
     public static Color4f BLUE = new Color4f(0, 0, 1, 1);
     public static Color4f PURPLE = new Color4f(1, 0, 1, 1);
-    
+
     //Black-white colors
     public static Color4f WHITE = new Color4f(1, 1, 1, 1);
     public static Color4f BLACK = new Color4f(0, 0, 0, 1);
@@ -19,7 +21,7 @@ public class Color4f {
     public static Color4f SILVER = new Color4f(0.75f, 0.75f, 0.75f, 1);
     public static Color4f WHITE_SNOW = new Color4f(1, 0.98f, 0.98f, 1);
     public static Color4f WHITE_SMOKE = new Color4f(0.96f, 0.96f, 0.96f, 1);
-    
+
     //Even more colors
     public static Color4f CYAN = new Color4f(0, 1, 1, 1);
     public static Color4f OLIVE = new Color4f(0.5f, 0.5f, 0, 1);
@@ -39,5 +41,22 @@ public class Color4f {
         this.g = g;
         this.b = b;
         this.a = a;
+    }
+
+    public Color4f(Color4f color) {
+        this.r = color.r;
+        this.g = color.g;
+        this.b = color.b;
+        this.a = color.a;
+    }
+
+    //This can't return the color white since 1 is excluded from the random float generator.
+    //Also, just by programmer's choice, this only returns opaque colors.
+    public static Color4f getRandomColor() {
+        Random random = new Random();
+        float r = random.nextFloat();
+        float g = random.nextFloat();
+        float b = random.nextFloat();
+        return new Color4f(r, g, b, 1);
     }
 }

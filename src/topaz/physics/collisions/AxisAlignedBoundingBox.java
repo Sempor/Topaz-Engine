@@ -21,16 +21,9 @@ public class AxisAlignedBoundingBox extends CollisionObject {
 
     @Override
     public boolean intersectsBox(AxisAlignedBoundingBox box) {
-        if (new Interval(x, x + width * scaleX).overlaps(new Interval(box.x, box.x + box.width * box.scaleX)) == false) {
-            return false;
-        }
-        if (new Interval(y, y + height * scaleY).overlaps(new Interval(box.y, box.y + box.height * box.scaleY)) == false) {
-            return false;
-        }
-        if (new Interval(z, z + depth * scaleZ).overlaps(new Interval(box.z, box.z + box.depth * box.scaleZ)) == false) {
-            return false;
-        }
-        return true;
+        return new Interval(x, x + width * scaleX).overlaps(new Interval(box.x, box.x + box.width * box.scaleX))
+                && new Interval(y, y + height * scaleY).overlaps(new Interval(box.y, box.y + box.height * box.scaleY))
+                && new Interval(z, z + depth * scaleZ).overlaps(new Interval(box.z, box.z + box.depth * box.scaleZ));
     }
 
     //NOT SUPPORTED YET!

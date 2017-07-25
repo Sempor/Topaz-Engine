@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 import topaz.physics.PhysicsManager;
 import topaz.physics.PhysicsObject;
 
-public class Raycast {
+public class CollisionRaycast {
 
     private PhysicsManager physicsManager;
 
@@ -14,7 +14,7 @@ public class Raycast {
     private float step;
     private ArrayList<CollisionObject> excludedCollisionObjects = new ArrayList<>();
 
-    public Raycast(PhysicsManager physicsManager, Vector3f startPoint, Vector3f endPoint, float step) {
+    public CollisionRaycast(PhysicsManager physicsManager, Vector3f startPoint, Vector3f endPoint, float step) {
         this.physicsManager = physicsManager;
         this.startPoint = new Vector3f(startPoint);
         this.endPoint = new Vector3f(endPoint);

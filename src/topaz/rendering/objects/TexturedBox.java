@@ -1,6 +1,5 @@
 package topaz.rendering.objects;
 
-import org.joml.Vector3f;
 import topaz.assets.AssetLoader;
 import topaz.physics.PhysicsObject;
 import topaz.physics.collisions.AxisAlignedBoundingBox;

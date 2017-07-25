@@ -22,8 +22,8 @@ public class BasicPlayer {
         this.camera = camera;
 
         this.physicalObject = physicalObject;
-        this.physicalObject.getCollisionObject().setCenter(camera.getLocation());
-        this.physicalObject.getCollisionObject().setActive(true);
+        this.physicalObject.setCenter(camera.getLocation());
+        this.physicalObject.setActive(true);
         this.physicalObject.setAccelerationFromGravity(-0.016f);
         this.physicalObject.setGravityEnabled(true);
 
@@ -54,7 +54,7 @@ public class BasicPlayer {
             physicalObject.addLinearVelocity(addedLinearVelocity);
         }
 
-        camera.setLocation(physicalObject.getCollisionObject().getCenter());
+        camera.setLocation(physicalObject.getCenter());
     }
 
     public void move(Vector3f translation) {
@@ -73,12 +73,12 @@ public class BasicPlayer {
     }
 
     public void setLocation(float x, float y, float z) {
-        physicalObject.getCollisionObject().setLocation(x, y, z);
-        camera.setLocation(physicalObject.getCollisionObject().getCenter());
+        physicalObject.setLocation(x, y, z);
+        camera.setLocation(physicalObject.getCenter());
     }
 
     public Vector3f getLocation() {
-        return physicalObject.getCollisionObject().getLocation();
+        return physicalObject.getLocation();
     }
 
     public float getJumpVelocity() {

@@ -15,6 +15,11 @@ public class Interval {
         }
     }
 
+    public Interval(Interval interval) {
+        this.min = interval.min;
+        this.max = interval.max;
+    }
+
     public boolean overlaps(Interval interval) {
         if (min > interval.min && min < interval.max) {
             return true;

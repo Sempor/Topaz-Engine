@@ -103,7 +103,25 @@ public class PhysicsObject {
     }
 
     public void setLocation(Vector3f location) {
-        collisionObject.setLocation(location);
+        setLocation(location.x, location.y, location.z);
+    }
+
+    public void setLocation(float x, float y, float z) {
+        collisionObject.setLocation(x, y, z);
+        sleeping = false;
+    }
+
+    public Vector3f getCenter() {
+        sleeping = false;
+        return collisionObject.getCenter();
+    }
+
+    public void setCenter(Vector3f center) {
+        setCenter(center.x, center.y, center.z);
+    }
+
+    public void setCenter(float x, float y, float z) {
+        collisionObject.setCenter(x, y, z);
         sleeping = false;
     }
 
@@ -152,5 +170,14 @@ public class PhysicsObject {
 
         this.accelerationFromGravity = acceleration;
         sleeping = false;
+    }
+
+    public void setActive(boolean active) {
+        sleeping = false;
+        collisionObject.setActive(active);
+    }
+
+    public boolean isActive() {
+        return collisionObject.isActive();
     }
 }
