@@ -1,7 +1,11 @@
 package topaz.rendering;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import topaz.physics.PhysicsObject;
 
 public class GameObject {
@@ -13,11 +17,15 @@ public class GameObject {
     private PhysicsObject physicsObject;
     private boolean collisionsEnabled;
 
+    private Vector3f ambientLightIntensity;
+
     private ArrayList<GameObject> children = new ArrayList<>();
 
     public GameObject(ObjectManager objectManager, Mesh mesh) {
         this.objectManager = objectManager;
         this.mesh = mesh;
+
+        ambientLightIntensity = new Vector3f(0.1f, 0.1f, 0.1f);
     }
 
     //Currently shallow copies, maybe make deep copy later
@@ -184,5 +192,12 @@ public class GameObject {
         if (collisionsEnabled) {
             physicsObject.getCollisionObject().setActive(true);
         }
+    }
+
+    public void write(OutputStream out) {
+    }
+
+    public ByteBuffer read(InputStream in) {
+        return BufferUtils.createByteBuffer(0);
     }
 }
