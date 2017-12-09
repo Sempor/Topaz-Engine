@@ -1,22 +1,22 @@
 package topaz.rendering.lighting;
 
-import topaz.util.Color4f;
+import topaz.util.Color;
 
 public class LightObject {
 
-    private Color4f lightColor;
+    private Color lightColor;
     private float lightIntensity;
 
-    public LightObject(Color4f lightColor, float lightIntensity) {
+    public LightObject(Color lightColor, float lightIntensity) {
         this.lightColor = lightColor;
         this.lightIntensity = lightIntensity;
     }
 
-    public Color4f getLightColor() {
+    public Color getLightColor() {
         return lightColor;
     }
 
-    public void setLightColor(Color4f lightColor) {
+    public void setLightColor(Color lightColor) {
         this.lightColor = lightColor;
     }
 

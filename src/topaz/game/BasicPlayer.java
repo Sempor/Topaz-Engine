@@ -29,7 +29,7 @@ public class BasicPlayer {
 
         addedLinearVelocity = new Vector3f(0, 0, 0);
         jumpVelocity = 0.15f;
-        moveSpeed = 0.09f;
+        moveSpeed = 10f;
     }
 
     public void tick(double delta) {
@@ -38,14 +38,14 @@ public class BasicPlayer {
             addedLinearVelocity = new Vector3f(0, 0, 0);
 
             if (keyManager.KEY_W.isPressed()) {
-                move(camera.getForward().mul(moveSpeed));
+                move(camera.getForward().mul((float) delta).mul(moveSpeed));
             } else if (keyManager.KEY_S.isPressed()) {
-                move(camera.getBackward().mul(moveSpeed));
+                move(camera.getBackward().mul((float) delta).mul(moveSpeed));
             }
             if (keyManager.KEY_A.isPressed()) {
-                move(camera.getLeft().mul(moveSpeed));
+                move(camera.getLeft().mul((float) delta).mul(moveSpeed));
             } else if (keyManager.KEY_D.isPressed()) {
-                move(camera.getRight().mul(moveSpeed));
+                move(camera.getRight().mul((float) delta).mul(moveSpeed));
             }
             if (keyManager.KEY_SPACE.isPressed()) {
                 jump();

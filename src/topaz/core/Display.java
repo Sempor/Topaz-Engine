@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-import topaz.util.Color4f;
+import topaz.util.Color;
 
 public class Display {
 
@@ -103,7 +103,7 @@ public class Display {
         return heightBuffer.get(0);
     }
 
-    public void setBackgroundColor(Color4f backgroundColor) {
+    public void setBackgroundColor(Color backgroundColor) {
         GL11.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     }
 

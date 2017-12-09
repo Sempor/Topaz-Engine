@@ -4,23 +4,23 @@ import org.joml.Vector3f;
 import topaz.physics.PhysicsManager;
 import topaz.util.Interval;
 
-public class AxisAlignedBoundingBox extends CollisionObject {
+public class BoundingBox extends CollisionObject {
 
     public float width, height, depth;
 
-    public AxisAlignedBoundingBox(PhysicsManager physicsManager, float width, float height, float depth) {
+    public BoundingBox(PhysicsManager physicsManager, float width, float height, float depth) {
         super(physicsManager);
         this.width = width;
         this.height = height;
         this.depth = depth;
     }
 
-    public AxisAlignedBoundingBox(PhysicsManager physicsManager, Vector3f dimensions) {
+    public BoundingBox(PhysicsManager physicsManager, Vector3f dimensions) {
         this(physicsManager, dimensions.x, dimensions.y, dimensions.z);
     }
 
     @Override
-    public boolean intersectsBox(AxisAlignedBoundingBox box) {
+    public boolean intersectsBox(BoundingBox box) {
         return new Interval(x, x + width * scaleX).overlaps(new Interval(box.x, box.x + box.width * box.scaleX))
                 && new Interval(y, y + height * scaleY).overlaps(new Interval(box.y, box.y + box.height * box.scaleY))
                 && new Interval(z, z + depth * scaleZ).overlaps(new Interval(box.z, box.z + box.depth * box.scaleZ));

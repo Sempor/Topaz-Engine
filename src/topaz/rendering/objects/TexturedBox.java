@@ -2,7 +2,7 @@ package topaz.rendering.objects;
 
 import topaz.assets.AssetLoader;
 import topaz.physics.PhysicsObject;
-import topaz.physics.collisions.AxisAlignedBoundingBox;
+import topaz.physics.collisions.BoundingBox;
 import topaz.rendering.GameObject;
 import topaz.rendering.Mesh;
 import topaz.rendering.ObjectManager;
@@ -33,7 +33,7 @@ public class TexturedBox extends Box {
         Mesh mesh = new TexturedMesh(objectManager.getRenderManager(), vertices, indices, textureCoords, textureIDs);
         objectManager.getRenderManager().add(mesh);
 
-        AxisAlignedBoundingBox boundingBox = new AxisAlignedBoundingBox(objectManager.getPhysicsManager(), width, height, depth);
+        BoundingBox boundingBox = new BoundingBox(objectManager.getPhysicsManager(), width, height, depth);
         boundingBox.setLocation(x, y, z);
         PhysicsObject physicalObject = new PhysicsObject(boundingBox, mass);
         objectManager.getPhysicsManager().add(physicalObject);

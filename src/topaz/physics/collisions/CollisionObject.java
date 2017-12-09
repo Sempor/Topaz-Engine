@@ -7,6 +7,8 @@ import topaz.physics.PhysicsObject;
 
 public abstract class CollisionObject {
 
+    private final float raycastStepSize = 0.004f;
+    
     protected PhysicsManager physicsManager;
 
     public float x = 0f, y = 0f, z = 0f;
@@ -33,15 +35,15 @@ public abstract class CollisionObject {
     }
 
     public boolean intersects(CollisionObject collisionObject) {
-        if (collisionObject instanceof AxisAlignedBoundingBox) {
-            return intersectsBox((AxisAlignedBoundingBox) collisionObject);
+        if (collisionObject instanceof BoundingBox) {
+            return intersectsBox((BoundingBox) collisionObject);
         } else if (collisionObject instanceof BoundingSphere) {
             return intersectsSphere((BoundingSphere) collisionObject);
         }
         return false;
     }
 
-    public abstract boolean intersectsBox(AxisAlignedBoundingBox box);
+    public abstract boolean intersectsBox(BoundingBox box);
 
     public abstract boolean intersectsSphere(BoundingSphere sphere);
 
@@ -76,9 +78,9 @@ public abstract class CollisionObject {
     public boolean translateX(float dx) {
         CollisionRaycast raycast;
         if (dx >= 0) {
-            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(dx + getWidth() / 2f, 0, 0), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(dx + getWidth() / 2f, 0, 0), raycastStepSize);
         } else {
-            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(dx - getWidth() / 2f, 0, 0), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(dx - getWidth() / 2f, 0, 0), raycastStepSize);
         }
         raycast.addExcludedCollisionObject(this);
 
@@ -100,9 +102,9 @@ public abstract class CollisionObject {
     public boolean translateY(float dy) {
         CollisionRaycast raycast;
         if (dy >= 0) {
-            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, dy + getHeight() / 2f, 0), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, dy + getHeight() / 2f, 0), raycastStepSize);
         } else {
-            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, dy - getHeight() / 2f, 0), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, dy - getHeight() / 2f, 0), raycastStepSize);
         }
         raycast.addExcludedCollisionObject(this);
 
@@ -124,9 +126,9 @@ public abstract class CollisionObject {
     public boolean translateZ(float dz) {
         CollisionRaycast raycast;
         if (dz >= 0) {
-            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, 0, dz + getDepth() / 2f), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, 0, dz + getDepth() / 2f), raycastStepSize);
         } else {
-            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, 0, dz - getDepth() / 2f), 0.01f);
+            raycast = new CollisionRaycast(physicsManager, getCenter(), getCenter().add(0, 0, dz - getDepth() / 2f), raycastStepSize);
         }
         raycast.addExcludedCollisionObject(this);
 

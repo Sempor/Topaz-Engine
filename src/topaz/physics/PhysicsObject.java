@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 
 public class PhysicsObject {
 
-    public static float GRAVITY_ACCELERATION = -9.8f;
+    public static float GRAVITY_ACCELERATION = -98f;
 
     private CollisionObject collisionObject;
     private Vector3f netForce;

@@ -12,27 +12,32 @@ import topaz.rendering.Camera;
 import topaz.rendering.ObjectManager;
 import topaz.rendering.RenderManager;
 import topaz.rendering.ui.UIManager;
-import topaz.util.Color4f;
+import topaz.util.Color;
 
 public class CoreEngine implements Runnable {
 
-    private String title;
-    private int width, height;
+    public static final String DEFAULT_DISPLAY_TITLE = "Topaz Game Engine - An Application";
+
+    //Display properties
+    private String displayTitle;
+    private int displayWidth, displayHeight;
+    //Internal engine variables
     private boolean running;
     private Thread thread;
     private CoreApp coreApp;
+    //Print
     private boolean printFPS = true;
     private boolean printSoftwareInformation = false;
 
-    public CoreEngine(CoreApp coreApp, int width, int height) {
-        this(coreApp, "Topaz Game Engine - An Application", width, height);
+    public CoreEngine(CoreApp coreApp, int displayWidth, int displayHeight) {
+        this(coreApp, DEFAULT_DISPLAY_TITLE, displayWidth, displayHeight);
     }
 
-    public CoreEngine(CoreApp coreApp, String title, int width, int height) {
+    public CoreEngine(CoreApp coreApp, String displayTitle, int displayWidth, int displayHeight) {
         this.coreApp = coreApp;
-        this.title = title;
-        this.width = width;
-        this.height = height;
+        this.displayTitle = displayTitle;
+        this.displayWidth = displayWidth;
+        this.displayHeight = displayHeight;
     }
 
     /**
@@ -51,36 +56,37 @@ public class CoreEngine implements Runnable {
     @Override
     public void run() {
         init();
-
+        
         double nsPerTick = 1_000_000_000D / coreApp.display.getFPS();
         double delta = 0;
-        long now;
+        long currentTime;
         long lastTime = System.nanoTime();
-        long timer = 0;
-        int ticks = 0;
+        long timeElapsed = 0;
+        int ticksElapsed = 0;
 
         while (running) {
-            now = System.nanoTime();
-            delta += (now - lastTime) / nsPerTick;
-            timer += now - lastTime;
-            lastTime = now;
+            currentTime = System.nanoTime();
+            timeElapsed += currentTime - lastTime;
+            delta += (currentTime - lastTime) / nsPerTick;
+            lastTime = currentTime;
 
             if (delta >= 1) {
+                System.out.println(delta);
                 tick(delta);
                 render();
-                ticks++;
-                delta--;
+                ticksElapsed++;
+                delta -= ((long) delta);
 
                 GLFW.glfwPollEvents();
                 GLFW.glfwSwapBuffers(coreApp.display.getWindowID());
             }
 
-            if (timer > 1000000000D) {
+            if (timeElapsed > 1000000000D) {
                 if (printFPS) {
-                    System.out.println("Frames per second: " + ticks);
+                    System.out.println("Frames per second: " + ticksElapsed);
                 }
-                ticks = 0;
-                timer = 0;
+                ticksElapsed = 0;
+                timeElapsed = 0;
             }
 
             if (GLFW.glfwWindowShouldClose(coreApp.display.getWindowID())) {
@@ -92,7 +98,7 @@ public class CoreEngine implements Runnable {
     }
 
     private void init() {
-        coreApp.display = new Display(title, width, height);
+        coreApp.display = new Display(displayTitle, displayWidth, displayHeight);
 
         GL.createCapabilities();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -100,13 +106,13 @@ public class CoreEngine implements Runnable {
         GL11.glEnable(GL11.GL_CULL_FACE);
 
         if (printSoftwareInformation) {
-            System.out.println("OS Name: " + System.getProperty("os.name"));
-            System.out.println("OS Version: " + System.getProperty("os.version"));
+            System.out.println("Operating System: " + System.getProperty("os.name")
+                    + " , Version: " + System.getProperty("os.version"));
             System.out.println("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION));
             System.out.println("LWJGL Version: " + Version.getVersion());
         }
 
-        coreApp.display.setBackgroundColor(Color4f.BLACK);
+        coreApp.display.setBackgroundColor(Color.BLACK);
 
         coreApp.keyManager = new KeyManager(coreApp.display.getWindowID());
         coreApp.mouseManager = new MouseManager(coreApp.display.getWindowID());
@@ -158,11 +164,11 @@ public class CoreEngine implements Runnable {
         }
     }
 
-    public void setPrintFPS(boolean enabled) {
+    public void enablePrintFPS(boolean enabled) {
         this.printFPS = enabled;
     }
 
-    public void setPrintSoftwareInformation(boolean enabled) {
+    public void enablePrintSoftwareInformation(boolean enabled) {
         this.printSoftwareInformation = enabled;
     }
 }

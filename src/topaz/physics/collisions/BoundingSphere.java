@@ -14,7 +14,7 @@ public class BoundingSphere extends CollisionObject {
 
     //NOT SUPPORTED YET!
     @Override
-    public boolean intersectsBox(AxisAlignedBoundingBox box) {
+    public boolean intersectsBox(BoundingBox box) {
         return false;
     }
 

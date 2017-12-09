@@ -3,7 +3,7 @@ package topaz.rendering;
 import java.util.ArrayList;
 import org.joml.Vector3f;
 
-public class GameObjectRaycast {
+public class Raycast {
 
     private ObjectManager objectManager;
 
@@ -12,7 +12,7 @@ public class GameObjectRaycast {
     private float step;
     private ArrayList<GameObject> excludedGameObjects = new ArrayList<>();
 
-    public GameObjectRaycast(ObjectManager objectManager, Vector3f startPoint, Vector3f endPoint, float step) {
+    public Raycast(ObjectManager objectManager, Vector3f startPoint, Vector3f endPoint, float step) {
         this.objectManager = objectManager;
         this.startPoint = new Vector3f(startPoint);
         this.endPoint = new Vector3f(endPoint);
