@@ -2,33 +2,33 @@ package topaz.rendering;
 
 import java.util.ArrayList;
 import org.joml.Vector3f;
+import topaz.physics.PhysicsManager;
+import topaz.physics.PhysicsObject;
+import topaz.physics.collisions.CollisionObject;
+import topaz.util.Ray;
 
 public class Raycast {
 
-    private ObjectManager objectManager;
-
-    private Vector3f startPoint;
+    private Ray ray;
     private Vector3f endPoint;
-    private float step;
     private ArrayList<GameObject> excludedGameObjects = new ArrayList<>();
+    private ArrayList<CollisionObject> excludedCollisionObjects = new ArrayList<>();
 
-    public Raycast(ObjectManager objectManager, Vector3f startPoint, Vector3f endPoint, float step) {
-        this.objectManager = objectManager;
-        this.startPoint = new Vector3f(startPoint);
-        this.endPoint = new Vector3f(endPoint);
-        this.step = step;
+    public Raycast(Vector3f startPoint, Vector3f direction) {
+        ray = new Ray();
+        ray.setStartPoint(startPoint);
+        ray.setDirection(direction);
     }
 
-    public ArrayList<GameObject> getIntersectingGameObjects() {
+    public ArrayList<GameObject> getIntersectingObjects(ObjectManager objectManager, float distance, float step) {
         ArrayList<GameObject> intersectingObjects = new ArrayList<>();
-        Vector3f separationVector = new Vector3f(endPoint).sub(startPoint);
 
-        for (float i = 0; i <= 1f; i += step) {
-            Vector3f point = new Vector3f(startPoint).add(new Vector3f(separationVector).mul(i));
+        for (float i = 0; i <= distance; i += step) {
+            Vector3f point = ray.getPointOnRay(i);
 
             for (GameObject gameObject : objectManager.getGameObjects()) {
                 if (excludedGameObjects.contains(gameObject)) {
-                    break;
+                    continue;
                 }
                 if (gameObject.getPhysicsObject().getCollisionObject().containsPoint(point)) {
                     intersectingObjects.add(gameObject);
@@ -38,41 +38,72 @@ public class Raycast {
         return intersectingObjects;
     }
 
-    public ArrayList<GameObject> getClosestIntersectingGameObjects() {
-        ArrayList<GameObject> intersectingObjects = new ArrayList<>();
-        Vector3f separationVector = new Vector3f(endPoint).sub(startPoint);
-        boolean intersectingObjectFound = false;
-
-        for (float i = 0; i <= 1f; i += step) {
-            Vector3f point = new Vector3f(startPoint).add(new Vector3f(separationVector).mul(i));
+    public GameObject getClosestIntersectingObject(ObjectManager objectManager, float distance, float step) {
+        for (float i = 0; i <= distance; i += step) {
+            Vector3f point = ray.getPointOnRay(i);
 
             for (GameObject gameObject : objectManager.getGameObjects()) {
                 if (excludedGameObjects.contains(gameObject)) {
-                    break;
+                    continue;
                 }
                 if (gameObject.getPhysicsObject().getCollisionObject().containsPoint(point)) {
-                    intersectingObjects.add(gameObject);
-                    intersectingObjectFound = true;
+                    return gameObject;
                 }
             }
+        }
+        return null;
+    }
 
-            if (intersectingObjectFound) {
-                break;
+    public ArrayList<CollisionObject> getIntersectingCollisionObjects(PhysicsManager physicsManager, float distance, float step) {
+        ArrayList<CollisionObject> intersectingObjects = new ArrayList<>();
+
+        for (float i = 0; i <= distance; i += step) {
+            Vector3f point = ray.getPointOnRay(i);
+
+            for (PhysicsObject physicsObject : physicsManager.getPhysicsObjects()) {
+                CollisionObject collisionObject = physicsObject.getCollisionObject();
+                if (excludedCollisionObjects.contains(collisionObject)) {
+                    continue;
+                }
+                if (collisionObject.containsPoint(point)) {
+                    intersectingObjects.add(collisionObject);
+                }
             }
         }
         return intersectingObjects;
+    }
+
+    public CollisionObject getClosestIntersectingCollisionObject(PhysicsManager physicsManager, float distance, float step) {
+        for (float i = 0; i <= distance; i += step) {
+            Vector3f point = ray.getPointOnRay(i);
+
+            for (PhysicsObject physicsObject : physicsManager.getPhysicsObjects()) {
+                CollisionObject collisionObject = physicsObject.getCollisionObject();
+                if (excludedCollisionObjects.contains(collisionObject)) {
+                    continue;
+                }
+                if (collisionObject.containsPoint(point)) {
+                    return collisionObject;
+                }
+            }
+        }
+        return null;
     }
 
     public void addExcludedGameObject(GameObject gameObject) {
         excludedGameObjects.add(gameObject);
     }
 
-    public Vector3f getStartPoint() {
-        return startPoint;
+    public void addExcludedCollisionObject(CollisionObject collisionObject) {
+        excludedCollisionObjects.add(collisionObject);
     }
 
-    public void setStartPoint(Vector3f startPoint) {
-        this.startPoint = startPoint;
+    public Ray getRay() {
+        return ray;
+    }
+
+    public void setRay(Ray ray) {
+        this.ray = ray;
     }
 
     public Vector3f getEndPoint() {
@@ -81,13 +112,5 @@ public class Raycast {
 
     public void setEndPoint(Vector3f endPoint) {
         this.endPoint = endPoint;
-    }
-
-    public float getStep() {
-        return step;
-    }
-
-    public void setStep(float step) {
-        this.step = step;
     }
 }
