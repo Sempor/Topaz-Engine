@@ -20,13 +20,13 @@ public class Raycast {
         ray.setDirection(direction);
     }
 
-    public ArrayList<GameObject> getIntersectingObjects(RenderManager renderManager, float distance, float step) {
+    public ArrayList<GameObject> getIntersectingObjects(GameObject rootObject, float distance, float step) {
         ArrayList<GameObject> intersectingObjects = new ArrayList<>();
 
         for (float i = 0; i <= distance; i += step) {
             Vector3f point = ray.getPointOnRay(i);
 
-            for (GameObject gameObject : renderManager.getGameObjects()) {
+            for (GameObject gameObject : rootObject.getAllDescendants()) {
                 if (excludedGameObjects.contains(gameObject)) {
                     continue;
                 }
@@ -38,11 +38,11 @@ public class Raycast {
         return intersectingObjects;
     }
 
-    public GameObject getClosestIntersectingObject(RenderManager renderManager, float distance, float step) {
+    public GameObject getClosestIntersectingObject(GameObject rootObject, float distance, float step) {
         for (float i = 0; i <= distance; i += step) {
             Vector3f point = ray.getPointOnRay(i);
 
-            for (GameObject gameObject : renderManager.getGameObjects()) {
+            for (GameObject gameObject : rootObject.getAllDescendants()) {
                 if (excludedGameObjects.contains(gameObject)) {
                     continue;
                 }

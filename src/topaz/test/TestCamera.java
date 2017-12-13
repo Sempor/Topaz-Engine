@@ -7,26 +7,27 @@ import topaz.rendering.meshes.Mesh_Box;
 import topaz.util.Color;
 
 public class TestCamera extends CoreApp {
-
+    
     private static int WIDTH = 1000, HEIGHT = 800;
     private float speed = 0.01f;
-
+    
     public static void main(String[] args) {
         CoreEngine core = new CoreEngine(new TestCamera(), WIDTH, HEIGHT);
         core.enablePrintSoftwareInformation(false);
         core.enablePrintFPS(false);
         core.start();
     }
-
+    
     @Override
     public void init() {
-        GameObject box = new GameObject("Box", new Mesh_Box());
+        GameObject box = new GameObject("Box");
+        box.setMesh(new Mesh_Box());
         box.setLocation(1, 1, 1);
         box.setColor(Color.RED);
         box.setVisible(true);
-        renderManager.add(box);
+        rootObject.attachChild(box);
     }
-
+    
     @Override
     public void tick(double delta) {
         if (keyManager.KEY_W.isPressed()) {

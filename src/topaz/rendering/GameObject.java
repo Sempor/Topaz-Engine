@@ -26,39 +26,23 @@ public class GameObject {
 
     private ArrayList<GameObject> children = new ArrayList<>();
 
-    public GameObject(Mesh mesh) {
-        this.mesh = mesh;
+    public GameObject() {
     }
 
-    //Currently shallow copies, maybe make deep copy later
-    public GameObject(Mesh mesh, PhysicsObject physicsObject) {
-        this(mesh);
-        this.physicsObject = physicsObject;
-    }
-
-    public GameObject(String name, Mesh mesh) {
+    public GameObject(String name) {
         this.name = name;
-        this.mesh = mesh;
-    }
-
-    //Currently shallow copies, maybe make deep copy later
-    public GameObject(String name, Mesh mesh, PhysicsObject physicsObject) {
-        this(name, mesh);
-        this.physicsObject = physicsObject;
     }
 
     public void attachChild(GameObject child) {
-        if (child == null) {
-            return;
+        if (child != null) {
+            children.add(child);
         }
-        children.add(child);
     }
 
     public void removeChild(GameObject child) {
-        if (child == null) {
-            return;
+        if (child != null) {
+            children.remove(child);
         }
-        children.remove(child);
     }
 
     public void setColor(Color color) {
@@ -268,5 +252,18 @@ public class GameObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ArrayList<GameObject> getChildren() {
+        return children;
+    }
+
+    public ArrayList<GameObject> getAllDescendants() {
+        ArrayList<GameObject> descendants = new ArrayList<>();
+        for (GameObject child : children) {
+            descendants.add(child);
+            descendants.addAll(child.getAllDescendants());
+        }
+        return descendants;
     }
 }

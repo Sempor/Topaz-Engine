@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import topaz.physics.PhysicsManager;
 import topaz.rendering.Camera;
+import topaz.rendering.GameObject;
 import topaz.rendering.RenderManager;
 import topaz.rendering.ui.UIManager;
 import topaz.util.Color;
@@ -115,7 +116,8 @@ public class CoreEngine implements Runnable {
         coreApp.keyManager = new KeyManager(coreApp.display.getWindowID());
         coreApp.mouseManager = new MouseManager(coreApp.display.getWindowID());
         coreApp.camera = new Camera(coreApp.display, coreApp.mouseManager);
-        coreApp.renderManager = new RenderManager(coreApp.display, coreApp.camera);
+        coreApp.rootObject = new GameObject();
+        coreApp.renderManager = new RenderManager(coreApp.display, coreApp.camera, coreApp.rootObject);
         coreApp.physicsManager = new PhysicsManager(coreApp.display);
         coreApp.uiManager = new UIManager(coreApp.display);
 

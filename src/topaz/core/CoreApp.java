@@ -4,6 +4,7 @@ import topaz.input.KeyManager;
 import topaz.input.MouseManager;
 import topaz.physics.PhysicsManager;
 import topaz.rendering.Camera;
+import topaz.rendering.GameObject;
 import topaz.rendering.RenderManager;
 import topaz.rendering.ui.UIManager;
 
@@ -14,6 +15,7 @@ public abstract class CoreApp {
     public PhysicsManager physicsManager;
     public UIManager uiManager;
     public Camera camera;
+    public GameObject rootObject;
     public KeyManager keyManager;
     public MouseManager mouseManager;
 

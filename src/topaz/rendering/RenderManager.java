@@ -1,6 +1,5 @@
 package topaz.rendering;
 
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joml.Matrix4f;
@@ -13,18 +12,18 @@ public class RenderManager {
 
     private Display display;
     private Camera camera;
+    private GameObject rootObject;
 
     private float fieldOfView = 45f;
     private float nearPlane = 0.01f;
     private float farPlane = 100f;
 
-    private ArrayList<GameObject> gameObjects = new ArrayList<>();
-
     private ShaderProgram[] shaderPrograms;
 
-    public RenderManager(Display display, Camera camera) {
+    public RenderManager(Display display, Camera camera, GameObject rootObject) {
         this.display = display;
         this.camera = camera;
+        this.rootObject = rootObject;
 
         try {
             shaderPrograms = new ShaderProgram[2];
@@ -44,32 +43,16 @@ public class RenderManager {
             viewProjectionMatrix.lookAt(camera.getLocation(), camera.getLocation().add(camera.getForward()), camera.getUp());
         }
 
-        for (GameObject gameObject : gameObjects) {
+        for (GameObject gameObject : rootObject.getAllDescendants()) {
             Matrix4f modelViewProjectionMatrix = new Matrix4f(viewProjectionMatrix).mul(gameObject.getModelMatrix());
             gameObject.getMesh().tick(delta, modelViewProjectionMatrix);
         }
     }
 
     public void render() {
-        for (GameObject gameObject : gameObjects) {
+        for (GameObject gameObject : rootObject.getAllDescendants()) {
             gameObject.getMesh().render(shaderPrograms, gameObject.getSelectedTexture(), gameObject.isVisible());
         }
-    }
-
-    public void add(GameObject gameObject) {
-        if (gameObject != null) {
-            gameObjects.add(gameObject);
-        }
-    }
-
-    public void remove(GameObject gameObject) {
-        if (gameObject != null) {
-            gameObjects.remove(gameObject);
-        }
-    }
-
-    public ArrayList<GameObject> getGameObjects() {
-        return gameObjects;
     }
 
     public float getFieldOfView() {
