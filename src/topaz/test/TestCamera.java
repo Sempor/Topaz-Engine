@@ -22,7 +22,7 @@ public class TestCamera extends CoreApp {
     public void init() {
         GameObject box = new GameObject("Box", new Mesh_Box());
         box.setLocation(1, 1, 1);
-        //box.setColor(Color.RED);
+        box.setColor(Color.RED);
         box.setVisible(true);
         renderManager.add(box);
     }

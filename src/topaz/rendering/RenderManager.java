@@ -51,11 +51,9 @@ public class RenderManager {
     }
 
     public void render() {
-        GL20.glUseProgram(shaderPrograms[0].getProgramID());
         for (GameObject gameObject : gameObjects) {
-            gameObject.getMesh().render(gameObject.getName(), shaderPrograms, gameObject.getSelectedTexture(), gameObject.isVisible());
+            gameObject.getMesh().render(shaderPrograms, gameObject.getSelectedTexture(), gameObject.isVisible());
         }
-        GL20.glUseProgram(0);
     }
 
     public void add(GameObject gameObject) {

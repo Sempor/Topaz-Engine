@@ -10,9 +10,9 @@ import topaz.util.Color;
 public class GameObject {
 
     private String name;
-    private float x, y, z;
-    private float rotateX, rotateY, rotateZ;
-    private float scaleX = 1f, scaleY = 1f, scaleZ = 1f;
+    private Vector3f location = new Vector3f(0, 0, 0);
+    private Vector3f rotation = new Vector3f(0, 0, 0);
+    private Vector3f scale = new Vector3f(1, 1, 1);
     private int[] textureIDs;
     private int selector;
     private boolean visible = true;
@@ -93,123 +93,111 @@ public class GameObject {
     }
 
     public void translate(Vector3f translation) {
-        translate(translation.x, translation.y, translation.z);
-    }
-
-    public void translate(float dx, float dy, float dz) {
-        x += dx;
-        y += dy;
-        z += dz;
+        location.add(translation);
 
         if (physicsObject != null) {
-            physicsObject.getCollisionObject().translate(dx, dy, dz);
+            physicsObject.getCollisionObject().translate(translation);
         }
 
         for (int i = 0; i < children.size(); i++) {
-            children.get(i).translate(dx, dy, dz);
+            children.get(i).translate(translation);
         }
     }
 
+    public void translate(float dx, float dy, float dz) {
+        translate(new Vector3f(dx, dy, dz));
+    }
+
     public void rotate(Vector3f rotation) {
-        rotate(rotation.x, rotation.y, rotation.z);
+        this.rotation.add(rotation);
+
+        for (int i = 0; i < children.size(); i++) {
+            children.get(i).rotate(rotation);
+        }
     }
 
     //Bounding box doesn't work that well with rotations
     public void rotate(float dx, float dy, float dz) {
-        rotateX += dx;
-        rotateY += dy;
-        rotateZ += dz;
-
-        for (int i = 0; i < children.size(); i++) {
-            children.get(i).rotate(dx, dy, dz);
-        }
+        rotate(new Vector3f(dx, dy, dz));
     }
 
     public void scale(Vector3f scale) {
-        scale(scale.x, scale.y, scale.z);
+        this.scale.add(scale);
+
+        if (physicsObject != null) {
+            physicsObject.getCollisionObject().scale(scale);
+        }
+
+        for (int i = 0; i < children.size(); i++) {
+            children.get(i).scale(scale);
+        }
     }
 
     public void scale(float dx, float dy, float dz) {
-        scaleX += dx;
-        scaleY += dy;
-        scaleZ += dz;
-
-        if (physicsObject != null) {
-            physicsObject.getCollisionObject().scale(dx, dy, dz);
-        }
-
-        for (int i = 0; i < children.size(); i++) {
-            children.get(i).scale(dx, dy, dz);
-        }
+        scale(new Vector3f(dx, dy, dz));
     }
 
     public void setLocation(Vector3f location) {
-        setLocation(location.x, location.y, location.z);
-    }
-
-    public void setLocation(float x, float y, float z) {
         for (int i = 0; i < children.size(); i++) {
-            Vector3f separationVector = new Vector3f(children.get(i).getLocation().sub(x, y, z));
-            children.get(i).setLocation(x, y, z);
+            Vector3f separationVector = new Vector3f(children.get(i).getLocation().sub(location));
+            children.get(i).setLocation(location);
             children.get(i).translate(separationVector);
         }
 
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.location = new Vector3f(location);
 
         if (physicsObject != null) {
-            physicsObject.setLocation(new Vector3f(x, y, z));
+            physicsObject.setLocation(new Vector3f(location));
         }
     }
 
+    public void setLocation(float x, float y, float z) {
+        setLocation(new Vector3f(x, y, z));
+    }
+
     public Vector3f getLocation() {
-        return new Vector3f(x, y, z);
+        return location;
     }
 
     public void setRotation(Vector3f rotation) {
-        setRotation(rotation.x, rotation.y, rotation.z);
+        for (int i = 0; i < children.size(); i++) {
+            Vector3f separationVector = new Vector3f(children.get(i).getRotation().sub(rotation));
+            children.get(i).setRotation(rotation);
+            children.get(i).rotate(separationVector);
+        }
+
+        this.rotation = new Vector3f(rotation);
     }
 
     //Bounding box doesn't work that well with rotations
     public void setRotation(float rotateX, float rotateY, float rotateZ) {
-        for (int i = 0; i < children.size(); i++) {
-            Vector3f separationVector = new Vector3f(children.get(i).getRotation().sub(rotateX, rotateY, rotateZ));
-            children.get(i).setRotation(rotateX, rotateY, rotateZ);
-            children.get(i).rotate(separationVector);
-        }
-
-        this.rotateX = rotateX;
-        this.rotateY = rotateY;
-        this.rotateZ = rotateZ;
+        setRotation(new Vector3f(rotateX, rotateY, rotateZ));
     }
 
     public Vector3f getRotation() {
-        return new Vector3f(rotateX, rotateY, rotateZ);
+        return rotation;
     }
 
     public void setScale(Vector3f scale) {
-        setScale(scale.x, scale.y, scale.z);
-    }
-
-    public void setScale(float scaleX, float scaleY, float scaleZ) {
         for (int i = 0; i < children.size(); i++) {
-            Vector3f separationVector = new Vector3f(children.get(i).getScale().sub(scaleX, scaleY, scaleZ));
-            children.get(i).setScale(scaleX, scaleY, scaleZ);
+            Vector3f separationVector = new Vector3f(children.get(i).getScale().sub(scale));
+            children.get(i).setScale(scale);
             children.get(i).scale(separationVector);
         }
 
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        this.scaleZ = scaleZ;
+        this.scale = new Vector3f(scale);
 
         if (physicsObject != null) {
-            physicsObject.getCollisionObject().setScale(scaleX, scaleY, scaleZ);
+            physicsObject.getCollisionObject().setScale(new Vector3f(scale));
         }
     }
 
+    public void setScale(float scaleX, float scaleY, float scaleZ) {
+        setScale(new Vector3f(scaleX, scaleY, scaleZ));
+    }
+
     public Vector3f getScale() {
-        return new Vector3f(scaleX, scaleY, scaleZ);
+        return scale;
     }
 
     public void setCollisionsEnabled(boolean enabled) {
@@ -241,8 +229,8 @@ public class GameObject {
 
     public void setPhysicsObject(PhysicsObject physicsObject) {
         this.physicsObject = physicsObject;
-        this.physicsObject.setLocation(x, y, z);
-        this.physicsObject.setScale(new Vector3f(scaleX, scaleY, scaleZ));
+        this.physicsObject.setLocation(location);
+        this.physicsObject.setScale(scale);
         if (collisionsEnabled) {
             physicsObject.getCollisionObject().setActive(true);
         }
@@ -266,11 +254,11 @@ public class GameObject {
 
     public Matrix4f getModelMatrix() {
         Matrix4f modelMatrix = new Matrix4f();
-        modelMatrix.scale(scaleX, scaleY, scaleZ);
-        modelMatrix.translate(x, y, z);
-        modelMatrix.rotate((float) Math.toRadians(rotateZ), 0, 0, 1);
-        modelMatrix.rotate((float) Math.toRadians(rotateY), 0, 1, 0);
-        modelMatrix.rotate((float) Math.toRadians(rotateX), 1, 0, 0);
+        modelMatrix.scale(scale);
+        modelMatrix.translate(location);
+        modelMatrix.rotate((float) Math.toRadians(rotation.z), 0, 0, 1);
+        modelMatrix.rotate((float) Math.toRadians(rotation.y), 0, 1, 0);
+        modelMatrix.rotate((float) Math.toRadians(rotation.x), 1, 0, 0);
         return modelMatrix;
     }
 

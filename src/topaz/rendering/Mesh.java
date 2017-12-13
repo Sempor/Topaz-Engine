@@ -70,55 +70,6 @@ public class Mesh {
 
         GL30.glBindVertexArray(0);
     }
-    
-    public Mesh(float[] vertices, short[] indices, float[] colors) {
-        this.vertices = Arrays.copyOf(vertices, vertices.length);
-        this.indices = Arrays.copyOf(indices, indices.length);
-
-        mvpMatrixBuffer = BufferUtils.createFloatBuffer(16);
-
-        FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
-        verticesBuffer.put(vertices).flip();
-
-        ShortBuffer indicesBuffer = BufferUtils.createShortBuffer(indices.length);
-        indicesBuffer.put(indices).flip();
-
-        vaoID = GL30.glGenVertexArrays(); //Creates vao (vertex array object)
-        GL30.glBindVertexArray(vaoID);
-
-        int verticesVboID = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, verticesVboID);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW); //Uploads vertex data into the array buffer of the vao
-        GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 0 of the array buffer in the vao
-
-        int eboID = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, eboID);
-        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW); //Uploads index data into the element array buffer of the vao
-
-        //Colors
-        FloatBuffer colorsBuffer = BufferUtils.createFloatBuffer(colors.length);
-        colorsBuffer.put(colors).flip();
-        colorsVboID = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorsVboID);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorsBuffer, GL15.GL_DYNAMIC_DRAW); //Uploads color data into the array buffer of the vao
-        GL20.glVertexAttribPointer(1, 4, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 1 of the array buffer of the vao
-
-        /*//Texture coords
-        float[] textureCoords = new float[]{
-            0, 0, //first vertex
-            0, 1, //second vertex
-            1, 1, //third vertex
-            1, 0 //fourth vertex
-        };
-        FloatBuffer textureCoordsBuffer = BufferUtils.createFloatBuffer(textureCoords.length);
-        textureCoordsBuffer.put(textureCoords).flip();
-        textureCoordsVboID = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, textureCoordsVboID);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, textureCoordsBuffer, GL15.GL_STATIC_DRAW); //Uploads texture coords data into the array buffer of the vao
-        GL20.glVertexAttribPointer(2, 2, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 2 of the array buffer of the vao*/
-
-        GL30.glBindVertexArray(0);
-    }
 
     public Mesh(Mesh mesh) {
         this(mesh.vertices, mesh.indices);
@@ -129,8 +80,9 @@ public class Mesh {
         mvpMatrixBuffer.flip();
     }
 
-    public void render(String name, ShaderProgram[] shaderPrograms, int texture, boolean visible) {
+    public void render(ShaderProgram[] shaderPrograms, int texture, boolean visible) {
         if (texture != -1) {
+            GL20.glUseProgram(shaderPrograms[1].getProgramID());
             GL20.glUniformMatrix4fv(GL20.glGetUniformLocation(shaderPrograms[1].getProgramID(), "mvpMatrix"), false, mvpMatrixBuffer); //Uploads mvpMatrix to the uniform variable
             if (visible) {
                 GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -147,6 +99,7 @@ public class Mesh {
                 GL30.glBindVertexArray(0);
             }
         } else {
+            GL20.glUseProgram(shaderPrograms[0].getProgramID());
             GL20.glUniformMatrix4fv(GL20.glGetUniformLocation(shaderPrograms[0].getProgramID(), "mvpMatrix"), false, mvpMatrixBuffer); //Uploads mvpMatrix to the uniform variable
             if (visible) {
                 GL30.glBindVertexArray(vaoID);
@@ -158,9 +111,9 @@ public class Mesh {
                 GL20.glDisableVertexAttribArray(0);
                 GL20.glDisableVertexAttribArray(1);
                 GL30.glBindVertexArray(0);
-                System.out.println(name);
             }
         }
+        GL20.glUseProgram(0);
     }
 
     private Matrix4f storeMatrixInBuffer(FloatBuffer matrixBuffer, Matrix4f matrix) {
