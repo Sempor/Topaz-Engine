@@ -4,7 +4,6 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -13,30 +12,21 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import topaz.rendering.shaders.ShaderProgram;
 
-public abstract class Mesh {
-
-    private RenderManager renderManager;
-
-    protected int vaoID;
-    private int eboID;
-    private int verticesVboID;
+public class Mesh {
 
     private float[] vertices;
     private short[] indices;
 
-    protected ShaderProgram shaderProgram;
+    private int vaoID;
+    private int colorsVboID;
+    private int textureCoordsVboID;
+
     private FloatBuffer mvpMatrixBuffer;
 
-    private float x, y, z;
-    private float rotateX, rotateY, rotateZ;
-    private float scaleX = 1f, scaleY = 1f, scaleZ = 1f;
-
-    protected boolean visible;
-
-    public Mesh(RenderManager renderManager, float[] vertices, short[] indices) {
-        this.renderManager = renderManager;
+    public Mesh(float[] vertices, short[] indices) {
         this.vertices = Arrays.copyOf(vertices, vertices.length);
         this.indices = Arrays.copyOf(indices, indices.length);
+
         mvpMatrixBuffer = BufferUtils.createFloatBuffer(16);
 
         FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
@@ -48,151 +38,186 @@ public abstract class Mesh {
         vaoID = GL30.glGenVertexArrays(); //Creates vao (vertex array object)
         GL30.glBindVertexArray(vaoID);
 
-        verticesVboID = GL15.glGenBuffers();
+        int verticesVboID = GL15.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, verticesVboID);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW); //Uploads vertex data into the array buffer of the vao
         GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 0 of the array buffer in the vao
 
-        eboID = GL15.glGenBuffers();
+        int eboID = GL15.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, eboID);
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW); //Uploads index data into the element array buffer of the vao
+
+        //Colors
+        FloatBuffer colorsBuffer = BufferUtils.createFloatBuffer(vertices.length * 4 / 3);
+        colorsVboID = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorsVboID);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorsBuffer, GL15.GL_DYNAMIC_DRAW); //Uploads color data into the array buffer of the vao
+        GL20.glVertexAttribPointer(1, 4, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 1 of the array buffer of the vao
+
+        //Texture coords
+        float[] textureCoords = new float[]{
+            0, 0, //first vertex
+            0, 1, //second vertex
+            1, 1, //third vertex
+            1, 0 //fourth vertex
+        };
+        FloatBuffer textureCoordsBuffer = BufferUtils.createFloatBuffer(textureCoords.length);
+        textureCoordsBuffer.put(textureCoords).flip();
+        textureCoordsVboID = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, textureCoordsVboID);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, textureCoordsBuffer, GL15.GL_STATIC_DRAW); //Uploads texture coords data into the array buffer of the vao
+        GL20.glVertexAttribPointer(2, 2, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 2 of the array buffer of the vao
+
+        GL30.glBindVertexArray(0);
+    }
+    
+    public Mesh(float[] vertices, short[] indices, float[] colors) {
+        this.vertices = Arrays.copyOf(vertices, vertices.length);
+        this.indices = Arrays.copyOf(indices, indices.length);
+
+        mvpMatrixBuffer = BufferUtils.createFloatBuffer(16);
+
+        FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
+        verticesBuffer.put(vertices).flip();
+
+        ShortBuffer indicesBuffer = BufferUtils.createShortBuffer(indices.length);
+        indicesBuffer.put(indices).flip();
+
+        vaoID = GL30.glGenVertexArrays(); //Creates vao (vertex array object)
+        GL30.glBindVertexArray(vaoID);
+
+        int verticesVboID = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, verticesVboID);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW); //Uploads vertex data into the array buffer of the vao
+        GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 0 of the array buffer in the vao
+
+        int eboID = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, eboID);
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW); //Uploads index data into the element array buffer of the vao
+
+        //Colors
+        FloatBuffer colorsBuffer = BufferUtils.createFloatBuffer(colors.length);
+        colorsBuffer.put(colors).flip();
+        colorsVboID = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorsVboID);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorsBuffer, GL15.GL_DYNAMIC_DRAW); //Uploads color data into the array buffer of the vao
+        GL20.glVertexAttribPointer(1, 4, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 1 of the array buffer of the vao
+
+        /*//Texture coords
+        float[] textureCoords = new float[]{
+            0, 0, //first vertex
+            0, 1, //second vertex
+            1, 1, //third vertex
+            1, 0 //fourth vertex
+        };
+        FloatBuffer textureCoordsBuffer = BufferUtils.createFloatBuffer(textureCoords.length);
+        textureCoordsBuffer.put(textureCoords).flip();
+        textureCoordsVboID = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, textureCoordsVboID);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, textureCoordsBuffer, GL15.GL_STATIC_DRAW); //Uploads texture coords data into the array buffer of the vao
+        GL20.glVertexAttribPointer(2, 2, GL11.GL_FLOAT, false, 0, 0); //Points buffer at location 2 of the array buffer of the vao*/
 
         GL30.glBindVertexArray(0);
     }
 
     public Mesh(Mesh mesh) {
-        this(mesh.renderManager, mesh.vertices, mesh.indices);
-        this.x = mesh.x;
-        this.y = mesh.y;
-        this.z = mesh.z;
-        this.rotateX = mesh.rotateX;
-        this.rotateY = mesh.rotateY;
-        this.rotateZ = mesh.rotateZ;
-        this.scaleX = mesh.scaleX;
-        this.scaleY = mesh.scaleY;
-        this.scaleZ = mesh.scaleZ;
-        this.visible = mesh.visible;
+        this(mesh.vertices, mesh.indices);
     }
 
-    public void tick(double delta, Matrix4f viewProjectionMatrix) {
-        Matrix4f modelMatrix = new Matrix4f();
-        modelMatrix.scale(scaleX, scaleY, scaleZ);
-        modelMatrix.translate(x, y, z);
-        modelMatrix.rotate((float) Math.toRadians(rotateZ), 0, 0, 1);
-        modelMatrix.rotate((float) Math.toRadians(rotateY), 0, 1, 0);
-        modelMatrix.rotate((float) Math.toRadians(rotateX), 1, 0, 0);
-
-        Matrix4f modelViewProjectionMatrix = new Matrix4f(viewProjectionMatrix).mul(modelMatrix);
-        RenderingUtils.storeMatrixInBuffer(mvpMatrixBuffer, modelViewProjectionMatrix);
+    public void tick(double delta, Matrix4f modelViewProjectionMatrix) {
+        storeMatrixInBuffer(mvpMatrixBuffer, modelViewProjectionMatrix);
         mvpMatrixBuffer.flip();
     }
 
-    public void render() {
-        GL20.glUniformMatrix4fv(GL20.glGetUniformLocation(shaderProgram.getProgramID(), "mvpMatrix"), false, mvpMatrixBuffer); //Uploads mvpMatrix to the uniform variable
-
-        if (visible) {
-            if (this instanceof TexturedMesh) {
+    public void render(String name, ShaderProgram[] shaderPrograms, int texture, boolean visible) {
+        if (texture != -1) {
+            GL20.glUniformMatrix4fv(GL20.glGetUniformLocation(shaderPrograms[1].getProgramID(), "mvpMatrix"), false, mvpMatrixBuffer); //Uploads mvpMatrix to the uniform variable
+            if (visible) {
                 GL13.glActiveTexture(GL13.GL_TEXTURE0);
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, ((TexturedMesh) this).getSelectedTexture());
+                GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+
+                GL30.glBindVertexArray(vaoID);
+                GL20.glEnableVertexAttribArray(0);
+                GL20.glEnableVertexAttribArray(2);
+
+                GL11.glDrawElements(GL11.GL_TRIANGLES, indices.length, GL11.GL_UNSIGNED_SHORT, 0);
+
+                GL20.glDisableVertexAttribArray(0);
+                GL20.glDisableVertexAttribArray(2);
+                GL30.glBindVertexArray(0);
             }
+        } else {
+            GL20.glUniformMatrix4fv(GL20.glGetUniformLocation(shaderPrograms[0].getProgramID(), "mvpMatrix"), false, mvpMatrixBuffer); //Uploads mvpMatrix to the uniform variable
+            if (visible) {
+                GL30.glBindVertexArray(vaoID);
+                GL20.glEnableVertexAttribArray(0);
+                GL20.glEnableVertexAttribArray(1);
 
-            GL30.glBindVertexArray(vaoID);
-            GL20.glEnableVertexAttribArray(0);
-            GL20.glEnableVertexAttribArray(1);
+                GL11.glDrawElements(GL11.GL_TRIANGLES, indices.length, GL11.GL_UNSIGNED_SHORT, 0);
 
-            GL11.glDrawElements(GL11.GL_TRIANGLES, indices.length, GL11.GL_UNSIGNED_SHORT, 0);
-
-            GL20.glDisableVertexAttribArray(0);
-            GL20.glDisableVertexAttribArray(1);
-            GL30.glBindVertexArray(0);
+                GL20.glDisableVertexAttribArray(0);
+                GL20.glDisableVertexAttribArray(1);
+                GL30.glBindVertexArray(0);
+                System.out.println(name);
+            }
         }
     }
 
-    public void translate(Vector3f translation) {
-        translate(translation.x, translation.y, translation.z);
+    private Matrix4f storeMatrixInBuffer(FloatBuffer matrixBuffer, Matrix4f matrix) {
+        matrixBuffer.put(matrix.m00());
+        matrixBuffer.put(matrix.m01());
+        matrixBuffer.put(matrix.m02());
+        matrixBuffer.put(matrix.m03());
+        matrixBuffer.put(matrix.m10());
+        matrixBuffer.put(matrix.m11());
+        matrixBuffer.put(matrix.m12());
+        matrixBuffer.put(matrix.m13());
+        matrixBuffer.put(matrix.m20());
+        matrixBuffer.put(matrix.m21());
+        matrixBuffer.put(matrix.m22());
+        matrixBuffer.put(matrix.m23());
+        matrixBuffer.put(matrix.m30());
+        matrixBuffer.put(matrix.m31());
+        matrixBuffer.put(matrix.m32());
+        matrixBuffer.put(matrix.m33());
+        return matrix;
     }
 
-    public void translate(float dx, float dy, float dz) {
-        x += dx;
-        y += dy;
-        z += dz;
+    //Need to fix up this code. Map buffer data instead of using glBufferData because
+    //glBufferData creates more memory.
+    public void setColor(float[] colors) {
+        //Stores the colors in a buffer
+        FloatBuffer colorsBuffer = BufferUtils.createFloatBuffer(colors.length);
+        colorsBuffer.put(colors).flip();
+
+        GL30.glBindVertexArray(vaoID);
+
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorsVboID);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorsBuffer, GL15.GL_DYNAMIC_DRAW); //Update location 1 of the array buffer of the vao
+
+        GL30.glBindVertexArray(0);
     }
 
-    public void rotate(Vector3f rotation) {
-        rotate(rotation.x, rotation.y, rotation.z);
+    //Need to fix up this code. Map buffer data instead of using glBufferData because
+    //glBufferData creates more memory.
+    public void setTextureCoords(float[] textureCoords) {
+        //Stores the texture coords in a buffer
+        FloatBuffer textureCoordsBuffer = BufferUtils.createFloatBuffer(textureCoords.length);
+        textureCoordsBuffer.put(textureCoords).flip();
+
+        GL30.glBindVertexArray(vaoID);
+
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, textureCoordsVboID);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, textureCoordsBuffer, GL15.GL_STATIC_DRAW); //Update location 2 of the array buffer of the vao
+
+        GL30.glBindVertexArray(0);
     }
 
-    public void rotate(float dx, float dy, float dz) {
-        rotateX += dx;
-        rotateY += dy;
-        rotateZ += dz;
+    public float[] getVertices() {
+        return vertices;
     }
 
-    public void scale(Vector3f scale) {
-        scale(scale.x, scale.y, scale.z);
-    }
-
-    public void scale(float dx, float dy, float dz) {
-        scaleX += dx;
-        scaleY += dy;
-        scaleZ += dz;
-    }
-
-    public Vector3f getLocation() {
-        return new Vector3f(x, y, z);
-    }
-
-    public void setLocation(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    public void setLocation(Vector3f location) {
-        setLocation(location.x, location.y, location.z);
-    }
-
-    public Vector3f getRotation() {
-        return new Vector3f(rotateX, rotateY, rotateZ);
-    }
-
-    public void setRotation(float rotateX, float rotateY, float rotateZ) {
-        this.rotateX = rotateX;
-        this.rotateY = rotateY;
-        this.rotateZ = rotateZ;
-    }
-
-    public void setRotation(Vector3f rotation) {
-        setRotation(rotation.x, rotation.y, rotation.z);
-    }
-
-    public Vector3f getScale() {
-        return new Vector3f(scaleX, scaleY, scaleZ);
-    }
-
-    public void setScale(float scaleX, float scaleY, float scaleZ) {
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        this.scaleZ = scaleZ;
-    }
-
-    public void setScale(Vector3f scale) {
-        setScale(scale.x, scale.y, scale.z);
-    }
-
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    public ShaderProgram getShaderProgram() {
-        return shaderProgram;
-    }
-
-    public void setShaderProgram(ShaderProgram shaderProgram) {
-        this.shaderProgram = shaderProgram;
+    public short[] getIndices() {
+        return indices;
     }
 }

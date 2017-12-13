@@ -6,109 +6,72 @@ import java.util.logging.Logger;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL20;
 import topaz.core.Display;
-import topaz.input.MouseManager;
 import topaz.rendering.shaders.Shader;
 import topaz.rendering.shaders.ShaderProgram;
 
 public class RenderManager {
 
     private Display display;
-    private MouseManager mouseManager;
     private Camera camera;
 
-    private float fieldOfView;
-    private float nearPlane;
-    private float farPlane;
+    private float fieldOfView = 45f;
+    private float nearPlane = 0.01f;
+    private float farPlane = 100f;
 
-    private ArrayList<ColoredMesh> coloredMeshes = new ArrayList<>();
-    private ArrayList<TexturedMesh> texturedMeshes = new ArrayList<>();
+    private ArrayList<GameObject> gameObjects = new ArrayList<>();
 
-    private ShaderProgram coloredMeshShaderProgram;
-    private ShaderProgram texturedMeshShaderProgram;
+    private ShaderProgram[] shaderPrograms;
 
-    public RenderManager(Display display, MouseManager mouseManager, Camera camera) {
+    public RenderManager(Display display, Camera camera) {
         this.display = display;
-        this.mouseManager = mouseManager;
         this.camera = camera;
 
-        fieldOfView = 45f;
-        nearPlane = 0.01f;
-        farPlane = 100f;
-
-        setUpShaders();
+        try {
+            shaderPrograms = new ShaderProgram[2];
+            shaderPrograms[0] = new ShaderProgram(new Shader("/topaz/assets/shaders/colorMesh.vs", GL20.GL_VERTEX_SHADER),
+                    new Shader("/topaz/assets/shaders/colorMesh.fs", GL20.GL_FRAGMENT_SHADER));
+            shaderPrograms[1] = new ShaderProgram(new Shader("/topaz/assets/shaders/textureMesh.vs", GL20.GL_VERTEX_SHADER),
+                    new Shader("/topaz/assets/shaders/textureMesh.fs", GL20.GL_FRAGMENT_SHADER));
+        } catch (Exception ex) {
+            Logger.getLogger(Mesh.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void tick(double delta) {
-        float aspectRatio = (float) display.getWidth() / (float) display.getHeight();
-
         Matrix4f viewProjectionMatrix = new Matrix4f();
-        viewProjectionMatrix.perspective((float) Math.toRadians(fieldOfView), aspectRatio, nearPlane, farPlane);
+        viewProjectionMatrix.perspective((float) Math.toRadians(fieldOfView), display.getAspectRatio(), nearPlane, farPlane);
         if (camera.isFollowingMouse()) {
             viewProjectionMatrix.lookAt(camera.getLocation(), camera.getLocation().add(camera.getForward()), camera.getUp());
         }
 
-        for (ColoredMesh mesh : coloredMeshes) {
-            mesh.tick(delta, viewProjectionMatrix);
-        }
-        for (TexturedMesh mesh : texturedMeshes) {
-            mesh.tick(delta, viewProjectionMatrix);
+        for (GameObject gameObject : gameObjects) {
+            Matrix4f modelViewProjectionMatrix = new Matrix4f(viewProjectionMatrix).mul(gameObject.getModelMatrix());
+            gameObject.getMesh().tick(delta, modelViewProjectionMatrix);
         }
     }
 
     public void render() {
-        GL20.glUseProgram(coloredMeshShaderProgram.getProgramID());
-        for (ColoredMesh mesh : coloredMeshes) {
-            mesh.render();
-        }
-        GL20.glUseProgram(0);
-
-        GL20.glUseProgram(texturedMeshShaderProgram.getProgramID());
-        for (TexturedMesh mesh : texturedMeshes) {
-            mesh.render();
+        GL20.glUseProgram(shaderPrograms[0].getProgramID());
+        for (GameObject gameObject : gameObjects) {
+            gameObject.getMesh().render(gameObject.getName(), shaderPrograms, gameObject.getSelectedTexture(), gameObject.isVisible());
         }
         GL20.glUseProgram(0);
     }
 
-    private void setUpShaders() {
-        try {
-            Shader vsColorMesh = new Shader("/topaz/assets/shaders/colorMesh.vs", GL20.GL_VERTEX_SHADER);
-            Shader fsColorMesh = new Shader("/topaz/assets/shaders/colorMesh.fs", GL20.GL_FRAGMENT_SHADER);
-            coloredMeshShaderProgram = new ShaderProgram(vsColorMesh, fsColorMesh);
-
-            Shader vsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.vs", GL20.GL_VERTEX_SHADER);
-            Shader fsTextureMesh = new Shader("/topaz/assets/shaders/textureMesh.fs", GL20.GL_FRAGMENT_SHADER);
-            texturedMeshShaderProgram = new ShaderProgram(vsTextureMesh, fsTextureMesh);
-        } catch (Exception ex) {
-            Logger.getLogger(TexturedMesh.class.getName()).log(Level.SEVERE, null, ex);
+    public void add(GameObject gameObject) {
+        if (gameObject != null) {
+            gameObjects.add(gameObject);
         }
     }
 
-    public void add(Mesh mesh) {
-        if (mesh == null) {
-            System.out.println("ERROR: Mesh is null!");
-            return;
-        }
-        if (mesh instanceof ColoredMesh) {
-            coloredMeshes.add((ColoredMesh) mesh);
-        } else if (mesh instanceof TexturedMesh) {
-            texturedMeshes.add((TexturedMesh) mesh);
-        } else {
-            System.out.println("ERROR: Mesh type is not supported!");
+    public void remove(GameObject gameObject) {
+        if (gameObject != null) {
+            gameObjects.remove(gameObject);
         }
     }
 
-    public void remove(Mesh mesh) {
-        if (mesh == null) {
-            System.out.println("ERROR: Mesh is null!");
-            return;
-        }
-        if (mesh instanceof ColoredMesh) {
-            coloredMeshes.remove((ColoredMesh) mesh);
-        } else if (mesh instanceof TexturedMesh) {
-            texturedMeshes.remove((TexturedMesh) mesh);
-        } else {
-            System.out.println("ERROR: Mesh type is not supported!");
-        }
+    public ArrayList<GameObject> getGameObjects() {
+        return gameObjects;
     }
 
     public float getFieldOfView() {
@@ -133,13 +96,5 @@ public class RenderManager {
 
     public void setFarPlane(float farPlane) {
         this.farPlane = farPlane;
-    }
-
-    public ShaderProgram getColoredMeshShaderProgram() {
-        return coloredMeshShaderProgram;
-    }
-
-    public ShaderProgram getTexturedMeshShaderProgram() {
-        return texturedMeshShaderProgram;
     }
 }

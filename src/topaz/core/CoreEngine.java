@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import topaz.physics.PhysicsManager;
 import topaz.rendering.Camera;
-import topaz.rendering.ObjectManager;
 import topaz.rendering.RenderManager;
 import topaz.rendering.ui.UIManager;
 import topaz.util.Color;
@@ -56,7 +55,7 @@ public class CoreEngine implements Runnable {
     @Override
     public void run() {
         init();
-        
+
         double nsPerTick = 1_000_000_000D / coreApp.display.getFPS();
         double delta = 0;
         long currentTime;
@@ -71,7 +70,6 @@ public class CoreEngine implements Runnable {
             lastTime = currentTime;
 
             if (delta >= 1) {
-                System.out.println(delta);
                 tick(delta);
                 render();
                 ticksElapsed++;
@@ -117,9 +115,8 @@ public class CoreEngine implements Runnable {
         coreApp.keyManager = new KeyManager(coreApp.display.getWindowID());
         coreApp.mouseManager = new MouseManager(coreApp.display.getWindowID());
         coreApp.camera = new Camera(coreApp.display, coreApp.mouseManager);
-        coreApp.renderManager = new RenderManager(coreApp.display, coreApp.mouseManager, coreApp.camera);
+        coreApp.renderManager = new RenderManager(coreApp.display, coreApp.camera);
         coreApp.physicsManager = new PhysicsManager(coreApp.display);
-        coreApp.objectManager = new ObjectManager(coreApp.renderManager, coreApp.physicsManager);
         coreApp.uiManager = new UIManager(coreApp.display);
 
         coreApp.init();

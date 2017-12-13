@@ -103,6 +103,10 @@ public class Display {
         return heightBuffer.get(0);
     }
 
+    public float getAspectRatio() {
+        return (float) getWidth() / (float) getHeight();
+    }
+
     public void setBackgroundColor(Color backgroundColor) {
         GL11.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     }
