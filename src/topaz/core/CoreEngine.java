@@ -1,8 +1,6 @@
 package topaz.core;
 
 import org.lwjgl.Version;
-import topaz.input.KeyManager;
-import topaz.input.MouseManager;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -16,10 +14,11 @@ import topaz.util.Color;
 
 public class CoreEngine implements Runnable {
 
-    public static final String DEFAULT_DISPLAY_TITLE = "Topaz Game Engine - An Application";
+    public static final int PRINT_FPS = 100;
+    public static final int PRINT_SOFTWARE_INFORMATION = 101;
 
     //Display properties
-    private String displayTitle;
+    private String displayTitle = "Topaz Game Engine - An Application";
     private int displayWidth, displayHeight;
     //Internal engine variables
     private boolean running;
@@ -30,7 +29,9 @@ public class CoreEngine implements Runnable {
     private boolean printSoftwareInformation = false;
 
     public CoreEngine(CoreApp coreApp, int displayWidth, int displayHeight) {
-        this(coreApp, DEFAULT_DISPLAY_TITLE, displayWidth, displayHeight);
+        this.coreApp = coreApp;
+        this.displayWidth = displayWidth;
+        this.displayHeight = displayHeight;
     }
 
     public CoreEngine(CoreApp coreApp, String displayTitle, int displayWidth, int displayHeight) {
@@ -113,12 +114,11 @@ public class CoreEngine implements Runnable {
 
         coreApp.display.setBackgroundColor(Color.BLACK);
 
-        coreApp.keyManager = new KeyManager(coreApp.display.getWindowID());
-        coreApp.mouseManager = new MouseManager(coreApp.display.getWindowID());
-        coreApp.camera = new Camera(coreApp.display, coreApp.mouseManager);
+        coreApp.input = new Input(coreApp.display.getWindowID());
+        coreApp.camera = new Camera(coreApp.display, coreApp.input);
         coreApp.rootObject = new GameObject();
         coreApp.renderManager = new RenderManager(coreApp.display, coreApp.camera, coreApp.rootObject);
-        coreApp.physicsManager = new PhysicsManager(coreApp.display);
+        coreApp.physicsManager = new PhysicsManager(coreApp.display, coreApp.rootObject);
         coreApp.uiManager = new UIManager(coreApp.display);
 
         coreApp.init();
@@ -130,8 +130,7 @@ public class CoreEngine implements Runnable {
         coreApp.camera.tick(delta);
         coreApp.display.setCursorLocation(coreApp.display.getWidth() / 2, coreApp.display.getHeight() / 2);
         coreApp.uiManager.tick(delta);
-        coreApp.keyManager.tick();
-        coreApp.mouseManager.tick();
+        coreApp.input.tick();
 
         if (!coreApp.isPaused()) {
             coreApp.tick(delta);
@@ -163,11 +162,29 @@ public class CoreEngine implements Runnable {
         }
     }
 
-    public void enablePrintFPS(boolean enabled) {
-        this.printFPS = enabled;
+    public void enable(int property) {
+        switch (property) {
+            case PRINT_FPS:
+                printFPS = true;
+                break;
+            case PRINT_SOFTWARE_INFORMATION:
+                printSoftwareInformation = true;
+                break;
+            default:
+                break;
+        }
     }
 
-    public void enablePrintSoftwareInformation(boolean enabled) {
-        this.printSoftwareInformation = enabled;
+    public void disable(int property) {
+        switch (property) {
+            case PRINT_FPS:
+                printFPS = false;
+                break;
+            case PRINT_SOFTWARE_INFORMATION:
+                printSoftwareInformation = false;
+                break;
+            default:
+                break;
+        }
     }
 }

@@ -14,6 +14,10 @@ import topaz.util.Color;
 
 public class Display {
 
+    public static final int Z_BUFFER = 100;
+    public static final int MULTISAMPLING = 101;
+    public static final int FACE_CULLING = 102;
+
     public static final int NUM_SAMPLES = 4;
 
     private long windowID;
@@ -124,27 +128,35 @@ public class Display {
         return visible;
     }
 
-    public void setZBuffer(boolean toggle) {
-        if (toggle) {
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-        } else {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
+    public void enable(int property) {
+        switch (property) {
+            case Z_BUFFER:
+                GL11.glEnable(GL11.GL_DEPTH_TEST);
+                break;
+            case MULTISAMPLING:
+                GL11.glEnable(GL13.GL_MULTISAMPLE);
+                break;
+            case FACE_CULLING:
+                GL11.glEnable(GL11.GL_CULL_FACE);
+                break;
+            default:
+                break;
         }
     }
-
-    public void setMultisampling(boolean toggle) {
-        if (toggle) {
-            GL11.glEnable(GL13.GL_MULTISAMPLE);
-        } else {
-            GL11.glDisable(GL13.GL_MULTISAMPLE);
-        }
-    }
-
-    public void setFaceCulling(boolean toggle) {
-        if (toggle) {
-            GL11.glEnable(GL11.GL_CULL_FACE);
-        } else {
-            GL11.glDisable(GL11.GL_CULL_FACE);
+    
+    public void disable(int property) {
+        switch (property) {
+            case Z_BUFFER:
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+                break;
+            case MULTISAMPLING:
+                GL11.glDisable(GL13.GL_MULTISAMPLE);
+                break;
+            case FACE_CULLING:
+                GL11.glDisable(GL11.GL_CULL_FACE);
+                break;
+            default:
+                break;
         }
     }
 

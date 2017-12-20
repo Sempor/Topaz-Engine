@@ -1,44 +1,22 @@
 package topaz.physics;
 
-import java.util.ArrayList;
 import topaz.core.Display;
+import topaz.rendering.GameObject;
 
 public class PhysicsManager {
 
     private Display display;
+    private GameObject rootObject;
 
-    private ArrayList<PhysicsObject> physicsObjects = new ArrayList<>();
-
-    public PhysicsManager(Display display) {
+    public PhysicsManager(Display display, GameObject rootObject) {
         this.display = display;
+        this.rootObject = rootObject;
     }
 
     public void tick(double delta) {
         double elapsedSeconds = delta / (double) display.getFPS();
-        for (PhysicsObject p : physicsObjects) {
-            p.tick(elapsedSeconds);
+        for (GameObject object : rootObject.getAllDescendants()) {
+            object.tick(elapsedSeconds);
         }
-    }
-
-    public void add(PhysicsObject physicsObject) {
-        if (physicsObject == null) {
-            return;
-        }
-        physicsObjects.add(physicsObject);
-    }
-
-    public void remove(PhysicsObject physicsObject) {
-        if (physicsObject == null) {
-            return;
-        }
-        physicsObjects.remove(physicsObject);
-    }
-
-    public ArrayList<PhysicsObject> getPhysicsObjects() {
-        return physicsObjects;
-    }
-
-    public void setPhysicsObjects(ArrayList<PhysicsObject> physicsObjects) {
-        this.physicsObjects = physicsObjects;
     }
 }

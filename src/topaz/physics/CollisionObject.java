@@ -1,30 +1,29 @@
-package topaz.physics.collisions;
+package topaz.physics;
 
 import java.util.ArrayList;
 import org.joml.Vector3f;
-import topaz.physics.PhysicsManager;
-import topaz.physics.PhysicsObject;
+import topaz.rendering.GameObject;
 import topaz.rendering.Raycast;
 
 public abstract class CollisionObject {
 
     private final float raycastStepSize = 0.004f;
 
-    protected PhysicsManager physicsManager;
+    protected GameObject rootObject;
 
     public float x = 0f, y = 0f, z = 0f;
     public float scaleX = 1f, scaleY = 1f, scaleZ = 1f;
 
     protected boolean active;
 
-    public CollisionObject(PhysicsManager physicsManager) {
-        this.physicsManager = physicsManager;
+    public CollisionObject(GameObject rootObject) {
+        this.rootObject = rootObject;
     }
 
     public ArrayList<CollisionObject> getCollidingObjects() {
         ArrayList<CollisionObject> collidingObjects = new ArrayList<>();
-        for (PhysicsObject physicalObject : physicsManager.getPhysicsObjects()) {
-            CollisionObject collisionObject = physicalObject.getCollisionObject();
+        for (GameObject object : rootObject.getAllDescendants()) {
+            CollisionObject collisionObject = object.getCollisionObject();
             if (collisionObject.isActive() == false || collisionObject.equals(this)) {
                 continue;
             }
@@ -60,6 +59,10 @@ public abstract class CollisionObject {
 
     public abstract float getDepth();
 
+    public Vector3f getDimensions() {
+        return new Vector3f(getWidth(), getHeight(), getDepth());
+    }
+
     public void setCenter(float centerX, float centerY, float centerZ) {
         x = centerX - getWidth() / 2f;
         y = centerY - getHeight() / 2f;
@@ -86,7 +89,7 @@ public abstract class CollisionObject {
         raycast.addExcludedCollisionObject(this);
 
         CollisionObject closestCollisionObject = raycast.getClosestIntersectingCollisionObject(
-                physicsManager, Math.abs(dx) + getWidth() / 2f, raycastStepSize);
+                rootObject, Math.abs(dx) + getWidth() / 2f, raycastStepSize);
         if (closestCollisionObject == null) {
             x += dx;
             return false;
@@ -110,7 +113,7 @@ public abstract class CollisionObject {
         raycast.addExcludedCollisionObject(this);
 
         CollisionObject closestCollisionObject = raycast.getClosestIntersectingCollisionObject(
-                physicsManager, Math.abs(dy) + getHeight() / 2f, raycastStepSize);
+                rootObject, Math.abs(dy) + getHeight() / 2f, raycastStepSize);
         if (closestCollisionObject == null) {
             y += dy;
             return false;
@@ -134,7 +137,7 @@ public abstract class CollisionObject {
         raycast.addExcludedCollisionObject(this);
 
         CollisionObject closestCollisionObject = raycast.getClosestIntersectingCollisionObject(
-                physicsManager, Math.abs(dz) + getDepth() / 2f, raycastStepSize);
+                rootObject, Math.abs(dz) + getDepth() / 2f, raycastStepSize);
         if (closestCollisionObject == null) {
             z += dz;
             return false;

@@ -1,4 +1,4 @@
-package topaz.input;
+package topaz.util;
 
 import org.lwjgl.glfw.GLFW;
 

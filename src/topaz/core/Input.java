@@ -1,11 +1,16 @@
-package topaz.input;
+package topaz.core;
 
 import org.lwjgl.glfw.GLFW;
 
-public class KeyManager {
+public class Input {
 
     private long windowID;
-    
+
+    public MouseButton MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE;
+    private float mouseSpeed;
+    private double scrollX, scrollY;
+    private boolean scrollUp, scrollDown, scrollLeft, scrollRight;
+
     public KeyButton KEY_A, //Alphabet keys
             KEY_B,
             KEY_C,
@@ -149,9 +154,50 @@ public class KeyManager {
         }
     }
 
-    public KeyManager(long windowID) {
+    public class MouseButton {
+
+        private int id;
+        private boolean pressed;
+        private int ticksPressed;
+        private boolean justPressed;
+        private boolean justReleased;
+
+        public MouseButton(int id) {
+            this.id = id;
+        }
+
+        public boolean isPressed() {
+            return pressed;
+        }
+
+        public boolean isJustPressed() {
+            return justPressed;
+        }
+
+        public boolean isJustReleased() {
+            return justReleased;
+        }
+
+        public int getTicksPressed() {
+            return ticksPressed;
+        }
+
+        public void tick(long window) {
+            pressed = (GLFW.GLFW_PRESS == GLFW.glfwGetMouseButton(window, id));
+
+            if (pressed) {
+                justPressed = (ticksPressed == 0);
+                ticksPressed++;
+            } else {
+                justReleased = (ticksPressed > 0);
+                ticksPressed = 0;
+            }
+        }
+    }
+
+    public Input(long windowID) {
         this.windowID = windowID;
-        
+
         //Alphabet keys
         KEY_A = new KeyButton(GLFW.GLFW_KEY_A);
         KEY_B = new KeyButton(GLFW.GLFW_KEY_B);
@@ -267,6 +313,18 @@ public class KeyManager {
                 GLFW.glfwSetWindowShouldClose(window, true);
             }
         });
+
+        mouseSpeed = 0.002f;
+
+        MOUSE_BUTTON_LEFT = new MouseButton(GLFW.GLFW_MOUSE_BUTTON_LEFT);
+        MOUSE_BUTTON_RIGHT = new MouseButton(GLFW.GLFW_MOUSE_BUTTON_RIGHT);
+        MOUSE_BUTTON_MIDDLE = new MouseButton(GLFW.GLFW_MOUSE_BUTTON_MIDDLE);
+
+        //Creates scroll callback that is called whenever a scroll event occurs
+        GLFW.glfwSetScrollCallback(windowID, (window, xoffset, yoffset) -> {
+            scrollX = xoffset;
+            scrollY = yoffset;
+        });
     }
 
     public void tick() {
@@ -378,5 +436,49 @@ public class KeyManager {
         KEY_KEYPAD_ADD.tick(windowID);
         KEY_KEYPAD_ENTER.tick(windowID);
         KEY_KEYPAD_EQUAL.tick(windowID);
+
+        MOUSE_BUTTON_LEFT.tick(windowID);
+        MOUSE_BUTTON_RIGHT.tick(windowID);
+        MOUSE_BUTTON_MIDDLE.tick(windowID);
+
+        if (scrollX > 0) {
+            scrollRight = true;
+            scrollX = 0;
+        } else if (scrollX < 0) {
+            scrollLeft = true;
+            scrollX = 0;
+        }
+
+        if (scrollY > 0) {
+            scrollUp = true;
+            scrollY = 0;
+        } else if (scrollY < 0) {
+            scrollDown = true;
+            scrollY = 0;
+        }
+    }
+
+    public void setMouseSpeed(float mouseSpeed) {
+        this.mouseSpeed = mouseSpeed;
+    }
+
+    public float getMouseSpeed() {
+        return mouseSpeed;
+    }
+
+    public boolean scrollUpEvent() {
+        return scrollUp;
+    }
+
+    public boolean scrollDownEvent() {
+        return scrollDown;
+    }
+
+    public boolean scrollLeftEvent() {
+        return scrollLeft;
+    }
+
+    public boolean scrollRightEvent() {
+        return scrollRight;
     }
 }

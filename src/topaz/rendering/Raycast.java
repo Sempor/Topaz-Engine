@@ -2,9 +2,7 @@ package topaz.rendering;
 
 import java.util.ArrayList;
 import org.joml.Vector3f;
-import topaz.physics.PhysicsManager;
-import topaz.physics.PhysicsObject;
-import topaz.physics.collisions.CollisionObject;
+import topaz.physics.CollisionObject;
 import topaz.util.Ray;
 
 public class Raycast {
@@ -26,12 +24,12 @@ public class Raycast {
         for (float i = 0; i <= distance; i += step) {
             Vector3f point = ray.getPointOnRay(i);
 
-            for (GameObject gameObject : rootObject.getAllDescendants()) {
-                if (excludedGameObjects.contains(gameObject)) {
+            for (GameObject object : rootObject.getAllDescendants()) {
+                if (excludedGameObjects.contains(object)) {
                     continue;
                 }
-                if (gameObject.getPhysicsObject().getCollisionObject().containsPoint(point)) {
-                    intersectingObjects.add(gameObject);
+                if (object.getCollisionObject().containsPoint(point)) {
+                    intersectingObjects.add(object);
                 }
             }
         }
@@ -42,26 +40,26 @@ public class Raycast {
         for (float i = 0; i <= distance; i += step) {
             Vector3f point = ray.getPointOnRay(i);
 
-            for (GameObject gameObject : rootObject.getAllDescendants()) {
-                if (excludedGameObjects.contains(gameObject)) {
+            for (GameObject object : rootObject.getAllDescendants()) {
+                if (excludedGameObjects.contains(object)) {
                     continue;
                 }
-                if (gameObject.getPhysicsObject().getCollisionObject().containsPoint(point)) {
-                    return gameObject;
+                if (object.getCollisionObject().containsPoint(point)) {
+                    return object;
                 }
             }
         }
         return null;
     }
 
-    public ArrayList<CollisionObject> getIntersectingCollisionObjects(PhysicsManager physicsManager, float distance, float step) {
+    public ArrayList<CollisionObject> getIntersectingCollisionObjects(GameObject rootObject, float distance, float step) {
         ArrayList<CollisionObject> intersectingObjects = new ArrayList<>();
 
         for (float i = 0; i <= distance; i += step) {
             Vector3f point = ray.getPointOnRay(i);
 
-            for (PhysicsObject physicsObject : physicsManager.getPhysicsObjects()) {
-                CollisionObject collisionObject = physicsObject.getCollisionObject();
+            for (GameObject object : rootObject.getAllDescendants()) {
+                CollisionObject collisionObject = object.getCollisionObject();
                 if (excludedCollisionObjects.contains(collisionObject)) {
                     continue;
                 }
@@ -73,12 +71,12 @@ public class Raycast {
         return intersectingObjects;
     }
 
-    public CollisionObject getClosestIntersectingCollisionObject(PhysicsManager physicsManager, float distance, float step) {
+    public CollisionObject getClosestIntersectingCollisionObject(GameObject rootObject, float distance, float step) {
         for (float i = 0; i <= distance; i += step) {
             Vector3f point = ray.getPointOnRay(i);
 
-            for (PhysicsObject physicsObject : physicsManager.getPhysicsObjects()) {
-                CollisionObject collisionObject = physicsObject.getCollisionObject();
+            for (GameObject object : rootObject.getAllDescendants()) {
+                CollisionObject collisionObject = object.getCollisionObject();
                 if (excludedCollisionObjects.contains(collisionObject)) {
                     continue;
                 }

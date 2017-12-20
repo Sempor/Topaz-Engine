@@ -1,22 +1,22 @@
-package topaz.physics.collisions;
+package topaz.physics;
 
 import org.joml.Vector3f;
-import topaz.physics.PhysicsManager;
+import topaz.rendering.GameObject;
 import topaz.util.Interval;
 
 public class BoundingBox extends CollisionObject {
 
     public float width, height, depth;
 
-    public BoundingBox(PhysicsManager physicsManager, float width, float height, float depth) {
-        super(physicsManager);
+    public BoundingBox(GameObject rootObject, float width, float height, float depth) {
+        super(rootObject);
         this.width = width;
         this.height = height;
         this.depth = depth;
     }
 
-    public BoundingBox(PhysicsManager physicsManager, Vector3f dimensions) {
-        this(physicsManager, dimensions.x, dimensions.y, dimensions.z);
+    public BoundingBox(GameObject rootObject, Vector3f dimensions) {
+        this(rootObject, dimensions.x, dimensions.y, dimensions.z);
     }
 
     @Override

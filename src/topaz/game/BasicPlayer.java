@@ -1,84 +1,101 @@
 package topaz.game;
 
 import org.joml.Vector3f;
-import topaz.input.KeyManager;
-import topaz.physics.PhysicsObject;
+import topaz.core.Input;
+import topaz.physics.CollisionObject;
 import topaz.rendering.Camera;
+import topaz.rendering.GameObject;
 
 public class BasicPlayer {
 
-    private KeyManager keyManager;
+    public static final int DEFAULT_KEY_CONTROLS = 100;
+
+    private Input input;
     private Camera camera;
 
-    private PhysicsObject physicalObject;
-    private float jumpVelocity;
-    private float moveSpeed;
-    private Vector3f addedLinearVelocity;
+    private GameObject playerObject;
+    private float jumpVelocity = 0.1f;
+    private float moveSpeed = 10f;
+    private Vector3f addedVelocity = new Vector3f(0, 0, 0);
+    private boolean defaultKeyControls;
 
-    private boolean useDefaultInput = true;
-
-    public BasicPlayer(KeyManager keyManager, Camera camera, PhysicsObject physicalObject) {
-        this.keyManager = keyManager;
+    public BasicPlayer(Input input, Camera camera, GameObject rootObject, CollisionObject collisionObject) {
+        this.input = input;
         this.camera = camera;
 
-        this.physicalObject = physicalObject;
-        this.physicalObject.setCenter(camera.getLocation());
-        this.physicalObject.setActive(true);
-        this.physicalObject.setAccelerationFromGravity(-0.016f);
-        this.physicalObject.setGravityEnabled(true);
-
-        addedLinearVelocity = new Vector3f(0, 0, 0);
-        jumpVelocity = 0.15f;
-        moveSpeed = 10f;
+        playerObject = new GameObject("BasicPlayer");
+        playerObject.setLocation(new Vector3f(camera.getLocation()).sub(collisionObject.getDimensions().div(2)));
+        playerObject.setCollisionObject(collisionObject);
+        playerObject.setGravityAcceleration(-0.016f);
+        playerObject.enable(GameObject.ENABLE_GRAVITY);
+        playerObject.getCollisionObject().setActive(true);
+        playerObject.setVisible(true);
+        rootObject.addChild(playerObject);
     }
 
     public void tick(double delta) {
-        if (useDefaultInput) {
-            physicalObject.addLinearVelocity(new Vector3f(addedLinearVelocity).negate());
-            addedLinearVelocity = new Vector3f(0, 0, 0);
+        if (defaultKeyControls) {
+            playerObject.setVelocity(addedVelocity.negate());
+            addedVelocity = new Vector3f(0, 0, 0);
 
-            if (keyManager.KEY_W.isPressed()) {
+            if (input.KEY_W.isPressed()) {
                 move(camera.getForward().mul((float) delta).mul(moveSpeed));
-            } else if (keyManager.KEY_S.isPressed()) {
+            } else if (input.KEY_S.isPressed()) {
                 move(camera.getBackward().mul((float) delta).mul(moveSpeed));
             }
-            if (keyManager.KEY_A.isPressed()) {
+            if (input.KEY_A.isPressed()) {
                 move(camera.getLeft().mul((float) delta).mul(moveSpeed));
-            } else if (keyManager.KEY_D.isPressed()) {
+            } else if (input.KEY_D.isPressed()) {
                 move(camera.getRight().mul((float) delta).mul(moveSpeed));
             }
-            if (keyManager.KEY_SPACE.isPressed()) {
+            if (input.KEY_SPACE.isPressed()) {
                 jump();
             }
 
-            physicalObject.addLinearVelocity(addedLinearVelocity);
+            playerObject.addVelocity(addedVelocity);
         }
 
-        camera.setLocation(physicalObject.getCenter());
+        camera.setLocation(playerObject.getCollisionObject().getCenter());
     }
 
     public void move(Vector3f translation) {
-        addedLinearVelocity.add(new Vector3f(translation.x, 0, translation.z));
+        addedVelocity.add(translation.x, 0, translation.z);
     }
 
     public void jump() {
-        if (physicalObject.getLinearVelocity().y != 0) {
+        if (playerObject.getVelocity().y != 0) {
             return;
         }
-        physicalObject.getLinearVelocity().y = jumpVelocity;
+        playerObject.getVelocity().y = jumpVelocity;
     }
 
-    public void enableDefaultInput(boolean toggle) {
-        useDefaultInput = toggle;
+    public void enable(int property) {
+        switch (property) {
+            case DEFAULT_KEY_CONTROLS:
+                defaultKeyControls = true;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void disable(int property) {
+        switch (property) {
+            case DEFAULT_KEY_CONTROLS:
+                defaultKeyControls = false;
+                break;
+            default:
+                break;
+        }
     }
 
     public void setLocation(float x, float y, float z) {
-        physicalObject.setLocation(x, y, z);
-        camera.setLocation(physicalObject.getCenter());
+        playerObject.setLocation(x, y, z);
+        camera.setLocation(playerObject.getCollisionObject().getCenter());
     }
 
     public Vector3f getLocation() {
-        return physicalObject.getLocation();
+        return playerObject.getLocation();
     }
 
     public float getJumpVelocity() {

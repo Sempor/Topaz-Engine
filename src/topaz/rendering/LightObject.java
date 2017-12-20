@@ -1,4 +1,4 @@
-package topaz.rendering.lighting;
+package topaz.rendering;
 
 import topaz.util.Color;
 

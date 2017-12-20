@@ -1,4 +1,4 @@
-package topaz.web;
+package topaz.util;
 
 import java.awt.Desktop;
 import java.io.IOException;

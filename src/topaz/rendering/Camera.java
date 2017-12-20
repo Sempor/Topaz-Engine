@@ -2,12 +2,12 @@ package topaz.rendering;
 
 import org.joml.Vector3f;
 import topaz.core.Display;
-import topaz.input.MouseManager;
+import topaz.core.Input;
 
 public class Camera {
 
     private Display display;
-    private MouseManager mouseManager;
+    private Input input;
 
     public float x, y, z;
 
@@ -20,9 +20,9 @@ public class Camera {
 
     private boolean followingMouse;
 
-    public Camera(Display display, MouseManager mouseManager) {
+    public Camera(Display display, Input input) {
         this.display = display;
-        this.mouseManager = mouseManager;
+        this.input = input;
 
         forward = new Vector3f(0, 0, 0);
         right = new Vector3f(0, 0, 0);
@@ -32,8 +32,8 @@ public class Camera {
     }
 
     public void tick(double delta) {
-        horizontalAngle += mouseManager.getMouseSpeed() * delta * ((float) display.getWidth() / 2f - (float) display.getCursorX());
-        verticalAngle += mouseManager.getMouseSpeed() * delta * ((float) display.getHeight() / 2f - (float) display.getCursorY());
+        horizontalAngle += input.getMouseSpeed() * delta * ((float) display.getWidth() / 2f - (float) display.getCursorX());
+        verticalAngle += input.getMouseSpeed() * delta * ((float) display.getHeight() / 2f - (float) display.getCursorY());
 
         forward = new Vector3f((float) (Math.cos(verticalAngle) * Math.sin(horizontalAngle)),
                 (float) Math.sin(verticalAngle),

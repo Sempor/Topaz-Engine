@@ -1,14 +1,14 @@
-package topaz.physics.collisions;
+package topaz.physics;
 
 import org.joml.Vector3f;
-import topaz.physics.PhysicsManager;
+import topaz.rendering.GameObject;
 
 public class BoundingSphere extends CollisionObject {
 
     public float radius;
 
-    public BoundingSphere(PhysicsManager physicsManager, float radius) {
-        super(physicsManager);
+    public BoundingSphere(GameObject rootObject, float radius) {
+        super(rootObject);
         this.radius = radius;
     }
 

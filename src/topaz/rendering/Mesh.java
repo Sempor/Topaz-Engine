@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import topaz.rendering.shaders.ShaderProgram;
 
 public class Mesh {
 
@@ -75,12 +74,12 @@ public class Mesh {
         this(mesh.vertices, mesh.indices);
     }
 
-    public void tick(double delta, Matrix4f modelViewProjectionMatrix) {
+    protected void tick(double delta, Matrix4f modelViewProjectionMatrix) {
         storeMatrixInBuffer(mvpMatrixBuffer, modelViewProjectionMatrix);
         mvpMatrixBuffer.flip();
     }
 
-    public void render(ShaderProgram[] shaderPrograms, int texture, boolean visible) {
+    protected void render(ShaderProgram[] shaderPrograms, int texture, boolean visible) {
         if (texture != -1) {
             GL20.glUseProgram(shaderPrograms[1].getProgramID());
             GL20.glUniformMatrix4fv(GL20.glGetUniformLocation(shaderPrograms[1].getProgramID(), "mvpMatrix"), false, mvpMatrixBuffer); //Uploads mvpMatrix to the uniform variable

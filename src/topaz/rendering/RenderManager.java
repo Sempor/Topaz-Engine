@@ -5,8 +5,6 @@ import java.util.logging.Logger;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL20;
 import topaz.core.Display;
-import topaz.rendering.shaders.Shader;
-import topaz.rendering.shaders.ShaderProgram;
 
 public class RenderManager {
 
@@ -44,14 +42,18 @@ public class RenderManager {
         }
 
         for (GameObject gameObject : rootObject.getAllDescendants()) {
-            Matrix4f modelViewProjectionMatrix = new Matrix4f(viewProjectionMatrix).mul(gameObject.getModelMatrix());
-            gameObject.getMesh().tick(delta, modelViewProjectionMatrix);
+            if (gameObject.getMesh() != null) {
+                Matrix4f modelViewProjectionMatrix = new Matrix4f(viewProjectionMatrix).mul(gameObject.getModelMatrix());
+                gameObject.getMesh().tick(delta, modelViewProjectionMatrix);
+            }
         }
     }
 
     public void render() {
         for (GameObject gameObject : rootObject.getAllDescendants()) {
-            gameObject.getMesh().render(shaderPrograms, gameObject.getSelectedTexture(), gameObject.isVisible());
+            if (gameObject.getMesh() != null) {
+                gameObject.getMesh().render(shaderPrograms, gameObject.getTexture(), gameObject.isVisible());
+            }
         }
     }
 

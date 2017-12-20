@@ -1,4 +1,4 @@
-package topaz.assets;
+package topaz.util;
 
 import java.awt.image.BufferedImage;
 

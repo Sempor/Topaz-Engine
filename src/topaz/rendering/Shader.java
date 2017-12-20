@@ -1,4 +1,4 @@
-package topaz.rendering.shaders;
+package topaz.rendering;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;

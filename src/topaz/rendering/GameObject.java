@@ -4,27 +4,33 @@ import java.util.ArrayList;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import topaz.assets.AssetLoader;
-import topaz.physics.PhysicsObject;
+import topaz.physics.CollisionObject;
 import topaz.util.Color;
 
 public class GameObject {
 
+    public static final int ENABLE_COLLISIONS = 100;
+    public static final int ENABLE_GRAVITY = 101;
+
+    //Basic properties
     private String name;
+    private ArrayList<GameObject> children = new ArrayList<>();
     private Vector3f location = new Vector3f(0, 0, 0);
     private Vector3f rotation = new Vector3f(0, 0, 0);
     private Vector3f scale = new Vector3f(1, 1, 1);
-    private int[] textureIDs;
-    private int selector;
-    private boolean visible = true;
-
+    private int textureID = -1;
+    //Rendering
     private Mesh mesh;
-
-    private PhysicsObject physicsObject;
+    private boolean visible;
+    //Physics
+    private Vector3f velocity = new Vector3f(0, 0, 0);
+    private Vector3f acceleration = new Vector3f(0, 0, 0);
+    private CollisionObject collisionObject;
     private boolean collisionsEnabled;
-
+    private boolean gravityEnabled;
+    private float gravityAcceleration = -98f;
+    //Lighting
     private Vector3f ambientLightIntensity = new Vector3f(0.1f, 0.1f, 0.1f);
-
-    private ArrayList<GameObject> children = new ArrayList<>();
 
     public GameObject() {
     }
@@ -33,15 +39,57 @@ public class GameObject {
         this.name = name;
     }
 
-    public void attachChild(GameObject child) {
+    public void tick(double elapsedSeconds) {
+        velocity.add(new Vector3f(acceleration).mul((float) elapsedSeconds));
+
+        if (collisionObject != null) {
+            if (collisionObject.translateX(velocity.x * (float) elapsedSeconds)) {
+                velocity.x = 0;
+            }
+            if (collisionObject.translateY(velocity.y * (float) elapsedSeconds)) {
+                velocity.y = 0;
+            }
+            if (collisionObject.translateZ(velocity.z * (float) elapsedSeconds)) {
+                velocity.z = 0;
+            }
+        }
+    }
+
+    public void addChild(GameObject child) {
         if (child != null) {
             children.add(child);
+        }
+    }
+
+    public void addChildren(GameObject... childs) {
+        for (GameObject child : childs) {
+            if (child != null) {
+                children.add(child);
+            }
         }
     }
 
     public void removeChild(GameObject child) {
         if (child != null) {
             children.remove(child);
+        }
+    }
+
+    public void removeChild(String name) {
+        if (name != null) {
+            for (GameObject child : children) {
+                if (name.equals(child.getName())) {
+                    children.remove(child);
+                }
+            }
+        }
+    }
+
+    public void removeChildren(GameObject... childs) {
+        for (GameObject child : childs) {
+            if (child != null) {
+                children.remove(child);
+            }
         }
     }
 
@@ -68,19 +116,15 @@ public class GameObject {
         mesh.setColor(colors);
     }
 
-    public void setTextures(String... textureFilePaths) {
-        textureIDs = new int[textureFilePaths.length];
-
-        for (int i = 0; i < textureFilePaths.length; i++) {
-            textureIDs[i] = AssetLoader.loadPNGTexture(textureFilePaths[i]);
-        }
+    public void setTexture(String textureFilePath) {
+        textureID = AssetLoader.loadPNGTexture(textureFilePath);
     }
 
     public void translate(Vector3f translation) {
         location.add(translation);
 
-        if (physicsObject != null) {
-            physicsObject.getCollisionObject().translate(translation);
+        if (collisionObject != null) {
+            collisionObject.translate(translation);
         }
 
         for (int i = 0; i < children.size(); i++) {
@@ -108,8 +152,8 @@ public class GameObject {
     public void scale(Vector3f scale) {
         this.scale.add(scale);
 
-        if (physicsObject != null) {
-            physicsObject.getCollisionObject().scale(scale);
+        if (collisionObject != null) {
+            collisionObject.scale(scale);
         }
 
         for (int i = 0; i < children.size(); i++) {
@@ -130,8 +174,8 @@ public class GameObject {
 
         this.location = new Vector3f(location);
 
-        if (physicsObject != null) {
-            physicsObject.setLocation(new Vector3f(location));
+        if (collisionObject != null) {
+            collisionObject.setLocation(new Vector3f(location));
         }
     }
 
@@ -171,8 +215,8 @@ public class GameObject {
 
         this.scale = new Vector3f(scale);
 
-        if (physicsObject != null) {
-            physicsObject.getCollisionObject().setScale(new Vector3f(scale));
+        if (collisionObject != null) {
+            collisionObject.setScale(new Vector3f(scale));
         }
     }
 
@@ -184,11 +228,54 @@ public class GameObject {
         return scale;
     }
 
-    public void setCollisionsEnabled(boolean enabled) {
-        this.collisionsEnabled = enabled;
-        if (physicsObject != null) {
-            physicsObject.getCollisionObject().setActive(enabled);
+    public void enable(int property) {
+        switch (property) {
+            case ENABLE_COLLISIONS:
+                collisionsEnabled = true;
+                if (collisionObject != null) {
+                    collisionObject.setActive(true);
+                }
+                break;
+            case ENABLE_GRAVITY:
+                if (!gravityEnabled) {
+                    acceleration.add(0, gravityAcceleration, 0);
+                    gravityEnabled = true;
+                }
+                break;
+            default:
+                break;
         }
+    }
+
+    public void disable(int property) {
+        switch (property) {
+            case ENABLE_COLLISIONS:
+                collisionsEnabled = false;
+                if (collisionObject != null) {
+                    collisionObject.setActive(false);
+                }
+                break;
+            case ENABLE_GRAVITY:
+                if (gravityEnabled) {
+                    acceleration.add(0, -gravityAcceleration, 0);
+                    gravityEnabled = false;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public float getGravityAcceleration() {
+        return gravityAcceleration;
+    }
+
+    public void setGravityAcceleration(float gravityAcceleration) {
+        if (gravityEnabled) {
+            acceleration.add(0, -this.gravityAcceleration, 0);
+            acceleration.add(0, gravityAcceleration, 0);
+        }
+        this.gravityAcceleration = gravityAcceleration;
     }
 
     public boolean isVisible() {
@@ -207,36 +294,48 @@ public class GameObject {
         this.mesh = mesh;
     }
 
-    public PhysicsObject getPhysicsObject() {
-        return physicsObject;
+    public CollisionObject getCollisionObject() {
+        return collisionObject;
     }
 
-    public void setPhysicsObject(PhysicsObject physicsObject) {
-        this.physicsObject = physicsObject;
-        this.physicsObject.setLocation(location);
-        this.physicsObject.setScale(scale);
+    public void setCollisionObject(CollisionObject collisionObject) {
+        this.collisionObject = collisionObject;
+        this.collisionObject.setLocation(location);
+        this.collisionObject.setScale(scale);
         if (collisionsEnabled) {
-            physicsObject.getCollisionObject().setActive(true);
+            collisionObject.setActive(true);
         }
     }
 
-    public boolean setSelectedTexture(int selector) {
-        if (selector < textureIDs.length && selector >= 0 && textureIDs != null) {
-            this.selector = selector;
-            return true;
-        }
-        return false;
+    public Vector3f getVelocity() {
+        return velocity;
     }
 
-    public int getSelectedTexture() {
-        if (textureIDs != null) {
-            return textureIDs[selector];
-        } else {
-            return -1;
-        }
+    public void setVelocity(Vector3f velocity) {
+        this.velocity = new Vector3f(velocity);
     }
 
-    public Matrix4f getModelMatrix() {
+    public void addVelocity(Vector3f velocity) {
+        this.velocity.add(new Vector3f(velocity));
+    }
+
+    public Vector3f getAcceleration() {
+        return acceleration;
+    }
+
+    public void setAcceleration(Vector3f acceleration) {
+        this.acceleration = new Vector3f(acceleration);
+    }
+
+    public void addAcceleration(Vector3f acceleration) {
+        this.acceleration.add(new Vector3f(acceleration));
+    }
+
+    public int getTexture() {
+        return textureID;
+    }
+
+    protected Matrix4f getModelMatrix() {
         Matrix4f modelMatrix = new Matrix4f();
         modelMatrix.scale(scale);
         modelMatrix.translate(location);
