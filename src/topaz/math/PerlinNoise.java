@@ -1,4 +1,4 @@
-package topaz.util;
+package topaz.math;
 
 public class PerlinNoise {
 

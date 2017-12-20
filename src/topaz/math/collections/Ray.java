@@ -1,4 +1,4 @@
-package topaz.util;
+package topaz.math.collections;
 
 import org.joml.Vector3f;
 

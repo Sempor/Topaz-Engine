@@ -2,7 +2,7 @@ package topaz.physics;
 
 import org.joml.Vector3f;
 import topaz.rendering.GameObject;
-import topaz.util.Interval;
+import topaz.math.collections.Interval;
 
 public class BoundingBox extends CollisionObject {
 
