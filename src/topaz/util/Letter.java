@@ -2,40 +2,33 @@ package topaz.util;
 
 public class Letter {
 
-    private char letter;
-    private int index;
-    private boolean vowel;
-    private int scrabbleValue;
-    private String morseCode;
 
-    public Letter(char letter, int index, boolean vowel, int scrabbleValue, String morseCode) {
-        this.letter = letter;
-        this.index = index;
-        this.vowel = vowel;
-        this.scrabbleValue = scrabbleValue;
-        this.morseCode = morseCode;
-    }
-
-    public char getLetter() {
-        return letter;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public boolean isVowel() {
-        return vowel;
-    }
-
-    public int getScrabbleValue() {
-        return scrabbleValue;
-    }
-
-    public String getMorseCode() {
-        return morseCode;
-    }
-
+    public static Letter LETTER_A = new Letter('A', 1, true, 1, ".-");
+    public static Letter LETTER_B = new Letter('B', 2, false, 3, "-...");
+    public static Letter LETTER_C = new Letter('C', 3, false, 3, "-.-.");
+    public static Letter LETTER_D = new Letter('D', 4, false, 2, "-..");
+    public static Letter LETTER_E = new Letter('E', 5, true, 1, ".");
+    public static Letter LETTER_F = new Letter('F', 6, false, 4, "..-.");
+    public static Letter LETTER_G = new Letter('G', 7, false, 2, "--.");
+    public static Letter LETTER_H = new Letter('H', 8, false, 4, "....");
+    public static Letter LETTER_I = new Letter('I', 9, true, 1, "..");
+    public static Letter LETTER_J = new Letter('J', 10, false, 8, ".---");
+    public static Letter LETTER_K = new Letter('K', 11, false, 5, "-.-");
+    public static Letter LETTER_L = new Letter('L', 12, false, 1, ".-..");
+    public static Letter LETTER_M = new Letter('M', 13, false, 3, "--");
+    public static Letter LETTER_N = new Letter('N', 14, false, 1, "-.");
+    public static Letter LETTER_O = new Letter('O', 15, true, 1, "---");
+    public static Letter LETTER_P = new Letter('P', 16, false, 3, ".--.");
+    public static Letter LETTER_Q = new Letter('Q', 17, false, 10, "--.-");
+    public static Letter LETTER_R = new Letter('R', 18, false, 1, ".-.");
+    public static Letter LETTER_S = new Letter('S', 19, false, 1, "...");
+    public static Letter LETTER_T = new Letter('T', 20, false, 1, "-");
+    public static Letter LETTER_U = new Letter('U', 21, true, 1, "..-");
+    public static Letter LETTER_V = new Letter('V', 22, false, 4, "...-");
+    public static Letter LETTER_W = new Letter('W', 23, false, 4, ".--");
+    public static Letter LETTER_X = new Letter('X', 24, false, 8, "-..-");
+    public static Letter LETTER_Y = new Letter('Y', 25, false, 4, "-.--");
+    public static Letter LETTER_Z = new Letter('Z', 26, false, 10, "--..");
     public static Letter charToLetter(char letter) {
         switch (letter) {
             case 'a':
@@ -94,7 +87,6 @@ public class Letter {
                 return null;
         }
     }
-
     public static int charToIndex(char letter) {
         switch (letter) {
             case 'a':
@@ -153,7 +145,6 @@ public class Letter {
                 return -1;
         }
     }
-
     public static char IndexToChar(int letterIndex) {
         switch (letterIndex) {
             case 1:
@@ -212,31 +203,31 @@ public class Letter {
                 return 'a';
         }
     }
-
-    public static Letter LETTER_A = new Letter('A', 1, true, 1, ".-");
-    public static Letter LETTER_B = new Letter('B', 2, false, 3, "-...");
-    public static Letter LETTER_C = new Letter('C', 3, false, 3, "-.-.");
-    public static Letter LETTER_D = new Letter('D', 4, false, 2, "-..");
-    public static Letter LETTER_E = new Letter('E', 5, true, 1, ".");
-    public static Letter LETTER_F = new Letter('F', 6, false, 4, "..-.");
-    public static Letter LETTER_G = new Letter('G', 7, false, 2, "--.");
-    public static Letter LETTER_H = new Letter('H', 8, false, 4, "....");
-    public static Letter LETTER_I = new Letter('I', 9, true, 1, "..");
-    public static Letter LETTER_J = new Letter('J', 10, false, 8, ".---");
-    public static Letter LETTER_K = new Letter('K', 11, false, 5, "-.-");
-    public static Letter LETTER_L = new Letter('L', 12, false, 1, ".-..");
-    public static Letter LETTER_M = new Letter('M', 13, false, 3, "--");
-    public static Letter LETTER_N = new Letter('N', 14, false, 1, "-.");
-    public static Letter LETTER_O = new Letter('O', 15, true, 1, "---");
-    public static Letter LETTER_P = new Letter('P', 16, false, 3, ".--.");
-    public static Letter LETTER_Q = new Letter('Q', 17, false, 10, "--.-");
-    public static Letter LETTER_R = new Letter('R', 18, false, 1, ".-.");
-    public static Letter LETTER_S = new Letter('S', 19, false, 1, "...");
-    public static Letter LETTER_T = new Letter('T', 20, false, 1, "-");
-    public static Letter LETTER_U = new Letter('U', 21, true, 1, "..-");
-    public static Letter LETTER_V = new Letter('V', 22, false, 4, "...-");
-    public static Letter LETTER_W = new Letter('W', 23, false, 4, ".--");
-    public static Letter LETTER_X = new Letter('X', 24, false, 8, "-..-");
-    public static Letter LETTER_Y = new Letter('Y', 25, false, 4, "-.--");
-    public static Letter LETTER_Z = new Letter('Z', 26, false, 10, "--..");
+    private char letter;
+    private int index;
+    private boolean vowel;
+    private int scrabbleValue;
+    private String morseCode;
+    public Letter(char letter, int index, boolean vowel, int scrabbleValue, String morseCode) {
+        this.letter = letter;
+        this.index = index;
+        this.vowel = vowel;
+        this.scrabbleValue = scrabbleValue;
+        this.morseCode = morseCode;
+    }
+    public char getLetter() {
+        return letter;
+    }
+    public int getIndex() {
+        return index;
+    }
+    public boolean isVowel() {
+        return vowel;
+    }
+    public int getScrabbleValue() {
+        return scrabbleValue;
+    }
+    public String getMorseCode() {
+        return morseCode;
+    }
 }

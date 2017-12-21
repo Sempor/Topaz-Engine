@@ -1,56 +1,26 @@
 package topaz.physics;
 
-import java.util.ArrayList;
 import org.joml.Vector3f;
 import topaz.rendering.GameObject;
 import topaz.rendering.Raycast;
 
 public abstract class CollisionObject {
 
-    private final float raycastStepSize = 0.004f;
-
     protected GameObject rootObject;
 
-    public float x = 0f, y = 0f, z = 0f;
-    public float scaleX = 1f, scaleY = 1f, scaleZ = 1f;
-
+    protected Vector3f location = new Vector3f(0, 0, 0);
+    protected Vector3f scale = new Vector3f(1, 1, 1);
     protected boolean active;
+    private float raycastStepSize = 0.004f;
 
     public CollisionObject(GameObject rootObject) {
         this.rootObject = rootObject;
     }
 
-    public ArrayList<CollisionObject> getCollidingObjects() {
-        ArrayList<CollisionObject> collidingObjects = new ArrayList<>();
-        for (GameObject object : rootObject.getAllDescendants()) {
-            CollisionObject collisionObject = object.getCollisionObject();
-            if (collisionObject.isActive() == false || collisionObject.equals(this)) {
-                continue;
-            }
-            if (intersects(collisionObject)) {
-                collidingObjects.add(collisionObject);
-            }
-        }
-        return collidingObjects;
-    }
+    public abstract boolean containsPoint(Vector3f point);
 
-    public boolean intersects(CollisionObject collisionObject) {
-        if (collisionObject instanceof BoundingBox) {
-            return intersectsBox((BoundingBox) collisionObject);
-        } else if (collisionObject instanceof BoundingSphere) {
-            return intersectsSphere((BoundingSphere) collisionObject);
-        }
-        return false;
-    }
-
-    public abstract boolean intersectsBox(BoundingBox box);
-
-    public abstract boolean intersectsSphere(BoundingSphere sphere);
-
-    public abstract boolean containsPoint(float pointX, float pointY, float pointZ);
-
-    public boolean containsPoint(Vector3f point) {
-        return containsPoint(point.x, point.y, point.z);
+    public boolean containsPoint(float x, float y, float z) {
+        return containsPoint(new Vector3f(x, y, z));
     }
 
     public abstract float getWidth();
@@ -63,18 +33,16 @@ public abstract class CollisionObject {
         return new Vector3f(getWidth(), getHeight(), getDepth());
     }
 
-    public void setCenter(float centerX, float centerY, float centerZ) {
-        x = centerX - getWidth() / 2f;
-        y = centerY - getHeight() / 2f;
-        z = centerZ - getDepth() / 2f;
+    public void setCenter(float x, float y, float z) {
+        setCenter(new Vector3f(x, y, z));
     }
 
     public void setCenter(Vector3f center) {
-        setCenter(center.x, center.y, center.z);
+        location = new Vector3f(center).sub(getWidth() / 2, getHeight() / 2, getDepth() / 2);
     }
 
     public Vector3f getCenter() {
-        return new Vector3f(x + getWidth() / 2f, y + getHeight() / 2f, z + getDepth() / 2f);
+        return new Vector3f(location).add(getWidth() / 2, getHeight() / 2, getDepth() / 2);
     }
 
     //Need to replace this with a shape cast
@@ -82,22 +50,22 @@ public abstract class CollisionObject {
     public boolean translateX(float dx) {
         Raycast raycast;
         if (dx >= 0) {
-            raycast = new Raycast(getCenter(), new Vector3f(dx + getWidth() / 2f, 0, 0));
+            raycast = new Raycast(rootObject, getCenter(), new Vector3f(dx + getWidth() / 2f, 0, 0));
         } else {
-            raycast = new Raycast(getCenter(), new Vector3f(dx - getWidth() / 2f, 0, 0));
+            raycast = new Raycast(rootObject, getCenter(), new Vector3f(dx - getWidth() / 2f, 0, 0));
         }
         raycast.addExcludedCollisionObject(this);
 
         CollisionObject closestCollisionObject = raycast.getClosestIntersectingCollisionObject(
-                rootObject, Math.abs(dx) + getWidth() / 2f, raycastStepSize);
+                Math.abs(dx) + getWidth() / 2f, raycastStepSize);
         if (closestCollisionObject == null) {
-            x += dx;
+            location.x += dx;
             return false;
         } else {
             if (dx > 0) {
-                x = closestCollisionObject.x - getWidth();
+                location.x = closestCollisionObject.getLocation().x - getWidth();
             } else if (dx < 0) {
-                x = closestCollisionObject.x + closestCollisionObject.getWidth();
+                location.x = closestCollisionObject.getLocation().x + closestCollisionObject.getWidth();
             }
             return true;
         }
@@ -106,22 +74,22 @@ public abstract class CollisionObject {
     public boolean translateY(float dy) {
         Raycast raycast;
         if (dy >= 0) {
-            raycast = new Raycast(getCenter(), new Vector3f(0, dy + getHeight() / 2f, 0));
+            raycast = new Raycast(rootObject, getCenter(), new Vector3f(0, dy + getHeight() / 2f, 0));
         } else {
-            raycast = new Raycast(getCenter(), new Vector3f(0, dy - getHeight() / 2f, 0));
+            raycast = new Raycast(rootObject, getCenter(), new Vector3f(0, dy - getHeight() / 2f, 0));
         }
         raycast.addExcludedCollisionObject(this);
 
         CollisionObject closestCollisionObject = raycast.getClosestIntersectingCollisionObject(
-                rootObject, Math.abs(dy) + getHeight() / 2f, raycastStepSize);
+                Math.abs(dy) + getHeight() / 2f, raycastStepSize);
         if (closestCollisionObject == null) {
-            y += dy;
+            location.y += dy;
             return false;
         } else {
             if (dy > 0) {
-                y = closestCollisionObject.y - getHeight();
+                location.y = closestCollisionObject.getLocation().y - getHeight();
             } else if (dy < 0) {
-                y = closestCollisionObject.y + closestCollisionObject.getHeight();
+                location.y = closestCollisionObject.getLocation().y + closestCollisionObject.getHeight();
             }
             return true;
         }
@@ -130,22 +98,22 @@ public abstract class CollisionObject {
     public boolean translateZ(float dz) {
         Raycast raycast;
         if (dz >= 0) {
-            raycast = new Raycast(getCenter(), new Vector3f(0, 0, dz + getDepth() / 2f));
+            raycast = new Raycast(rootObject, getCenter(), new Vector3f(0, 0, dz + getDepth() / 2f));
         } else {
-            raycast = new Raycast(getCenter(), new Vector3f(0, 0, dz - getDepth() / 2f));
+            raycast = new Raycast(rootObject, getCenter(), new Vector3f(0, 0, dz - getDepth() / 2f));
         }
         raycast.addExcludedCollisionObject(this);
 
         CollisionObject closestCollisionObject = raycast.getClosestIntersectingCollisionObject(
-                rootObject, Math.abs(dz) + getDepth() / 2f, raycastStepSize);
+                Math.abs(dz) + getDepth() / 2f, raycastStepSize);
         if (closestCollisionObject == null) {
-            z += dz;
+            location.z += dz;
             return false;
         } else {
             if (dz > 0) {
-                z = closestCollisionObject.z - getDepth();
+                location.z = closestCollisionObject.getLocation().z - getDepth();
             } else if (dz < 0) {
-                z = closestCollisionObject.z + closestCollisionObject.getDepth();
+                location.z = closestCollisionObject.getLocation().z + closestCollisionObject.getDepth();
             }
             return true;
         }
@@ -162,41 +130,43 @@ public abstract class CollisionObject {
     }
 
     public void setLocation(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        setLocation(new Vector3f(x, y, z));
     }
 
     public void setLocation(Vector3f location) {
-        setLocation(location.x, location.y, location.z);
+        this.location = new Vector3f(location);
     }
 
     public Vector3f getLocation() {
-        return new Vector3f(x, y, z);
+        return location;
     }
 
     public void scale(float dx, float dy, float dz) {
-        scaleX *= dx;
-        scaleY *= dy;
-        scaleZ *= dz;
+        scale(new Vector3f(dx, dy, dz));
     }
 
     public void scale(Vector3f scale) {
-        scale(scale.x, scale.y, scale.z);
+        this.scale.mul(new Vector3f(scale));
     }
 
-    public void setScale(float scaleX, float scaleY, float scaleZ) {
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        this.scaleZ = scaleZ;
+    public void setScale(float x, float y, float z) {
+        setScale(new Vector3f(x, y, z));
     }
 
     public void setScale(Vector3f scale) {
-        setScale(scale.x, scale.y, scale.z);
+        this.scale = new Vector3f(scale);
     }
 
     public Vector3f getScale() {
-        return new Vector3f(scaleX, scaleY, scaleZ);
+        return scale;
+    }
+
+    public float getRaycastStepSize() {
+        return raycastStepSize;
+    }
+
+    public void setRaycastStepSize(float raycastStepSize) {
+        this.raycastStepSize = raycastStepSize;
     }
 
     public void setActive(boolean active) {

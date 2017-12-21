@@ -113,87 +113,6 @@ public class Input {
             KEY_KEYPAD_ENTER,
             KEY_KEYPAD_EQUAL;
 
-    public class KeyButton {
-
-        private int id;
-        private boolean pressed;
-        private int ticksPressed;
-        private boolean justPressed;
-        private boolean justReleased;
-
-        public KeyButton(int id) {
-            this.id = id;
-        }
-
-        public boolean isPressed() {
-            return pressed;
-        }
-
-        public boolean isJustPressed() {
-            return justPressed;
-        }
-
-        public boolean isJustReleased() {
-            return justReleased;
-        }
-
-        public int getTicksPressed() {
-            return ticksPressed;
-        }
-
-        public void tick(long window) {
-            pressed = (GLFW.GLFW_PRESS == GLFW.glfwGetKey(window, id));
-
-            if (pressed) {
-                justPressed = (ticksPressed == 0);
-                ticksPressed++;
-            } else {
-                justReleased = (ticksPressed > 0);
-                ticksPressed = 0;
-            }
-        }
-    }
-
-    public class MouseButton {
-
-        private int id;
-        private boolean pressed;
-        private int ticksPressed;
-        private boolean justPressed;
-        private boolean justReleased;
-
-        public MouseButton(int id) {
-            this.id = id;
-        }
-
-        public boolean isPressed() {
-            return pressed;
-        }
-
-        public boolean isJustPressed() {
-            return justPressed;
-        }
-
-        public boolean isJustReleased() {
-            return justReleased;
-        }
-
-        public int getTicksPressed() {
-            return ticksPressed;
-        }
-
-        public void tick(long window) {
-            pressed = (GLFW.GLFW_PRESS == GLFW.glfwGetMouseButton(window, id));
-
-            if (pressed) {
-                justPressed = (ticksPressed == 0);
-                ticksPressed++;
-            } else {
-                justReleased = (ticksPressed > 0);
-                ticksPressed = 0;
-            }
-        }
-    }
 
     public Input(long windowID) {
         this.windowID = windowID;
@@ -480,5 +399,85 @@ public class Input {
 
     public boolean scrollRightEvent() {
         return scrollRight;
+    }
+    public class KeyButton {
+        
+        private int id;
+        private boolean pressed;
+        private int ticksPressed;
+        private boolean justPressed;
+        private boolean justReleased;
+        
+        public KeyButton(int id) {
+            this.id = id;
+        }
+        
+        public boolean isPressed() {
+            return pressed;
+        }
+        
+        public boolean isJustPressed() {
+            return justPressed;
+        }
+        
+        public boolean isJustReleased() {
+            return justReleased;
+        }
+        
+        public int getTicksPressed() {
+            return ticksPressed;
+        }
+        
+        public void tick(long window) {
+            pressed = (GLFW.GLFW_PRESS == GLFW.glfwGetKey(window, id));
+            
+            if (pressed) {
+                justPressed = (ticksPressed == 0);
+                ticksPressed++;
+            } else {
+                justReleased = (ticksPressed > 0);
+                ticksPressed = 0;
+            }
+        }
+    }
+    public class MouseButton {
+        
+        private int id;
+        private boolean pressed;
+        private int ticksPressed;
+        private boolean justPressed;
+        private boolean justReleased;
+        
+        public MouseButton(int id) {
+            this.id = id;
+        }
+        
+        public boolean isPressed() {
+            return pressed;
+        }
+        
+        public boolean isJustPressed() {
+            return justPressed;
+        }
+        
+        public boolean isJustReleased() {
+            return justReleased;
+        }
+        
+        public int getTicksPressed() {
+            return ticksPressed;
+        }
+        
+        public void tick(long window) {
+            pressed = (GLFW.GLFW_PRESS == GLFW.glfwGetMouseButton(window, id));
+            
+            if (pressed) {
+                justPressed = (ticksPressed == 0);
+                ticksPressed++;
+            } else {
+                justReleased = (ticksPressed > 0);
+                ticksPressed = 0;
+            }
+        }
     }
 }

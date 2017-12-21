@@ -1,6 +1,7 @@
 package topaz.math.collections;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /* TODO
 getPowerSet() method
@@ -15,9 +16,7 @@ public class Set<T> {
 
     public Set(T... elementArray) {
         elements = new ArrayList<>();
-        for (T element : elementArray) {
-            elements.add(element);
-        }
+        elements.addAll(Arrays.asList(elementArray));
     }
 
     public boolean add(T element) {

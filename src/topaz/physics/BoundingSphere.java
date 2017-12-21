@@ -5,43 +5,39 @@ import topaz.rendering.GameObject;
 
 public class BoundingSphere extends CollisionObject {
 
-    public float radius;
+    private float radius;
 
     public BoundingSphere(GameObject rootObject, float radius) {
         super(rootObject);
         this.radius = radius;
     }
 
-    //NOT SUPPORTED YET!
     @Override
-    public boolean intersectsBox(BoundingBox box) {
-        return false;
-    }
-
-    @Override
-    public boolean intersectsSphere(BoundingSphere sphere) {
-        Vector3f separationVector = getCenter().sub(sphere.getCenter());
-        return separationVector.lengthSquared() <= (radius + sphere.radius) * (radius + sphere.radius);
-    }
-
-    @Override
-    public boolean containsPoint(float pointX, float pointY, float pointZ) {
-        Vector3f separationVector = getCenter().sub(pointX, pointY, pointZ);
+    public boolean containsPoint(Vector3f point) {
+        Vector3f separationVector = getCenter().sub(point.x, point.y, point.z);
         return separationVector.lengthSquared() <= radius * radius;
     }
 
     @Override
     public float getWidth() {
-        return radius * 2f * scaleX;
+        return radius * 2f * scale.x;
     }
 
     @Override
     public float getHeight() {
-        return radius * 2f * scaleY;
+        return radius * 2f * scale.y;
     }
 
     @Override
     public float getDepth() {
-        return radius * 2f * scaleZ;
+        return radius * 2f * scale.z;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
+    
+    public float getRadius() {
+        return radius;
     }
 }

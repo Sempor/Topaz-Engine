@@ -7,7 +7,6 @@ import java.util.Random;
  */
 public class Color {
 
-    public float r, g, b, a;
 
     public static Color BLACK = new Color(0, 0, 0, 1);
     public static Color BLUE = new Color(0, 0, 1, 1);
@@ -36,45 +35,6 @@ public class Color {
     public static Color WHITE_SNOW = new Color(1, 0.98f, 0.98f, 1);
     public static Color YELLOW = new Color(1, 1, 0, 1);
 
-    public Color(float r, float g, float b, float a) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
-    }
-
-    public Color(Color color) {
-        this.r = color.r;
-        this.g = color.g;
-        this.b = color.b;
-        this.a = color.a;
-    }
-
-    public float getGrayscale() {
-        return 0.3f * r + 0.59f * g + 0.11f * b;
-    }
-
-    public float getMaximumColorComponent() {
-        float max = r;
-        if (g > max) {
-            max = g;
-        }
-        if (b > max) {
-            max = b;
-        }
-        return max;
-    }
-
-    public float getMinimumColorComponent() {
-        float min = r;
-        if (g < min) {
-            min = g;
-        }
-        if (b < min) {
-            min = b;
-        }
-        return min;
-    }
 
     //This can't return the color white since 1 is excluded from the random float generator.
     //Also, just by programmer's choice, this only returns opaque colors.
@@ -119,5 +79,44 @@ public class Color {
         float b = c.b / d;
         float a = c.a / d;
         return new Color(r, g, b, a);
+    }
+    public float r;
+    public float g;
+    public float b;
+    public float a;
+    public Color(float r, float g, float b, float a) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+    }
+    public Color(Color color) {
+        this.r = color.r;
+        this.g = color.g;
+        this.b = color.b;
+        this.a = color.a;
+    }
+    public float getGrayscale() {
+        return 0.3f * r + 0.59f * g + 0.11f * b;
+    }
+    public float getMaximumColorComponent() {
+        float max = r;
+        if (g > max) {
+            max = g;
+        }
+        if (b > max) {
+            max = b;
+        }
+        return max;
+    }
+    public float getMinimumColorComponent() {
+        float min = r;
+        if (g < min) {
+            min = g;
+        }
+        if (b < min) {
+            min = b;
+        }
+        return min;
     }
 }

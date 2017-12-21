@@ -15,9 +15,6 @@ public class ScreenshotUtil {
 
     public static final int BBP = 4;
 
-    public enum SaveFormat {
-        PNG, JPG, GIF, BMP, WBMP
-    }
 
     public static void takeScreenshot(Display display, File saveFile, SaveFormat saveFormat) {
         //Gets screen data and puts it in a byte buffer
@@ -61,5 +58,8 @@ public class ScreenshotUtil {
         } catch (IOException ex) {
             Logger.getLogger(ScreenshotUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    public enum SaveFormat {
+        PNG, JPG, GIF, BMP, WBMP
     }
 }

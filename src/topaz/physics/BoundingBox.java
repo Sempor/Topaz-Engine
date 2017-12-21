@@ -2,11 +2,10 @@ package topaz.physics;
 
 import org.joml.Vector3f;
 import topaz.rendering.GameObject;
-import topaz.math.collections.Interval;
 
 public class BoundingBox extends CollisionObject {
 
-    public float width, height, depth;
+    private float width, height, depth;
 
     public BoundingBox(GameObject rootObject, float width, float height, float depth) {
         super(rootObject);
@@ -20,37 +19,36 @@ public class BoundingBox extends CollisionObject {
     }
 
     @Override
-    public boolean intersectsBox(BoundingBox box) {
-        return new Interval(x, x + width * scaleX).overlaps(new Interval(box.x, box.x + box.width * box.scaleX))
-                && new Interval(y, y + height * scaleY).overlaps(new Interval(box.y, box.y + box.height * box.scaleY))
-                && new Interval(z, z + depth * scaleZ).overlaps(new Interval(box.z, box.z + box.depth * box.scaleZ));
+    public boolean containsPoint(Vector3f point) {
+        return point.x >= location.x && point.x <= location.x + getWidth()
+                && point.y >= location.y && point.y <= location.y + getHeight()
+                && point.z >= location.z && point.z <= location.z + getDepth();
     }
 
-    //NOT SUPPORTED YET!
-    @Override
-    public boolean intersectsSphere(BoundingSphere sphere) {
-        return false;
+    public void setWidth(float width) {
+        this.width = width;
     }
 
-    @Override
-    public boolean containsPoint(float pointX, float pointY, float pointZ) {
-        return pointX >= x && pointX <= x + getWidth()
-                && pointY >= y && pointY <= y + getHeight()
-                && pointZ >= z && pointZ <= z + getDepth();
+    public void setHeight(float height) {
+        this.height = height;
+    }
+
+    public void setDepth(float depth) {
+        this.depth = depth;
     }
 
     @Override
     public float getWidth() {
-        return width * scaleX;
+        return width * scale.x;
     }
 
     @Override
     public float getHeight() {
-        return height * scaleY;
+        return height * scale.y;
     }
 
     @Override
     public float getDepth() {
-        return depth * scaleZ;
+        return depth * scale.z;
     }
 }

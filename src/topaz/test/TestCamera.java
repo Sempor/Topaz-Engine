@@ -1,21 +1,21 @@
 package topaz.test;
 
-import topaz.core.CoreEngine;
 import topaz.core.CoreApp;
+import topaz.core.CoreEngine;
 import topaz.rendering.GameObject;
 import topaz.rendering.meshes.Mesh_Box;
 
 public class TestCamera extends CoreApp {
 
     private static int WIDTH = 1000, HEIGHT = 800;
-    private float speed = 0.01f;
-    private GameObject boxTextured;
-
     public static void main(String[] args) {
         CoreEngine core = new CoreEngine(new TestCamera(), WIDTH, HEIGHT);
         core.disable(CoreEngine.PRINT_FPS);
         core.start();
     }
+    private float speed = 0.01f;
+    private GameObject boxTextured;
+
 
     @Override
     public void init() {

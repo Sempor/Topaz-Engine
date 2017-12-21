@@ -1,7 +1,7 @@
 package topaz.math;
 
-import topaz.math.collections.Set;
 import topaz.math.collections.OrderedPair;
+import topaz.math.collections.Set;
 
 public class SetMath {
 

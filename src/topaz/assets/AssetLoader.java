@@ -21,7 +21,6 @@ public class AssetLoader {
         try {
             return ImageIO.read(AssetLoader.class.getResource(path));
         } catch (IOException e) {
-            e.printStackTrace();
             System.exit(-1);
         }
         return null;
@@ -70,7 +69,6 @@ public class AssetLoader {
             return textureID;
 
         } catch (IOException e) {
-            e.printStackTrace();
             System.exit(-1);
         }
 
@@ -81,7 +79,6 @@ public class AssetLoader {
         try {
             return Font.createFont(Font.TRUETYPE_FONT, AssetLoader.class.getResourceAsStream(path)).deriveFont(Font.PLAIN, size);
         } catch (FontFormatException | IOException e) {
-            e.printStackTrace();
             System.exit(-1);
         }
         return null;
@@ -95,12 +92,11 @@ public class AssetLoader {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
             String line;
             while ((line = br.readLine()) != null) {
-                builder.append(line + "\n");
+                builder.append(line).append("\n");
             }
 
             br.close();
         } catch (IOException e) {
-            e.printStackTrace();
         }
         return builder.toString();
     }

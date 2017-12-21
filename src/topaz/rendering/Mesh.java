@@ -74,8 +74,23 @@ public class Mesh {
         this(mesh.vertices, mesh.indices);
     }
 
-    protected void tick(double delta, Matrix4f modelViewProjectionMatrix) {
-        storeMatrixInBuffer(mvpMatrixBuffer, modelViewProjectionMatrix);
+    protected void tick(double delta, Matrix4f mvpMatrix) {
+        mvpMatrixBuffer.put(mvpMatrix.m00());
+        mvpMatrixBuffer.put(mvpMatrix.m01());
+        mvpMatrixBuffer.put(mvpMatrix.m02());
+        mvpMatrixBuffer.put(mvpMatrix.m03());
+        mvpMatrixBuffer.put(mvpMatrix.m10());
+        mvpMatrixBuffer.put(mvpMatrix.m11());
+        mvpMatrixBuffer.put(mvpMatrix.m12());
+        mvpMatrixBuffer.put(mvpMatrix.m13());
+        mvpMatrixBuffer.put(mvpMatrix.m20());
+        mvpMatrixBuffer.put(mvpMatrix.m21());
+        mvpMatrixBuffer.put(mvpMatrix.m22());
+        mvpMatrixBuffer.put(mvpMatrix.m23());
+        mvpMatrixBuffer.put(mvpMatrix.m30());
+        mvpMatrixBuffer.put(mvpMatrix.m31());
+        mvpMatrixBuffer.put(mvpMatrix.m32());
+        mvpMatrixBuffer.put(mvpMatrix.m33());
         mvpMatrixBuffer.flip();
     }
 
@@ -113,26 +128,6 @@ public class Mesh {
             }
         }
         GL20.glUseProgram(0);
-    }
-
-    private Matrix4f storeMatrixInBuffer(FloatBuffer matrixBuffer, Matrix4f matrix) {
-        matrixBuffer.put(matrix.m00());
-        matrixBuffer.put(matrix.m01());
-        matrixBuffer.put(matrix.m02());
-        matrixBuffer.put(matrix.m03());
-        matrixBuffer.put(matrix.m10());
-        matrixBuffer.put(matrix.m11());
-        matrixBuffer.put(matrix.m12());
-        matrixBuffer.put(matrix.m13());
-        matrixBuffer.put(matrix.m20());
-        matrixBuffer.put(matrix.m21());
-        matrixBuffer.put(matrix.m22());
-        matrixBuffer.put(matrix.m23());
-        matrixBuffer.put(matrix.m30());
-        matrixBuffer.put(matrix.m31());
-        matrixBuffer.put(matrix.m32());
-        matrixBuffer.put(matrix.m33());
-        return matrix;
     }
 
     //Need to fix up this code. Map buffer data instead of using glBufferData because

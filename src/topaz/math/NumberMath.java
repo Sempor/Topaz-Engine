@@ -130,10 +130,7 @@ public class NumberMath {
      */
     public static boolean areRelativelyPrime(int num1, int num2) {
         int GCD = getGCD(num1, num2);
-        if (GCD == 1) {
-            return true;
-        }
-        return false;
+        return GCD == 1;
     }
 
     public static boolean areAmicable(int num1, int num2) {

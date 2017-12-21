@@ -43,8 +43,8 @@ public class RenderManager {
 
         for (GameObject gameObject : rootObject.getAllDescendants()) {
             if (gameObject.getMesh() != null) {
-                Matrix4f modelViewProjectionMatrix = new Matrix4f(viewProjectionMatrix).mul(gameObject.getModelMatrix());
-                gameObject.getMesh().tick(delta, modelViewProjectionMatrix);
+                Matrix4f mvpMatrix = new Matrix4f(viewProjectionMatrix).mul(gameObject.getModelMatrix());
+                gameObject.getMesh().tick(delta, mvpMatrix);
             }
         }
     }

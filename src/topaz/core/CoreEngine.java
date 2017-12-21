@@ -158,7 +158,6 @@ public class CoreEngine implements Runnable {
         try {
             thread.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

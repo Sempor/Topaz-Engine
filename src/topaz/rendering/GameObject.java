@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import topaz.assets.AssetLoader;
+import topaz.core.Display;
 import topaz.physics.CollisionObject;
 import topaz.util.Color;
 
@@ -13,24 +14,24 @@ public class GameObject {
     public static final int ENABLE_GRAVITY = 101;
 
     //Basic properties
-    private String name;
-    private ArrayList<GameObject> children = new ArrayList<>();
-    private Vector3f location = new Vector3f(0, 0, 0);
-    private Vector3f rotation = new Vector3f(0, 0, 0);
-    private Vector3f scale = new Vector3f(1, 1, 1);
-    private int textureID = -1;
+    protected String name;
+    protected ArrayList<GameObject> children = new ArrayList<>();
+    protected Vector3f location = new Vector3f(0, 0, 0);
+    protected Vector3f rotation = new Vector3f(0, 0, 0);
+    protected Vector3f scale = new Vector3f(1, 1, 1);
+    protected int textureID = -1;
     //Rendering
-    private Mesh mesh;
-    private boolean visible;
+    protected Mesh mesh;
+    protected boolean visible;
     //Physics
-    private Vector3f velocity = new Vector3f(0, 0, 0);
-    private Vector3f acceleration = new Vector3f(0, 0, 0);
-    private CollisionObject collisionObject;
-    private boolean collisionsEnabled;
-    private boolean gravityEnabled;
-    private float gravityAcceleration = -98f;
+    protected Vector3f velocity = new Vector3f(0, 0, 0);
+    protected Vector3f acceleration = new Vector3f(0, 0, 0);
+    protected CollisionObject collisionObject;
+    protected boolean collisionsEnabled;
+    protected boolean gravityEnabled;
+    protected float gravityAcceleration = -98f;
     //Lighting
-    private Vector3f ambientLightIntensity = new Vector3f(0.1f, 0.1f, 0.1f);
+    protected Vector3f ambientLightIntensity = new Vector3f(0.1f, 0.1f, 0.1f);
 
     public GameObject() {
     }
@@ -39,17 +40,21 @@ public class GameObject {
         this.name = name;
     }
 
-    public void tick(double elapsedSeconds) {
+    public void tick(double delta, Display display) {
+        double elapsedSeconds = delta / (double) display.getFPS();
         velocity.add(new Vector3f(acceleration).mul((float) elapsedSeconds));
 
         if (collisionObject != null) {
-            if (collisionObject.translateX(velocity.x * (float) elapsedSeconds)) {
+            boolean collision = collisionObject.translateX(velocity.x * (float) elapsedSeconds);
+            if (collision) {
                 velocity.x = 0;
             }
-            if (collisionObject.translateY(velocity.y * (float) elapsedSeconds)) {
+            collision = collisionObject.translateY(velocity.y * (float) elapsedSeconds);
+            if (collision) {
                 velocity.y = 0;
             }
-            if (collisionObject.translateZ(velocity.z * (float) elapsedSeconds)) {
+            collision = collisionObject.translateZ(velocity.z * (float) elapsedSeconds);
+            if (collision) {
                 velocity.z = 0;
             }
         }
