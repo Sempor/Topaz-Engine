@@ -3,7 +3,7 @@ package topaz.physics;
 import java.util.ArrayList;
 import org.joml.Vector3f;
 import topaz.core.Display;
-import topaz.math.collections.Interval;
+import topaz.math.Interval;
 import topaz.rendering.GameObject;
 
 public class PhysicsManager {

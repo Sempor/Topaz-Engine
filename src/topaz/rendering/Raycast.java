@@ -2,7 +2,7 @@ package topaz.rendering;
 
 import java.util.ArrayList;
 import org.joml.Vector3f;
-import topaz.math.collections.Ray;
+import topaz.math.Ray;
 import topaz.physics.CollisionObject;
 
 public class Raycast {
