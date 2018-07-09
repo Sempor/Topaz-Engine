@@ -1,6 +1,5 @@
 package topaz.core;
 
-import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -14,19 +13,14 @@ import topaz.util.Color;
 
 public class CoreEngine implements Runnable {
 
-    public static final int PRINT_FPS = 100;
-    public static final int PRINT_SOFTWARE_INFORMATION = 101;
-
     //Display properties
-    private String displayTitle = "Topaz Game Engine - An Application";
+    private String displayTitle = "Topaz";
     private int displayWidth, displayHeight;
+
     //Internal engine variables
     private boolean running;
     private Thread thread;
     private CoreApp coreApp;
-    //Print
-    private boolean printFPS = true;
-    private boolean printSoftwareInformation = false;
 
     public CoreEngine(CoreApp coreApp, int displayWidth, int displayHeight) {
         this.coreApp = coreApp;
@@ -82,9 +76,7 @@ public class CoreEngine implements Runnable {
             }
 
             if (timeElapsed > 1000000000D) {
-                if (printFPS) {
-                    System.out.println("Frames per second: " + ticksElapsed);
-                }
+                System.out.println("Frames per second: " + ticksElapsed);
                 ticksElapsed = 0;
                 timeElapsed = 0;
             }
@@ -104,13 +96,6 @@ public class CoreEngine implements Runnable {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL13.GL_MULTISAMPLE);
         GL11.glEnable(GL11.GL_CULL_FACE);
-
-        if (printSoftwareInformation) {
-            System.out.println("Operating System: " + System.getProperty("os.name")
-                    + " , Version: " + System.getProperty("os.version"));
-            System.out.println("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION));
-            System.out.println("LWJGL Version: " + Version.getVersion());
-        }
 
         coreApp.display.setBackgroundColor(Color.BLACK);
 
@@ -158,32 +143,6 @@ public class CoreEngine implements Runnable {
         try {
             thread.join();
         } catch (InterruptedException e) {
-        }
-    }
-
-    public void enable(int property) {
-        switch (property) {
-            case PRINT_FPS:
-                printFPS = true;
-                break;
-            case PRINT_SOFTWARE_INFORMATION:
-                printSoftwareInformation = true;
-                break;
-            default:
-                break;
-        }
-    }
-
-    public void disable(int property) {
-        switch (property) {
-            case PRINT_FPS:
-                printFPS = false;
-                break;
-            case PRINT_SOFTWARE_INFORMATION:
-                printSoftwareInformation = false;
-                break;
-            default:
-                break;
         }
     }
 }
